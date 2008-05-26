@@ -93,6 +93,7 @@ void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int 
 }
 
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
+//   topLeft == bottomRight
   qDebug( "dataChanged in ItemView called" );
 }
 

@@ -1,0 +1,5 @@
+.svn
+Makefile
+debug/
+release/
+gmon.out

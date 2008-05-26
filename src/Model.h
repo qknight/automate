@@ -37,7 +37,8 @@ enum CustomRole {
   IdRole = Qt::UserRole,
   FinalRole,
   StartRole,
-  IndexRole // the connection index "a" -> (index) -> "b" of a connection
+  IndexRole, // the connection index "a" -> (index) -> "b" of a connection
+  SymbolIndexRole
 };
 }
 
@@ -68,6 +69,7 @@ class Model : public QAbstractItemModel {
     bool removeNodes( QList<QModelIndex> nodeList );
     bool removeConnection(QModelIndex connection);
 
+    AbstractTreeItem* AbstractTreeItemFromId(unsigned int id);
 //   private:
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex() );
     bool removeRows( int row, int count, const QModelIndex & parent );

@@ -267,24 +267,34 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
 }
 
 bool Model::setData( const QModelIndex & index, const QVariant & value, int role ) {
-  qDebug("setData");
-  if (index.isValid() && role == Qt::EditRole) {
-
-//     stringList.replace(index.row(), value.toString());
+//   qDebug() << "setData " << index.column();
+  if (index.isValid() && getTreeItemType(index) == NODE_CONNECTION && index.column() == 4 && role == Qt::EditRole) {
+    AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
+    node_connection* nc = static_cast<node_connection*>( n );
+    nc->symbol_index=value.toInt();
+    emit dataChanged(index, index);
+    return true;
+  }
+  if (index.isValid() && getTreeItemType(index) == NODE_CONNECTION && index.column() == 5 && role == Qt::EditRole) {
+    AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
+    node_connection* nc = static_cast<node_connection*>( n );
+    AbstractTreeItem* a = AbstractTreeItemFromId(value.toInt());
+    if (a == NULL) {
+      qDebug() << "can't redirect connection because the given node id was not found in the graph, please try again later!";
+      return false;
+    }
+    nc->next_node=a;
     emit dataChanged(index, index);
     return true;
   }
   return false;
-  /*  node* z = nodeFromIndex(index);
-    if (index.isValid() && role == Qt::EditRole) {
-      if (!ncm->contains(z))
-        return false;
-      int v=value.toInt();
-      z->node_connections[index.row()]->symbol=v;
-      emit dataChanged(index, index);
-      return true;
-    }            */
-  return false;
+}
+
+AbstractTreeItem* Model::AbstractTreeItemFromId(unsigned int id) {
+  foreach(AbstractTreeItem* item,rootItem->childItems)
+    if (item->getId() == id)
+      return item;
+  return NULL;
 }
 
 QVariant Model::headerData( int section, Qt::Orientation orientation, int role ) const {

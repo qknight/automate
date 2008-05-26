@@ -9,6 +9,7 @@ items which have to be editable in treeView:
 - make items editable via the model
   implement flags/setData
 
+
 - grid
 - implement 'flow' -> this feature will move overlapping nodes away from each and
                       it does so for connection labels as well
