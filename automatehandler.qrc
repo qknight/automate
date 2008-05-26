@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file>icons/gtk-add.png</file>
+     <file>icons/gtk-close.png</file>
+     <file>icons/assign.png</file>
+    <file>icons/node.png</file>
+    <file>icons/connect.png</file>
+ </qresource>
+</RCC>

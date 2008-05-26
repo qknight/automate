@@ -1,0 +1,115 @@
+items which have to be editable in treeView:
+ - start
+ - final
+ - connection symbol
+ - next_node
+
+- graphicsview -> items must be deletable
+
+- make items editable via the model
+  implement flags/setData
+
+- grid
+- implement 'flow' -> this feature will move overlapping nodes away from each and
+                      it does so for connection labels as well
+- printing
+- mash modulator with radius modifier
+  this feature enables a mesh modification as seen in blender
+- multiselection
+- selection model support (sync with other selections)
+- add/delete node/node_connections
+
+- aspect editor (featuring):
+  - move nodes/connections F1
+  - add nodes F2
+  - add node_connections F3
+  - mash edit F4
+
+node (and the nodes it links to)
+    a -> b
+    -> c
+    -> d
+    b -> a
+    c
+    d -> b
+    d -> c
+    e -> d
+    f
+
+    so we see that node 'a' has connections to node 'b','c' and 'd'
+    the model displays this structure with a QAbstractItemModel
+
+    now i want to delete a node with say "delete d"
+    in the model i write the function removeRows() but after the delete
+    i don't want to reset the model but do i have to call
+
+    dataChanged(a,a_d);
+    dataChanged(e,e_d);
+
+http://www.graphviz.org/doc/libguide/libguide.pdf
+http://www.boost.org/doc/libs/1_35_0/libs/graph/doc/index.html
+
+see TODO and BUG notices in the code as well
+
+ - cleanup automate
+   - clean all TODOs in the code
+
+ - doxygen comments on code and concepts
+ - think about if automate/meta_automate need a
+   copy constructor ... -> rule of three
+   - copy an automate 1:1
+
+Later
+ - add 'invert all connections' to automate_algorithms
+ - remerge automate_algorithms to trunk
+ - add symbol editor
+ - getAutomateType
+   create a better detection of automate type
+ - checkWord
+   iterative word check implementation for eNFA/NFA/DFA
+
+mein todo bis fertig:
+- model view control aufsatz fuer graphicsview
+  das beinhaltet das:
+  - markieren von nodes/connections
+  - umbennen von labels
+  - verschieben von nodes/labels
+  - hinzufuegen von neuen
+  - loeschen von bestehenden
+  - (allg rendering von diesen)
+- model view control aufsatz fuer normales automate modification (z.b. library
+example)
+- editing ohne MCV aufsatz z.b. fuer schnelle algorithmen (example code
+dafuer)
+- allg. doku mit doxygen wo die wichtigsten konzepte erklaert
+
+-markieren/kopieren/löschen/verschieben von mehren Objekten
+-skalieren(?) je nach dem wie du es implementierst.
+-drucken(?) wenn du willst das geht in QT transparent, du musst halt eine
+
+graph visualisation:
+ - http://www.graphviz.org/
+ - http://www.boost.org/libs/graph/doc/fruchterman_reingold.html
+
+  > > des tages ins svn hochladen.
+>
+> Lass mich das mal ein wenig abstrakter formulieren. Ich habe einen
+> Automaten (auf Papier/im Kopf) aufgemalt und will ihn in den Computer
+> eingeben (auch grafisch).
+>
+> Das war ja immer einer der Kernpunkte und da habe ich bisher noch kein
+> Beispiel von dir gesehen, wie das geht. In sofern wäre das gut wenn du mal
+> vorführen könntest wie man einen Automaten bei dir im Computer malen kann.
+>
+> Vorher ist es für mich problematisch zu sagen welche Details genau
+> (verschieben, neu labeln, ...) ich brauche. Meine Vorstellungen orientieren
+> sich an einem (Vektor-)Zeichenprogram, stimmt also grob mit deiner Liste
+> überein, kann dir aber da nicht die Vollständigkeit garantieren.
+>
+> Ein paar Punkte die mir fehlen (da verstehen wir vielleicht
+> unterschiedliche Sachen, also sollten wir es vorher erst besprechen):
+> -markieren/kopieren/löschen/verschieben von mehren Objekten
+> -skalieren(?) je nach dem wie du es implementierst.
+> -drucken(?) wenn du willst das geht in QT transparent, du musst halt eine
+> draw Routine haben die ein QDevice als Parameter nimmt und das als argument
+> an QPainter übergeben (<10min)

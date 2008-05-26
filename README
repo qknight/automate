@@ -1,0 +1,34 @@
+======================================
+ what is this?
+======================================
+  a complete automate code base with a lightweight automatehandler
+  this codebase is converted into full MCV compatibility and
+  a new property system is evaluated for usage
+
+  the main changes the the previous versions is that:
+   a) all objects derive from the same abstract base class nodeItem
+      all objects must be accessed from either the model (normal way)
+      or in special cases the automate can be copied without using
+      the model
+   b) all objects share their properties in a common array
+
+======================================
+ why?
+======================================
+i've implemented this as a library for later use in a more complex
+environment.
+
+see TODO for more information about what is still left to be done.
+
+this automate class code is GPL v2, see GPL_V2 for more info
+
+======================================
+ class documentation using doxygen
+======================================
+run doxygen to get a nice html documentation with helpful comments
+
+doxygen class documentaion:
+   http://www.stack.nl/~dimitri/doxygen/docblocks.html
+
+
+Joachim Schiele
