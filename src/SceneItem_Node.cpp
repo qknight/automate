@@ -71,8 +71,8 @@ QRectF SceneItem_Node::boundingRect() const {
                  2*( r + penWidth ), 2*( r + penWidth ) );
 }
 
-void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) {
-  painter->drawRect( boundingRect() );
+void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
+//   painter->drawRect( boundingRect() );
   QBrush brush( Qt::lightGray, Qt::SolidPattern );
 
   painter->setBrush( brush );
@@ -114,7 +114,7 @@ void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem *o
 
   QFontMetrics fm( f );
   int width = fm.width( label );
-  int height = fm.height();
+//   int height = fm.height();
   painter->setFont( f );
   painter->drawText( QPointF( -width / 2, 12 ), label );
 }
@@ -147,13 +147,13 @@ void SceneItem_Node::addConnection( SceneItem_Connection* ci ) {
   ConnectionItems.append( ci );
 }
 
-int SceneItem_Node::type() {
+int SceneItem_Node::type() const {
   return SceneItem_NodeType;
 }
 
-void SceneItem_Node::hoverEnterEvent ( QGraphicsSceneHoverEvent * event ) {
+void SceneItem_Node::hoverEnterEvent ( QGraphicsSceneHoverEvent * /*event*/ ) {
 //   qDebug() << "hoverEnterEvent";
-  return;
+//   return;
   hovering=true;
   foreach( SceneItem_Connection  *ci, ConnectionItems ) {
     ci->highlight(true);
@@ -162,9 +162,9 @@ void SceneItem_Node::hoverEnterEvent ( QGraphicsSceneHoverEvent * event ) {
   update();
 }
 
-void SceneItem_Node::hoverLeaveEvent ( QGraphicsSceneHoverEvent * event ) {
+void SceneItem_Node::hoverLeaveEvent ( QGraphicsSceneHoverEvent * /*event*/ ) {
 //   qDebug() << "hoverLeaveEvent";
-  return;
+//   return;
   hovering=false;
   foreach( SceneItem_Connection  *ci, ConnectionItems ) {
     ci->highlight(false);

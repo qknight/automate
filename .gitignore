@@ -3,3 +3,5 @@ Makefile
 debug/
 release/
 gmon.out
+debug
+doxygen

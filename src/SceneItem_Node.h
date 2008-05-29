@@ -71,7 +71,7 @@ class SceneItem_Node : public QGraphicsItem {
     SceneItem_Node( QPersistentModelIndex index, bool start, bool final, QString label );
     ~SceneItem_Node();
     void addConnection( SceneItem_Connection* ci );
-    int type();
+    int type() const;
     QPersistentModelIndex index;
     void removeConnections();
   private:

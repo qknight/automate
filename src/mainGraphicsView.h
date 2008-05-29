@@ -33,11 +33,11 @@ class mainGraphicsView : public AbstractView { /*, public Ui::mainGraphicsViewWi
     mainGraphicsView( Model *, QDialog* parent = 0 );
     ~mainGraphicsView();
   private:
-    void gDebug( QString input );
+//     void gDebug( QString input );
     ItemView* itemView;
     Model *model;
     QGraphicsView* view;
-    QTextBrowser* textBrowser;
+//     QTextBrowser* textBrowser;
     QGraphicsItemGroup* generateNode( bool start, bool final, QString label, QString name );
 };
 

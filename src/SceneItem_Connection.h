@@ -74,7 +74,7 @@ class QPolygonF;
 
 class SceneItem_Connection : public QGraphicsItem {
   public:
-    SceneItem_Connection( QPersistentModelIndex index, int value, SceneItem_Node *startItem, SceneItem_Node *endItem );
+    SceneItem_Connection( QPersistentModelIndex index, unsigned int symbol_index, SceneItem_Node *startItem, SceneItem_Node *endItem );
     ~SceneItem_Connection();
     QRectF boundingRect() const;
     SceneItem_Node *startItem() const {
@@ -84,9 +84,10 @@ class SceneItem_Connection : public QGraphicsItem {
       return myEndItem;
     }
     void updatePosition();
-    int type();
+    int type() const;
     QPersistentModelIndex index;
     void highlight(bool status);
+    void setSymbol_Index(unsigned int symbol_index);
   protected:
     bool m_highlight;
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
@@ -95,7 +96,7 @@ class SceneItem_Connection : public QGraphicsItem {
     QLineF createLine( QPointF a, QPointF b );
     QPolygonF arrowHead;
     QPen pen;
-    int value;
+    unsigned int symbol_index;
     void setColor( const QColor &color ) {
       myColor = color;
     }

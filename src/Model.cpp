@@ -224,8 +224,6 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
   return 6;
 }
 
-
-
 bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
   if ( !parent.isValid() ) {
     AbstractTreeItem* abstractitem = rootItem;
@@ -395,6 +393,7 @@ QModelIndex Model::getQModelIndexFromAbstractNodeItem( AbstractTreeItem* item ) 
     qDebug() << "In " << __FILE__ << ", " << __FUNCTION__ << " something went very wrong!";
     exit( 0 );
   }
+  return QModelIndex();
 }
 
 
@@ -437,15 +436,15 @@ QModelIndex Model::next_nodeModelIndex( QModelIndex item ) {
 }
 
 QModelIndex Model::addConnection(){
-
+ return QModelIndex();
 }
 
-bool Model::removeConnection(QModelIndex connection){
-
+bool Model::removeConnection(QModelIndex /*connection*/){
+  return false;
 }
 
 QModelIndex Model::addNode(){
-
+  return QModelIndex();
 }
 
 /// this function is provided for convenience since it just invokes removeNodes

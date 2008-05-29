@@ -38,7 +38,9 @@ QGraphicsItem* SceneItem_FlexibleConnection::addHandle(handleType::itemType type
   return (QGraphicsItem*) h1;
 }
 
-void SceneItem_FlexibleConnection::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) {
+void SceneItem_FlexibleConnection::paint( QPainter *painter,
+                                          const QStyleOptionGraphicsItem */*option*/,
+                                          QWidget */*widget*/ ) {
   painter->drawRect(boundingRect());
   QPainterPath qp( start );
 

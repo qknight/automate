@@ -89,8 +89,8 @@ void automatehandler::addRandomAutomate() {
 //   qDebug() << "rootnode=" << (unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
-  int todonodes = qrand() % 10;
-  int todoconnections_ = 2;
+  int todonodes = qrand() % 5;
+  int todoconnections_ = 12;
 
   for ( int i = 0; i < todonodes; ++i ) {
     int s = qrand() % 2;

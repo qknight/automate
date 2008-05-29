@@ -26,7 +26,8 @@ QRectF ScneItem_FlexibleHandle::boundingRect() const {
   return r;
 }
 
-void ScneItem_FlexibleHandle::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) {
+void ScneItem_FlexibleHandle::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/,
+                                      QWidget */*widget*/ ) {
   if ( isSelected() )
     painter->setPen( QPen( QColor( "red" ), 3 ) );
   else

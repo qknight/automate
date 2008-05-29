@@ -25,26 +25,26 @@ ItemView::ItemView( QGraphicsView* view, Model *model ) : QAbstractItemView() {
 //   SceneItem_FlexibleConnection* flex = new SceneItem_FlexibleConnection(scene);
 //   scene->addItem(flex);
 
-    processNewNodes();
+  processNewNodes();
 }
 
 ItemView::~ItemView() {
 
 }
 
-QRect ItemView::visualRect( const QModelIndex &index ) const {
+QRect ItemView::visualRect( const QModelIndex &/*index*/ ) const {
   return QRect()/*view->rect()*/;
 }
 
-void ItemView::scrollTo( const QModelIndex &index, ScrollHint hint ) {
+void ItemView::scrollTo( const QModelIndex &/*index*/, ScrollHint /*hint*/ ) {
 
 }
 
-QModelIndex ItemView::indexAt( const QPoint &point ) const {
+QModelIndex ItemView::indexAt( const QPoint &/*point*/ ) const {
   return QModelIndex();
 }
 
-QModelIndex ItemView::moveCursor( CursorAction cursorAction, Qt::KeyboardModifiers modifiers ) {
+QModelIndex ItemView::moveCursor( CursorAction /*cursorAction*/, Qt::KeyboardModifiers /*modifiers*/ ) {
   return QModelIndex();
 }
 
@@ -56,15 +56,15 @@ int ItemView::verticalOffset() const {
   return 0;
 }
 
-bool ItemView::isIndexHidden( const QModelIndex &index ) const {
+bool ItemView::isIndexHidden( const QModelIndex &/*index*/ ) const {
   return false;
 }
 
-void ItemView::setSelection( const QRect &rect, QItemSelectionModel::SelectionFlags command ) {
+void ItemView::setSelection( const QRect &/*rect*/, QItemSelectionModel::SelectionFlags /*command*/ ) {
 
 }
 
-QRegion ItemView::visualRegionForSelection( const QItemSelection &selection ) const {
+QRegion ItemView::visualRegionForSelection( const QItemSelection &/*selection*/ ) const {
   return QRegion();
 }
 
@@ -82,18 +82,35 @@ void ItemView::processNewNodes() {
   }
 }
 
-void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
+void ItemView::rowsInserted( const QModelIndex & parent, int /*start*/, int /*end*/ ) {
 //   QModelIndex item = model->index( i, 0, QModelIndex() );
 //   scene->addNode( QPersistentModelIndex( parent ) );
   qDebug() << "rowsInserted in ItemView called: " << model->objectTypeQString(model->getTreeItemType( parent));
 }
 
-void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end ) {
+void ItemView::rowsAboutToBeRemoved( const QModelIndex & /*parent*/, int /*start*/, int /*end*/ ) {
   qDebug( "rowsAboutToBeRemoved in ItemView called" );
 }
 
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
-//   topLeft == bottomRight
+  //TODO find all items which need to be updated, somewhere between topLeft and bottomRight
+  //  topleft -- itemA
+  //          -- itemB
+  //          -- itemC
+  //          -- bottomRight
+  qDebug() << topLeft.row() << " " << topLeft.column();
+  if (topLeft == bottomRight)
+    qDebug() << "match, the two modelindexes are equal";
+  else
+    qDebug() << "WARNING: this has to be handled but isn't yet";
+  if (model->getSelectedItemType(topLeft) == NODE) {
+    qDebug() << "Node modification";
+    scene->modifyNode(QPersistentModelIndex(topLeft));
+  }
+  if (model->getSelectedItemType(topLeft) == NODE_CONNECTION) {
+    qDebug() << "Node_CONNECTION modification";
+    scene->modifyConnection(QPersistentModelIndex(topLeft));
+  }
   qDebug( "dataChanged in ItemView called" );
 }
 

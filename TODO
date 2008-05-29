@@ -1,3 +1,14 @@
+FIXME modeltest.cpp line 106 issue
+FIXME implement hasChildren
+graphicsview:
+ - [fixed] arrows are pointing into the wrong direction
+ - enable opengl rendering + make icon for enable/disable
+ - icon for antialiasing enable/disable
+ - highlight by mouse over node enable/disable
+
+treeview
+- mass selection of items
+
 items which have to be editable in treeView:
  - start
  - final
@@ -6,11 +17,10 @@ items which have to be editable in treeView:
 
 - graphicsview -> items must be deletable
 
-- make items editable via the model
-  implement flags/setData
-
-
 - grid
+  show/hide grid
+  enable/disable magnifying
+  inc/dec grid spacing
 - implement 'flow' -> this feature will move overlapping nodes away from each and
                       it does so for connection labels as well
 - printing

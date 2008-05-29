@@ -34,19 +34,45 @@ void GraphicsScene::addNode( QPersistentModelIndex item ) {
 }
 
 void GraphicsScene::addConnection( QPersistentModelIndex item ) {
-  int id = model->data( item, customRole::IdRole ).toInt();
+//   int id = model->data( item, customRole::IdRole ).toInt();
   QGraphicsItem* a = modelToSceenIndex( QPersistentModelIndex( model->parent( item ) ) );
+  if ( a == NULL )
+    return;
   QModelIndex next_node_index = model->next_nodeModelIndex( item );
   if ( !next_node_index.isValid() ) {
     qDebug() << "Critical error because next_node isn't a valid index";
   }
   QGraphicsItem* b = modelToSceenIndex( next_node_index );
-  int symbol_index = model->data(item, customRole::IndexRole).toInt();
+  if ( b == NULL )
+    return;
+  int symbol_index = model->data( item, customRole::IndexRole ).toInt();
   SceneItem_Connection * cItem = new SceneItem_Connection( item, symbol_index, ( SceneItem_Node * )a, ( SceneItem_Node * )b );
   cItem->setData( 0, &item );
   (( SceneItem_Node * )a )->addConnection( cItem );
   (( SceneItem_Node * )b )->addConnection( cItem );
   addItem( cItem );
+}
+
+void GraphicsScene::modifyNode( QPersistentModelIndex  ) {
+
+}
+
+void GraphicsScene::modifyConnection( QPersistentModelIndex item ) {
+  // case 1. symbol_index changed
+  qDebug() << "id of changed item " << model->data( item, customRole::IdRole ).toInt();
+  unsigned int index = model->data( item, customRole::IndexRole ).toInt();
+  QGraphicsItem* i = modelToSceenIndex( item );
+  if ( i == NULL )
+    return;
+  if ( i->type() == SceneItem_ConnectionType ) {
+    (( SceneItem_Connection* )i )->setSymbol_Index( index );
+  }
+  // case 2. next_node changed
+  // check if next_node changed
+  // unregister at next_node
+  // register at new next_node
+  // change item's new parentitem
+  // update item
 }
 
 void GraphicsScene::reset() {
@@ -58,23 +84,56 @@ void GraphicsScene::reset() {
 ** we have a QPersistentModelIndex stored. this gives us the possibility of
 ** having several different graphicsViews on the same automate
 */
+
+// FIXME i've implemented my own compare function: compareIndexes since this implementation doesn't use
+// column BUT columns somehow where reported to be different, meaning: a stored index could have column 3
+// while the treeView would make a difference because the treeView uses the columns to distinguish between
+// different entries in the hierarchical view (the treeView) where for instance column 3 shows the node name
+// and column 4 shows the symbol_index of a connection
 QGraphicsItem* GraphicsScene::modelToSceenIndex( QPersistentModelIndex index ) {
   QList<QGraphicsItem *> m_list = items();
+//   qDebug() << "=== searching in: " << m_list.size() << " items ====";
+//   qDebug() << " searching for: " << index.row() <<  " " << index.column() << " row/column";
   for ( int i = 0; i < m_list.size(); ++i ) {
-    if ( (( SceneItem_Node * )m_list[i])->type() == SceneItem_NodeType ) {
-      if ( (( SceneItem_Node * )m_list[i])->index == index )
+    if ( m_list[i]->type() == SceneItem_NodeType ) {
+      if (compareIndexes((( SceneItem_Node * )m_list[i] )->index, index )) {
+//         qDebug() << "node found";
         return m_list[i];
+      }
+    }
+    if ( m_list[i]->type() == SceneItem_ConnectionType ) {
+//       qDebug() << "  -->> trying:  " << (( SceneItem_Connection * )m_list[i] )->index.row() <<  " " <<
+          (( SceneItem_Connection * )m_list[i] )->index.column();
+      if (compareIndexes((( SceneItem_Connection * )m_list[i] )->index, index )) {
+//         qDebug() << "connection found";
+        return m_list[i];
+      }
     }
   }
+  qDebug() << "failed to modify the item, since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found";
   return NULL;
 }
 
-void GraphicsScene::keyPressEvent ( QKeyEvent * keyEvent ){
-//   qDebug() << "got this event";
+// I hope this function in not incomplete
+bool GraphicsScene::compareIndexes(const QPersistentModelIndex & a, const QPersistentModelIndex & b) {
+  if (a.row() != b.row())
+    return false;
+  if (a.internalPointer () != b.internalPointer ())
+    return false;
+  return true;
+}
+
+void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
+  //   qDebug() << "got this event";
   // del ->> remove an item or remove selection
-  if (keyEvent->key() == Qt::Key_Delete) {
+  if ( keyEvent->key() == Qt::Key_Delete ) {
     qDebug() << "del event";
     qDebug() << selectedItems().size();
   }
 }
+
+// void GraphicsScene::contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent ){
+//   qDebug() << "event";
+// }
+
 

@@ -48,7 +48,7 @@ unsigned int node_connection::getObjectType() {
 }
 
 void node_connection::removeChild( unsigned int index ) {
-  if ( childItems.size() < index ) {
+  if ( (unsigned int)childItems.size() < index ) {
     qDebug() << "Fatal error, childItems.size() < index!";
     qDebug() << "having " << childItems.size() << " childs";
     exit( 0 );

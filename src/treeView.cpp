@@ -143,7 +143,15 @@ void treeView::addAbstractNodeItem( TreeItemType type ) {
     selectedItems.append(QModelIndex());
   foreach( QModelIndex item, selectedItems ) {
     switch ( type ) {
-    case NODE:
+      case AUTOMATE_ROOT:
+        qDebug() << "FATAL ERROR: AUTOMATE_ROOT";
+        exit(0);
+        continue;
+      case UNKNOWN:
+        qDebug() << "FATAL ERROR: UNKNOWN";
+        exit(0);
+        continue;
+      case NODE:
       qDebug() << "addNODE clicked";
       model->insertRows( model->rowCount(QModelIndex()), 1 );
       continue;

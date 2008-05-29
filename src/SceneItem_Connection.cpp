@@ -56,9 +56,9 @@
 const qreal Pi = 3.14;
 #define CIRCLE_FOR_SYNBOL_RADIUS 14
 
-SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index, int value, SceneItem_Node *startItem, SceneItem_Node *endItem ) : QGraphicsItem() {
+SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index, unsigned int symbol_index, SceneItem_Node *startItem, SceneItem_Node *endItem ) : QGraphicsItem() {
 //   qDebug() << "Creating a new connection";
-  this->value = value;
+  this->symbol_index = symbol_index;
   this->index = index;
   m_highlight = false;
 
@@ -118,7 +118,7 @@ void SceneItem_Connection::updatePosition() {
   update();
 }
 
-void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget ) {
+void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
   painter->drawLine( line );
 // this is a nice feature for debugging
   QPen p = pen;
@@ -160,8 +160,6 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
   painter->setPen( myPen );
   painter->setBrush( myColor );
 
-  QPointF p1 = myEndItem->pos();
-
   // additional label code
   QPointF vpos = myStartItem->pos() / 2 + myEndItem->pos() / 2;
 
@@ -178,7 +176,7 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
   painter->setPen( myPen );
   painter->setBrush( myColor );
 
-  QString label = QString( "%1" ).arg( value );
+  QString label = QString( "%1" ).arg( symbol_index );
   QFont f;
   QFontMetrics fm( f );
   int width = fm.width( label );
@@ -192,19 +190,18 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
   if ( line.dy() >= 0 )
     angle = ( Pi * 2 ) - angle;
 
-  QPointF arrowP1 = line.p1() + QPointF( sin( angle + Pi / 3 ) * arrowSize,
+  QPointF arrowP1 = line.p2() - QPointF( sin( angle + Pi / 3 ) * arrowSize,
                                          cos( angle + Pi / 3 ) * arrowSize );
-  QPointF arrowP2 = line.p1() + QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
+  QPointF arrowP2 = line.p2() - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
                                          cos( angle + Pi - Pi / 3 ) * arrowSize );
 
   arrowHead.clear();
-  arrowHead << line.p1() << arrowP1 << arrowP2;
+  arrowHead << line.p2() << arrowP1 << arrowP2;
 
   painter->drawPolygon( arrowHead );
 }
 
-
-int SceneItem_Connection::type() {
+int SceneItem_Connection::type() const {
   return SceneItem_ConnectionType;
 }
 
@@ -215,3 +212,9 @@ void SceneItem_Connection::highlight( bool status ) {
     m_highlight = false;
 }
 
+void SceneItem_Connection::setSymbol_Index(unsigned int symbol_index){
+  if (this->symbol_index == symbol_index)
+    return;
+  this->symbol_index = symbol_index;
+  update();
+}

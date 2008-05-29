@@ -35,12 +35,18 @@ class GraphicsScene : public QGraphicsScene {
   public:
     void addNode( QPersistentModelIndex item );
     void addConnection( QPersistentModelIndex item );
+    void modifyNode(QPersistentModelIndex item);
+    void modifyConnection(QPersistentModelIndex item);
+    // maybe we want to remove an item
+//     void removeNode( QGraphicsItem* item );
+//     void removeConnection( QGraphicsItem* item );
     void reset();
     void keyPressEvent ( QKeyEvent * keyEvent );
-
   private:
+    bool compareIndexes(const QPersistentModelIndex & a, const QPersistentModelIndex & b);
     Model *model;
     QGraphicsItem* modelToSceenIndex(QPersistentModelIndex index);
+//     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
 };
 
 #endif
