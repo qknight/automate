@@ -74,8 +74,9 @@ class QPolygonF;
 
 class SceneItem_Connection : public QGraphicsItem {
   public:
-    SceneItem_Connection( QPersistentModelIndex index, unsigned int symbol_index, SceneItem_Node *startItem, SceneItem_Node *endItem );
+    SceneItem_Connection( QPersistentModelIndex index);
     ~SceneItem_Connection();
+    void updateData();
     QRectF boundingRect() const;
     SceneItem_Node *startItem() const {
       return myStartItem;

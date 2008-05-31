@@ -41,6 +41,7 @@ class automatehandler : public QDialog, private Ui::controllerWidget {
   private:
     QVector<automate*> automates;
     void closeEvent( QCloseEvent * event );
+    void keyPressEvent( QKeyEvent * keyEvent );
   public:
     automatehandler( QWidget* parent = 0 );
     ~automatehandler();

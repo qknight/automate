@@ -12,7 +12,7 @@
 #include "ItemView.h"
 #include "SceneItem_FlexibleConnection.h"
 
-ItemView::ItemView( QGraphicsView* view, Model *model ) : QAbstractItemView() {
+ItemView::ItemView( QGraphicsView* view, Model *model, QWidget * parent ) : QAbstractItemView(parent) {
   this->view = view;
   this->model = model;
   setModel( model );
@@ -20,17 +20,17 @@ ItemView::ItemView( QGraphicsView* view, Model *model ) : QAbstractItemView() {
 
   view->setRenderHints( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
   view->setScene( scene );
-//   view->setRubberBandSelectionMode(Qt::ContainsItemShape);
   view-> setDragMode (QGraphicsView::RubberBandDrag);
+
 //   SceneItem_FlexibleConnection* flex = new SceneItem_FlexibleConnection(scene);
 //   scene->addItem(flex);
 
+  // Special layout functionality should go here!
   processNewNodes();
+  connect(scene, SIGNAL(hideView()), parentWidget (), SLOT(hide()));
 }
 
-ItemView::~ItemView() {
-
-}
+ItemView::~ItemView() { }
 
 QRect ItemView::visualRect( const QModelIndex &/*index*/ ) const {
   return QRect()/*view->rect()*/;
@@ -82,14 +82,26 @@ void ItemView::processNewNodes() {
   }
 }
 
-void ItemView::rowsInserted( const QModelIndex & parent, int /*start*/, int /*end*/ ) {
-//   QModelIndex item = model->index( i, 0, QModelIndex() );
-//   scene->addNode( QPersistentModelIndex( parent ) );
-  qDebug() << "rowsInserted in ItemView called: " << model->objectTypeQString(model->getTreeItemType( parent));
+void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
+  qDebug() << "rowsInserted in ItemView called: need to insert " << end-start+1 << " item(s).";
+  for (int i = start; i <= end; ++i) {
+    QModelIndex item = model->index( i, 0, parent );
+    if (model->getTreeItemType( item ) == NODE)
+      scene->addNode( QPersistentModelIndex( item ) );
+    else if (model->getTreeItemType( item ) == NODE_CONNECTION)
+      scene->addConnection( QPersistentModelIndex( item ) );
+  }
 }
 
-void ItemView::rowsAboutToBeRemoved( const QModelIndex & /*parent*/, int /*start*/, int /*end*/ ) {
-  qDebug( "rowsAboutToBeRemoved in ItemView called" );
+void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end ) {
+  qDebug() << "rowsAboutToBeRemoved in ItemView called: need to remove " << end-start+1 << " item(s).";
+  for (int i = start; i <= end; ++i) {
+    QModelIndex item = model->index( i, 0, parent );
+    if (model->getTreeItemType( item ) == NODE)
+      scene->removeNode( QPersistentModelIndex( item ) );
+    else if (model->getTreeItemType( item ) == NODE_CONNECTION)
+      scene->removeConnection( QPersistentModelIndex( item ) );
+  }
 }
 
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
@@ -103,6 +115,7 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
     qDebug() << "match, the two modelindexes are equal";
   else
     qDebug() << "WARNING: this has to be handled but isn't yet";
+
   if (model->getSelectedItemType(topLeft) == NODE) {
     qDebug() << "Node modification";
     scene->modifyNode(QPersistentModelIndex(topLeft));

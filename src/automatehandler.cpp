@@ -37,8 +37,6 @@ automatehandler::automatehandler( QWidget* parent ) : QDialog( parent ) {
   addRandomAutomate();
   addRandomAutomate();
   addRandomAutomate();
-
-  automates[0]->openNewView( GraphicsViewType );
 }
 
 automatehandler::~automatehandler() {
@@ -89,8 +87,8 @@ void automatehandler::addRandomAutomate() {
 //   qDebug() << "rootnode=" << (unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
-  int todonodes = qrand() % 5;
-  int todoconnections_ = 12;
+  int todonodes = qrand() % 7;
+  int todoconnections_ = 6;
 
   for ( int i = 0; i < todonodes; ++i ) {
     int s = qrand() % 2;
@@ -247,3 +245,16 @@ void automatehandler::todo() {
 void automatehandler::closeEvent( QCloseEvent * /*event*/ ) {
   qDebug() << "closeEvent";
 }
+
+void automatehandler::keyPressEvent( QKeyEvent * keyEvent ) {
+  if ( keyEvent->key() == Qt::Key_T ) {
+    automates[0]->openNewView( TreeViewType );
+  }
+  if ( keyEvent->key() == Qt::Key_G ) {
+    automates[0]->openNewView( GraphicsViewType );
+  }
+  if ( keyEvent->key() == Qt::Key_Escape ) {
+    exit(0);
+  }
+}
+

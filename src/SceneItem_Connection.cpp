@@ -56,24 +56,59 @@
 const qreal Pi = 3.14;
 #define CIRCLE_FOR_SYNBOL_RADIUS 14
 
-SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index, unsigned int symbol_index, SceneItem_Node *startItem, SceneItem_Node *endItem ) : QGraphicsItem() {
+SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
 //   qDebug() << "Creating a new connection";
-  this->symbol_index = symbol_index;
   this->index = index;
-  m_highlight = false;
-
-  // needed for debugging, remove later
+  // FIXME needed for debugging, remove later
   m_color = QColor(qrand()%255,qrand()%255,qrand()%255,255);
 
-  myStartItem = startItem;
-  myEndItem = endItem;
+  myStartItem = NULL;
+  myEndItem = NULL;
+
+  m_highlight = false;
   setFlag( QGraphicsItem::ItemIsSelectable, true );
   myColor = Qt::black;
   pen = QPen( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
-  line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
+  line = QLine();
 }
 
 SceneItem_Connection::~SceneItem_Connection() { }
+
+void SceneItem_Connection::updateData() {
+  bool redraw = false;
+  unsigned int symbol_index = ((GraphicsScene*)scene())->data( index, customRole::IndexRole ).toInt();
+  if (this->symbol_index != symbol_index) {
+    this->symbol_index=symbol_index;
+    redraw=true;
+  }
+
+ QGraphicsItem* a = ((GraphicsScene*)scene())->modelToSceenIndex( QPersistentModelIndex( index.parent() ) );
+  if ( a == NULL )
+    return;
+  QModelIndex next_node_index = ((Model*)index.model())->next_nodeModelIndex( index );
+  if ( !next_node_index.isValid() ) {
+    qDebug() << "Critical error because next_node isn't a valid index";
+  }
+  QGraphicsItem* b = ((GraphicsScene*)scene())->modelToSceenIndex( next_node_index );
+  if ( b == NULL )
+    return;
+  symbol_index = ((GraphicsScene*)scene())->data( index, customRole::IndexRole ).toInt();
+
+  (( SceneItem_Node * )a )->addConnection( this );
+  (( SceneItem_Node * )b )->addConnection( this );
+  SceneItem_Node *s=(( SceneItem_Node * )a );
+  SceneItem_Node *e=(( SceneItem_Node * )b );
+  if (myStartItem != s || myEndItem != e)
+    redraw=true;
+  myStartItem=s;
+  myEndItem=e;
+
+  if(redraw) {
+    qDebug() << "id of changed item " << ((GraphicsScene*)scene())->data( index, customRole::IdRole ).toInt();
+    line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
+    update();
+  }
+}
 
 QLineF SceneItem_Connection::createLine( QPointF a, QPointF b ) {
   QLineF tLine( a, b );
@@ -119,6 +154,10 @@ void SceneItem_Connection::updatePosition() {
 }
 
 void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
+  if (myStartItem == NULL || myEndItem == NULL) {
+    qDebug() << "Can't draw anything since myStartItem||myEndItem isn't set yet";
+    return;
+  }
   painter->drawLine( line );
 // this is a nice feature for debugging
   QPen p = pen;

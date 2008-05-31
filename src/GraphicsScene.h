@@ -19,6 +19,9 @@
 #include <QDebug>
 #include <QKeyEvent>
 
+#include <QPrinter>
+#include <QPrintDialog>
+
 #include "Model.h"
 #include "SceneItem_Node.h"
 #include "SceneItem_Connection.h"
@@ -27,26 +30,38 @@
  @author Joachim Schiele <js@lastlog.de>
 */
 class GraphicsScene : public QGraphicsScene {
+    Q_OBJECT
   public:
-    GraphicsScene(Model *model);
+    GraphicsScene( Model *model );
     ~GraphicsScene();
   public slots:
-    void selectionChanged();
-  public:
-    void addNode( QPersistentModelIndex item );
-    void addConnection( QPersistentModelIndex item );
-    void modifyNode(QPersistentModelIndex item);
-    void modifyConnection(QPersistentModelIndex item);
-    // maybe we want to remove an item
-//     void removeNode( QGraphicsItem* item );
-//     void removeConnection( QGraphicsItem* item );
+    QGraphicsItem* addNode( QPersistentModelIndex item );
+    QGraphicsItem* addConnection( QPersistentModelIndex item );
+    void modifyNode( QPersistentModelIndex item );
+    void modifyConnection( QPersistentModelIndex item );
+    void removeNode( QPersistentModelIndex item );
+    void removeConnection( QPersistentModelIndex item );
     void reset();
-    void keyPressEvent ( QKeyEvent * keyEvent );
+//   private slots: FIXME
+    void selectionChanged();
+//   protected: FIXME
+    QVariant data( const QModelIndex &index, int role ) const;
+
+  // private: FIXME
+    QGraphicsItem* modelToSceenIndex( QPersistentModelIndex index );
   private:
-    bool compareIndexes(const QPersistentModelIndex & a, const QPersistentModelIndex & b);
     Model *model;
-    QGraphicsItem* modelToSceenIndex(QPersistentModelIndex index);
+    void keyPressEvent( QKeyEvent * keyEvent );
+    void modifyNode( QGraphicsItem* item );
+    void modifyConnection( QGraphicsItem* item );
+    void removeEvent();
+    bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
+    void startToggleEvent(int role);
+
 //     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * contextMenuEvent );
+    void print();
+  signals:
+    void hideView();
 };
 
 #endif

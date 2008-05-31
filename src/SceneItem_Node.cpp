@@ -49,17 +49,30 @@
 //
 #include "SceneItem_Node.h"
 
-SceneItem_Node::SceneItem_Node( QPersistentModelIndex index, bool start, bool final, QString label ) : QGraphicsItem() {
+SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() {
   setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable |QGraphicsItem::ItemIsFocusable);
   setAcceptsHoverEvents(true);
-  this->label = label;
-  this->start = start;
-  this->final = final;
-  this->index = index;
+//   setData( 0, &index );
   hovering = false;
   penWidth = 3;
   r = 24; /*radius*/
   setZValue( 10 );
+  this->index = index;
+//   updateData();
+}
+
+void SceneItem_Node::updateData() {
+  if (scene() == NULL) {
+    qDebug() << "item isn't in any scene, can't query for valid data";
+    return;
+  }
+  int id = ((GraphicsScene*)scene())->data( index, customRole::IdRole ).toInt();
+  bool start = ((GraphicsScene*)scene())->data( index, customRole::StartRole ).toBool();
+  bool final = ((GraphicsScene*)scene())->data( index, customRole::FinalRole ).toBool();
+  this->label = QString( "%1" ).arg( id );
+  this->start = start;
+  this->final = final;
+  update();
 }
 
 SceneItem_Node::~SceneItem_Node() {

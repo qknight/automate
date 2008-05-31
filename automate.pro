@@ -76,7 +76,8 @@ FORMS += ui/controllerWidget.ui \
          ui/graphicsViewWidget.ui
 DISTFILES += TODO README \
  GPL_V2 \
- COPYING
+ COPYING \
+ CHANGELOG
 
 RESOURCES += automatehandler.qrc
 

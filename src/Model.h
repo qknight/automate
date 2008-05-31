@@ -44,7 +44,6 @@ enum CustomRole {
 
 class Model : public QAbstractItemModel {
   public:
-    AbstractTreeItem* rootItem;
     Model( AbstractTreeItem* root, QObject* parent = 0 );
     QModelIndex index( int row, int column, const QModelIndex & parent ) const;
     QModelIndex parent( const QModelIndex & index ) const;
@@ -52,16 +51,13 @@ class Model : public QAbstractItemModel {
     int columnCount( const QModelIndex & parent ) const;
     QVariant data( const QModelIndex &, int role ) const;
     bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
-    Qt::ItemFlags flags ( const QModelIndex & index ) const;
-//     bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
-
-    QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
 
     unsigned int getSelectedItemType( const QModelIndex& );
     QModelIndex getQModelIndexFromAbstractNodeItem( AbstractTreeItem* item );
     QModelIndex next_nodeModelIndex(QModelIndex item);
     QString objectTypeQString( unsigned int input );
     unsigned int getTreeItemType( const QModelIndex& item );
+    AbstractTreeItem* AbstractTreeItemFromId(unsigned int id);
 
     QModelIndex addNode();
     QModelIndex addConnection();
@@ -69,10 +65,15 @@ class Model : public QAbstractItemModel {
     bool removeNodes( QList<QModelIndex> nodeList );
     bool removeConnection(QModelIndex connection);
 
-    AbstractTreeItem* AbstractTreeItemFromId(unsigned int id);
+    // TODO and FIXME this has to be done, err what? -> next to functions will get private! so keeep the hack out!
 //   private:
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex() );
     bool removeRows( int row, int count, const QModelIndex & parent );
+  private:
+    AbstractTreeItem* rootItem;
+    Qt::ItemFlags flags ( const QModelIndex & index ) const;
+//     bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
+    QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
 };
 
 #endif

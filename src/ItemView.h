@@ -26,7 +26,7 @@
 */
 class ItemView : public QAbstractItemView {
   public:
-    ItemView( QGraphicsView* view, Model *model );
+    ItemView( QGraphicsView* view, Model *model, QWidget * parent );
     ~ItemView();
   private:
     QGraphicsView* view;

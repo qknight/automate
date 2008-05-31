@@ -52,13 +52,14 @@
 
 #include <QGraphicsItem>
 #include <QPainter>
-#include <QGraphicsScene>
 #include <QDebug>
 #include <QPainterPath>
 #include <QPersistentModelIndex>
 // #include <QKeyEvent>
 #include <QGraphicsView>
 #include <QMenu>
+
+#include "GraphicsScene.h"
 #include "SceneItem_Connection.h"
 #include "SceneItem_Types.h"
 
@@ -68,12 +69,14 @@ class SceneItem_Connection;
 */
 class SceneItem_Node : public QGraphicsItem {
   public:
-    SceneItem_Node( QPersistentModelIndex index, bool start, bool final, QString label );
+    SceneItem_Node( QPersistentModelIndex index );
     ~SceneItem_Node();
     void addConnection( SceneItem_Connection* ci );
     int type() const;
-    QPersistentModelIndex index;
     void removeConnections();
+    void updateData();
+//   private: FIXME
+    QPersistentModelIndex index;
   private:
     void removeConnection( SceneItem_Connection* ci );
     void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );

@@ -285,6 +285,15 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
     emit dataChanged(index, index);
     return true;
   }
+  if (index.isValid() && getTreeItemType(index) == NODE && ((role == customRole::StartRole) || role == customRole::FinalRole)) {
+    AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
+    if (role == customRole::StartRole)
+      n->setProperty("start", value);
+    if (role == customRole::FinalRole)
+      n->setProperty("final", value);
+    emit dataChanged(index, index);
+    return true;
+  }
   return false;
 }
 
@@ -436,14 +445,16 @@ QModelIndex Model::next_nodeModelIndex( QModelIndex item ) {
 }
 
 QModelIndex Model::addConnection(){
- return QModelIndex();
+  qDebug() << "FIXME NOT IMPLEMENTED YET";
+  return QModelIndex();
 }
 
-bool Model::removeConnection(QModelIndex /*connection*/){
-  return false;
+bool Model::removeConnection(QModelIndex connection) {
+  return removeRow(connection.row(),connection.parent());
 }
 
 QModelIndex Model::addNode(){
+  qDebug() << "FIXME NOT IMPLEMENTED YET";
   return QModelIndex();
 }
 

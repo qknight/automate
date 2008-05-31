@@ -21,7 +21,6 @@
 #include "Model.h"
 #include "AbstractView.h"
 #include "ItemView.h"
-// #include "GraphicsView.h"
 
 /*
 ** This class is responsible for displaying the graph as graphical representation
@@ -34,9 +33,11 @@ class mainGraphicsView : public AbstractView { /*, public Ui::mainGraphicsViewWi
     ~mainGraphicsView();
   private:
 //     void gDebug( QString input );
+    QToolBar* tb;
     ItemView* itemView;
     Model *model;
     QGraphicsView* view;
+    void populateMenu();
 //     QTextBrowser* textBrowser;
     QGraphicsItemGroup* generateNode( bool start, bool final, QString label, QString name );
 };
