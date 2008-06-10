@@ -37,10 +37,10 @@ const QVariant objectProperty::getProperty(QString key, QVariant init) {
 }
 
 const QVariant objectProperty::getProperty(QString key) {
-  if (!property.contains(key)) {
-    qDebug() << "ERROR: getProperty for key " << key << " not found in property space";
-    qDebug() << "FIX your code, and try again, exiting now";
-    exit(1);
-  }
+//   if (!property.contains(key)) {
+//     qDebug() << __FILE__ << " " << __FUNCTION__ << " ERROR: getProperty for key " << key << " not found in property space";
+//     qDebug() << __FILE__ << " " << __FUNCTION__ << " FIX your code, and try again, exiting now";
+//     exit(1);
+//   }
   return property.value(key);
 }

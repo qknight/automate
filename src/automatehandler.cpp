@@ -26,7 +26,7 @@ automatehandler::automatehandler( QWidget* parent ) : QDialog( parent ) {
   connect( treeWidget, SIGNAL( customContextMenuRequested( const QPoint & ) ),
            this, SLOT( popQMenu( const QPoint & ) ) );
   connect( updateBtn, SIGNAL( clicked() ), this, SLOT( updateTreeWidget() ) );
-  qsrand( 0 );
+  qsrand( 5 );
 
   addRandomAutomate();
   addRandomAutomate();
@@ -87,8 +87,8 @@ void automatehandler::addRandomAutomate() {
 //   qDebug() << "rootnode=" << (unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
-  int todonodes = qrand() % 7;
-  int todoconnections_ = 6;
+  int todonodes = qrand() % 11;
+  int todoconnections_ = 3;
 
   for ( int i = 0; i < todonodes; ++i ) {
     int s = qrand() % 2;
@@ -247,11 +247,20 @@ void automatehandler::closeEvent( QCloseEvent * /*event*/ ) {
 }
 
 void automatehandler::keyPressEvent( QKeyEvent * keyEvent ) {
+  int z = -1;
+  if (treeWidget->selectedItems().size() == 1) {
+    QTreeWidgetItem * item  = treeWidget->selectedItems().first();
+    if ( item != NULL ) {
+      z = item->data( 0, customRole::IdRole ).toInt();
+    }
+  }
   if ( keyEvent->key() == Qt::Key_T ) {
-    automates[0]->openNewView( TreeViewType );
+    if (z >= 0)
+      automates[z]->openNewView( TreeViewType );
   }
   if ( keyEvent->key() == Qt::Key_G ) {
-    automates[0]->openNewView( GraphicsViewType );
+    if (z >= 0)
+      automates[z]->openNewView( GraphicsViewType );
   }
   if ( keyEvent->key() == Qt::Key_Escape ) {
     exit(0);

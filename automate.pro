@@ -72,8 +72,7 @@ SOURCES += src/main.cpp \
  src/SceneItem_FlexibleConnection.cpp \
  src/ScneItem_FlexibleHandle.cpp
 FORMS += ui/controllerWidget.ui \
-         ui/treeViewWidget.ui \
-         ui/graphicsViewWidget.ui
+         ui/treeViewMainWindow.ui
 DISTFILES += TODO README \
  GPL_V2 \
  COPYING \

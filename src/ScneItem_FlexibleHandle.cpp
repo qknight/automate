@@ -16,7 +16,6 @@ ScneItem_FlexibleHandle::ScneItem_FlexibleHandle( int type ) : QGraphicsItem() {
   setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable );
 }
 
-
 ScneItem_FlexibleHandle::~ScneItem_FlexibleHandle() {
 }
 

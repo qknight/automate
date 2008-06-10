@@ -50,33 +50,39 @@
 #include "SceneItem_Node.h"
 
 SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() {
-  setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable |QGraphicsItem::ItemIsFocusable);
-  setAcceptsHoverEvents(true);
+  setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable );
+  setAcceptsHoverEvents( true );
 //   setData( 0, &index );
-  hovering = false;
+//   hovering = false;
   penWidth = 3;
   r = 24; /*radius*/
   setZValue( 10 );
   this->index = index;
-//   updateData();
+  //   updateData();
+}
+
+SceneItem_Node::~SceneItem_Node() {
+//   foreach( SceneItem_Connection* ci, ConnectionItems ) {
+//     ci->startItem()->removeConnection( ci );
+//     ci->endItem()->removeConnection( ci );
+//     scene()->removeItem( ci );
+//   }
 }
 
 void SceneItem_Node::updateData() {
-  if (scene() == NULL) {
+  if ( scene() == NULL ) {
     qDebug() << "item isn't in any scene, can't query for valid data";
     return;
   }
-  int id = ((GraphicsScene*)scene())->data( index, customRole::IdRole ).toInt();
-  bool start = ((GraphicsScene*)scene())->data( index, customRole::StartRole ).toBool();
-  bool final = ((GraphicsScene*)scene())->data( index, customRole::FinalRole ).toBool();
+  int id = (( GraphicsScene* )scene() )->data( index, customRole::IdRole ).toInt();
+  QString toolTip = QString( "n%1" ).arg( id );
+  setToolTip( toolTip );
+  bool start = (( GraphicsScene* )scene() )->data( index, customRole::StartRole ).toBool();
+  bool final = (( GraphicsScene* )scene() )->data( index, customRole::FinalRole ).toBool();
   this->label = QString( "%1" ).arg( id );
   this->start = start;
   this->final = final;
   update();
-}
-
-SceneItem_Node::~SceneItem_Node() {
-  removeConnections();
 }
 
 QRectF SceneItem_Node::boundingRect() const {
@@ -85,7 +91,11 @@ QRectF SceneItem_Node::boundingRect() const {
 }
 
 void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
-//   painter->drawRect( boundingRect() );
+  if ( (( GraphicsScene* )scene() )->want_boundingBox() )
+    painter->drawRect( boundingRect() );
+  if ( (( GraphicsScene* )scene() )->want_drawItemShape() )
+    painter->drawPath(shape());
+
   QBrush brush( Qt::lightGray, Qt::SolidPattern );
 
   painter->setBrush( brush );
@@ -112,16 +122,24 @@ void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */
     painter->setPen( pen );
     painter->setBrush( QBrush() );
     QPainterPath path1;
-    path1.addEllipse( -r-3, -r-3, 2*r+6, 2*r+6 );
+    path1.addEllipse( -r - 3, -r - 3, 2*r + 6, 2*r + 6 );
     painter->drawPath( path1 );
   }
   pen = QPen( Qt::black, penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
   painter->setPen( pen );
   painter->setBrush( QBrush() );
-
   painter->drawPath( path );
 
 // name text
+  QString label;
+  if ((( GraphicsScene* )scene() )->want_customNodeLabels() ) {
+    label = (( GraphicsScene * )scene() )->data( index, customRole::CustomLabelRole ).toString();
+    if (label.size() == 0)
+      label = this->label;
+  } else {
+    label = this->label;
+  }
+
   QFont f;
   f.setPointSize( 20 );
 
@@ -133,7 +151,7 @@ void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */
 }
 
 QVariant SceneItem_Node::itemChange( GraphicsItemChange change, const QVariant &value ) {
-  if ( /*change == QGraphicsItem::ItemPositionChange ||*/ change == QGraphicsItem::ItemPositionHasChanged) {
+  if ( /*change == QGraphicsItem::ItemPositionChange ||*/ change == QGraphicsItem::ItemPositionHasChanged ) {
     foreach( SceneItem_Connection  *ci, ConnectionItems ) {
       ci->updatePosition();
     }
@@ -148,52 +166,51 @@ void SceneItem_Node::removeConnection( SceneItem_Connection *ci ) {
     ConnectionItems.removeAt( index );
 }
 
-void SceneItem_Node::removeConnections() {
-  foreach( SceneItem_Connection* ci, ConnectionItems ) {
-    ci->startItem()->removeConnection( ci );
-    ci->endItem()->removeConnection( ci );
-    scene()->removeItem( ci );
-  }
-}
-
 void SceneItem_Node::addConnection( SceneItem_Connection* ci ) {
   ConnectionItems.append( ci );
+}
+
+QPainterPath SceneItem_Node::shape() const {
+  QPainterPath path;
+  path.addEllipse( boundingRect() );
+  return path;
 }
 
 int SceneItem_Node::type() const {
   return SceneItem_NodeType;
 }
 
-void SceneItem_Node::hoverEnterEvent ( QGraphicsSceneHoverEvent * /*event*/ ) {
+void SceneItem_Node::hoverEnterEvent( QGraphicsSceneHoverEvent * /*event*/ ) {
 //   qDebug() << "hoverEnterEvent";
-//   return;
-  hovering=true;
+  if ( !(( GraphicsScene* )scene() )->want_highlight() )
+    return;
+
   foreach( SceneItem_Connection  *ci, ConnectionItems ) {
-    ci->highlight(true);
-    ci->updatePosition();
+    ci->highlight( true );
+    ci->update();
   }
-  update();
 }
 
-void SceneItem_Node::hoverLeaveEvent ( QGraphicsSceneHoverEvent * /*event*/ ) {
+void SceneItem_Node::hoverLeaveEvent( QGraphicsSceneHoverEvent * /*event*/ ) {
 //   qDebug() << "hoverLeaveEvent";
-//   return;
-  hovering=false;
   foreach( SceneItem_Connection  *ci, ConnectionItems ) {
-    ci->highlight(false);
-    ci->updatePosition();
+    ci->highlight( false );
+    ci->update();
   }
-  update();
 }
 
-void SceneItem_Node::contextMenuEvent ( QGraphicsSceneContextMenuEvent * /*event*/ ) {
-  QMenu a;
-//   a.addAction ( "todo del Node", this, SLOT(removeConnections() ) );
-  a.addSeparator();
-  a.addAction ("-Node-");
-  a.addAction ( "todo start switch" );
-  a.addAction ( "todo final switch" );
-  a.addAction ( "todo edit label" );
-  a.exec(QCursor::pos());
+void SceneItem_Node::contextMenuEvent( QGraphicsSceneContextMenuEvent * /*event*/ ) {
+  //FIXME unfinished code!
+//   QMenu a;
+// //   a.addAction ( "todo del Node", this, SLOT(removeConnections() ) );
+// //   a.addSeparator();
+//   a.addAction( "-Node-" );
+//   a.addAction( "todo start switch" );
+//   a.addAction( "todo final switch" );
+//   a.addAction( "todo edit label" );
+//   a.exec( QCursor::pos() );
 }
 
+void SceneItem_Node::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
+  qDebug() << __FUNCTION__;
+}

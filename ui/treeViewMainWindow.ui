@@ -1,0 +1,125 @@
+<ui version="4.0" >
+ <class>treeViewMainWindow</class>
+ <widget class="QMainWindow" name="treeViewMainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>717</width>
+    <height>625</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>MainWindow</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="../automatehandler.qrc" >:/icons/next.png</iconset>
+  </property>
+  <property name="dockNestingEnabled" >
+   <bool>true</bool>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
+     <widget class="QLabel" name="label" >
+      <property name="text" >
+       <string>This is the proxymodel view</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" >
+     <widget class="QPushButton" name="expandAllBtn" >
+      <property name="text" >
+       <string>&amp;ExpandAll</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2" >
+     <widget class="QPushButton" name="collapseAllBtn" >
+      <property name="text" >
+       <string>&amp;CollapseAll</string>
+      </property>
+     </widget>
+    </item>
+    <item rowspan="4" row="1" column="0" >
+     <widget class="QTreeView" name="nodeTreeView" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <horstretch>2</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="alternatingRowColors" >
+       <bool>true</bool>
+      </property>
+      <property name="selectionMode" >
+       <enum>QAbstractItemView::ExtendedSelection</enum>
+      </property>
+      <property name="autoExpandDelay" >
+       <number>2</number>
+      </property>
+      <property name="sortingEnabled" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1" colspan="2" >
+     <widget class="QPushButton" name="addConnectionBtn" >
+      <property name="text" >
+       <string>Add co&amp;nnection</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="2" >
+     <widget class="QPushButton" name="delConnectionBtn" >
+      <property name="text" >
+       <string>Del C&amp;onnection</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1" >
+     <widget class="QPushButton" name="addNodeBtn" >
+      <property name="text" >
+       <string>&amp;Add Node</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="2" >
+     <widget class="QPushButton" name="delNodeBtn" >
+      <property name="text" >
+       <string>&amp;Del Node</string>
+      </property>
+     </widget>
+    </item>
+    <item rowspan="2" row="4" column="1" colspan="2" >
+     <widget class="QTextBrowser" name="textBrowser" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <horstretch>0</horstretch>
+        <verstretch>5</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="0" >
+     <widget class="QTreeView" name="testTreeView" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>717</width>
+     <height>32</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+ </widget>
+ <resources>
+  <include location="../automatehandler.qrc" />
+ </resources>
+ <connections/>
+</ui>

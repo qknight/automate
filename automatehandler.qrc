@@ -1,8 +1,30 @@
 <!DOCTYPE RCC><RCC version="1.0">
  <qresource>
-     <file>icons/gtk-add.png</file>
-     <file>icons/gtk-close.png</file>
-     <file>icons/assign.png</file>
+     <file>icons/startNode.png</file>
+     <file>icons/finalNode.png</file>
+     <file>icons/printer2.png</file>
+     <file>icons/button_cancel.png</file>
+     <file>icons/view_choose.png</file>
+     <file>icons/view_detailed.png</file>
+     <file>icons/viewmag+.png</file>
+     <file>icons/viewmag-.png</file>
+     <file>icons/viewmag1.png</file>
+     <file>icons/viewmagfit.png</file>
+     <file>icons/antialiasing.png</file>
+     <file>icons/highlighting.png</file>
+     <file>icons/boundingBox.png</file>
+     <file>icons/bookmark_add.png</file>
+     <file>icons/next.png</file>
+     <file>icons/view_choose.png</file>
+     <file>icons/home_blue.png</file>
+     <file>icons/drawShape.png</file>
+     <file>icons/coloredConnectionHelper.png</file>
+     <file>icons/customNodeLabel.png</file>
+     <file>icons/customConnectionLabel.png</file>
+
+    <file>icons/gtk-add.png</file>
+    <file>icons/gtk-close.png</file>
+    <file>icons/assign.png</file>
     <file>icons/node.png</file>
     <file>icons/connect.png</file>
  </qresource>

@@ -55,9 +55,9 @@
 #include <QDebug>
 #include <QPainterPath>
 #include <QPersistentModelIndex>
-// #include <QKeyEvent>
 #include <QGraphicsView>
 #include <QMenu>
+#include <QGraphicsSceneMouseEvent>
 
 #include "GraphicsScene.h"
 #include "SceneItem_Connection.h"
@@ -73,14 +73,14 @@ class SceneItem_Node : public QGraphicsItem {
     ~SceneItem_Node();
     void addConnection( SceneItem_Connection* ci );
     int type() const;
-    void removeConnections();
     void updateData();
-//   private: FIXME
     QPersistentModelIndex index;
   private:
+    void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
+    QPainterPath shape() const;
     void removeConnection( SceneItem_Connection* ci );
-    void hoverEnterEvent ( QGraphicsSceneHoverEvent * event );
-    void hoverLeaveEvent ( QGraphicsSceneHoverEvent * event );
+    void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
+    void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
     QRectF boundingRect() const;
     QList<SceneItem_Connection *> ConnectionItems;
     QString label;
@@ -90,7 +90,7 @@ class SceneItem_Node : public QGraphicsItem {
     int r; /*radius*/
     qreal penWidth;
 
-    void contextMenuEvent ( QGraphicsSceneContextMenuEvent * event );
+    void contextMenuEvent( QGraphicsSceneContextMenuEvent * event );
   protected:
     QVariant itemChange( GraphicsItemChange change, const QVariant &value );
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );

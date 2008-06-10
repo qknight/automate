@@ -11,7 +11,7 @@
 //
 #include "AbstractView.h"
 
-AbstractView::AbstractView( QDialog *parent ) : QDialog( parent ) {}
+AbstractView::AbstractView( QMainWindow *parent ) : QMainWindow( parent ) {}
 
 AbstractView::~AbstractView() { }
 

@@ -13,52 +13,64 @@
 
 GraphicsScene::GraphicsScene( Model *model ) : QGraphicsScene() {
   this->model = model;
+  m_want_highlight = true;
+  m_want_boundingBox = false;
+  m_want_drawItemShape = false;
+  m_want_coloredConnectionHelper = false;
+  m_want_customNodeLabels = false;
+  m_want_customConnectionLabels = false;
+  line = 0;
+  connect( this, SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
 }
 
 GraphicsScene::~GraphicsScene() {}
 
 void GraphicsScene::selectionChanged() {
-  qDebug( "Selection changed, %i selected items", selectedItems().size() );
+//   qDebug( "Selection changed, %i selected items", selectedItems().size() );
 }
 
-QGraphicsItem* GraphicsScene::addNode( QPersistentModelIndex item ) {
-//   qDebug() << "addNode( QPersistentModelIndex item )";
+QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {
+  qDebug() << __FUNCTION__;
   SceneItem_Node* node = new SceneItem_Node( item );
   addItem( node );
-  node->setPos( node->pos().x() + qrand() % 400, node->pos().y() + qrand() % 600 );
-  modifyNode( node );
+  // FIXME need to implement this!
+  // when the ItemView widget has focus && when the mouse is in the ItemView
+  //   only then insert the new node below the cursor
+  // else put it at an random position near QPoint(0,0)
+  node->setPos( node->pos().x() + qrand() % 600, node->pos().y() + qrand() % 400 );
+  updateNode( node );
   return node;
 }
 
-QGraphicsItem* GraphicsScene::addConnection( QPersistentModelIndex item ) {
-  qDebug() << "addConnection( QPersistentModelIndex item )";
+QGraphicsItem* GraphicsScene::connectionInserted( QPersistentModelIndex item ) {
+//   qDebug() << __FUNCTION__;
   SceneItem_Connection * cItem = new SceneItem_Connection( item );
   addItem( cItem );
-  modifyConnection( cItem );
+  updateConnection( cItem );
   return cItem;
 }
 
-void GraphicsScene::modifyNode( QPersistentModelIndex item ) {
-  modifyNode( modelToSceenIndex( item ) );
+void GraphicsScene::updateNode( QPersistentModelIndex item ) {
+  updateNode( modelToSceenIndex( item ) );
 }
 
-void GraphicsScene::modifyNode( QGraphicsItem* item ) {
-  qDebug() << "modifyNode( QGraphicsItem* item )";
+void GraphicsScene::updateNode( QGraphicsItem* item ) {
+//   qDebug() << "updateNode( QGraphicsItem* item )";
   if ( item == NULL ) {
-    qDebug() << "Warning, something is going wrong";
+    qDebug() << __FUNCTION__ << " " << __LINE__ << "Warning, something is going wrong";
     return;
   }
   (( SceneItem_Node * )item )->updateData();
 }
 
-void GraphicsScene::modifyConnection( QPersistentModelIndex item ) {
-  modifyConnection( modelToSceenIndex( item ) );
+void GraphicsScene::updateConnection( QPersistentModelIndex item ) {
+  updateConnection( modelToSceenIndex( item ) );
 }
 
-void GraphicsScene::modifyConnection( QGraphicsItem* item ) {
-  qDebug() << "modifyConnection( QGraphicsItem* item )";
+void GraphicsScene::updateConnection( QGraphicsItem* item ) {
+//   qDebug() << "updateConnection( QGraphicsItem* item )";
   if ( item == NULL ) {
-    qDebug() << "Warning, something is going wrong";
+    qDebug() << __FUNCTION__ << " " << __LINE__ << " Warning, something is going wrong";
     return;
   }
   (( SceneItem_Connection * )item )->updateData();
@@ -66,7 +78,8 @@ void GraphicsScene::modifyConnection( QGraphicsItem* item ) {
 
 void GraphicsScene::reset() {
   // FIXME not implemented yet
-  qDebug() << "FIXME should call reset() in the GraphicsScene now";
+  qDebug() << "FIXME should call reset() in the GraphicsScene now. It's not implemented yet!";
+  exit( 0 );
 }
 
 /*
@@ -75,7 +88,8 @@ void GraphicsScene::reset() {
 ** having several different graphicsViews on the same automate
 */
 
-// FIXME i've implemented my own compare function: compareIndexes since this implementation doesn't use
+// a general compare function had to be implemented: compareIndexes
+// since this implementation doesn't use
 // column BUT columns somehow where reported to be different, meaning: a stored index could have column 3
 // while the treeView would make a difference because the treeView uses the columns to distinguish between
 // different entries in the hierarchical view (the treeView) where for instance column 3 shows the node name
@@ -124,38 +138,76 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     emit hideView();
   }
   if ( keyEvent->key() == Qt::Key_N ) {
-    qDebug() << "adding a new node";
+    insertNode();
   }
-  if ( keyEvent->key() == Qt::Key_C ) {
-    qDebug() << "FIXME adding a new connection";
+
+  if ( keyEvent->key() == Qt::Key_B ) {
+    qDebug() << "toggleBoundingBox()";
+    toggleBoundingBox();
   }
+  if ( keyEvent->key() == Qt::Key_L ) {
+    qDebug() << "'l' - toggle_coloredConnectionHelper";
+    toggle_coloredConnectionHelper();
+  }
+
   if ( keyEvent->key() == Qt::Key_Plus ) {
-    qDebug() << "FIXME zoom in";
+    emit zoomIn();
+//     qDebug() << "zoom in";
   }
   if ( keyEvent->key() == Qt::Key_Minus ) {
-    qDebug() << "FIXME zoom out";
+    emit zoomOut();
+//     qDebug() << "zoom out";
   }
   if ( keyEvent->key() == Qt::Key_G ) {
-    qDebug() << "FIXME enable/disable grid";
+    qDebug() << "NOT IMPLEMENTED YET FIXME enable/disable grid";
+  }
+  if ( keyEvent->key() == Qt::Key_F1 ) {
+    qDebug() << "NOT IMPLEMENTED YET toggle rendering";
+  }
+  if ( keyEvent->key() == Qt::Key_U ) {
+    update();
+    qDebug() << endl << endl << endl << endl;
+    qDebug() << "scene->update(): " << items().size() << " items in the scene";
   }
 
   if ( keyEvent->key() == Qt::Key_A && keyEvent->modifiers() == Qt::ControlModifier ) {
-    qDebug() << "FIXME select all items in the scene";
-//     items();
+    qDebug() << "Selects all items in the scene";
+    QPainterPath path;
+    path.addRect( sceneRect() );
+    setSelectionArea( path );
   }
   // node start toggle
   if ( keyEvent->key() == Qt::Key_S ) {
-    qDebug() << "FIXME on mouseOver Node, trigger: start toggle";
-    startToggleEvent( customRole::StartRole );
+    toggleStartEvent();
   }
   // node final toggle
   if ( keyEvent->key() == Qt::Key_F ) {
-    qDebug() << "FIXME on mouseOver Node, trigger: final toggle";
-    startToggleEvent( customRole::FinalRole );
+    toggleFinalEvent();
+  }
+  if ( keyEvent->key() == Qt::Key_H ) {
+    qDebug() << "toggle highlighting mode";
+    toggleHighlight();
+  }
+  if ( keyEvent->key() == Qt::Key_E ) {
+    qDebug() << "toggle shape drawing mode";
+    toggleDrawItemShape();
+  }
+
+  if ( keyEvent->key() == Qt::Key_T ) {
+    qDebug() << "toggle rendering mode to enable/disable antialiasing";
+    emit toggleRenderHints();
   }
 }
 
-void GraphicsScene::startToggleEvent( int role ) {
+void GraphicsScene::toggleStartEvent() {
+  toggleEvent( customRole::StartRole );
+}
+
+void GraphicsScene::toggleFinalEvent() {
+  toggleEvent( customRole::FinalRole );
+}
+
+void GraphicsScene::toggleEvent( int role ) {
   if ( selectedItems().size() == 1 ) {
     QGraphicsItem* item = selectedItems().first();
     if ( item->type() == SceneItem_NodeType ) {
@@ -175,7 +227,7 @@ void GraphicsScene::startToggleEvent( int role ) {
 // }
 
 void GraphicsScene::print() {
-  qDebug() << "printing";
+  qDebug() << "printing the view";
   QPrinter printer;
   if ( QPrintDialog( &printer ).exec() == QDialog::Accepted ) {
     QPainter painter( &printer );
@@ -184,33 +236,41 @@ void GraphicsScene::print() {
   }
 }
 
-void GraphicsScene::removeNode( QPersistentModelIndex item ) {
-  QGraphicsItem* gItem = modelToSceenIndex( item );
-  if ( gItem == NULL ) {
+bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
+  QGraphicsItem* nItem = modelToSceenIndex( item );
+  if ( nItem == NULL ) {
     qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+    // FIXME after testing this can be changed to return instaead of exit
     exit( 0 );
+//     return false;
   }
-  removeItem( gItem );
+  removeItem( nItem );
+  return true;
 }
 
-void GraphicsScene::removeConnection( QPersistentModelIndex item ) {
-  QGraphicsItem* gItem = modelToSceenIndex( item );
-  if ( gItem == NULL ) {
+bool GraphicsScene::connectionRemoved( QPersistentModelIndex item ) {
+  QGraphicsItem* cItem = modelToSceenIndex( item );
+  if ( cItem == NULL ) {
     qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+    // FIXME after testing this can be changed to return instaead of exit
     exit( 0 );
+//     return false;
   }
-  removeItem( gItem );
+  removeItem( cItem );
+//   delete cItem; // seems to be an bad idea, triggers a lot of program terminations?!
+  return true;
 }
 
 void GraphicsScene::removeEvent() {
-  qDebug() << "removeEvent";
-  qDebug() << selectedItems().size();
+//   qDebug() << "removeEvent, removing at least" << selectedItems().size() << " items";
+  foreach( QGraphicsItem* z, selectedItems() ) {
+    if ( z->type() == SceneItem_NodeType ) {
+      model->removeNode((( SceneItem_Node * )z )->index );
+    }
+  }
   foreach( QGraphicsItem* z, selectedItems() ) {
     if ( z->type() == SceneItem_ConnectionType ) {
       model->removeConnection((( SceneItem_Connection * )z )->index );
-    }
-    if ( z->type() == SceneItem_NodeType ) {
-      model->removeNode((( SceneItem_Node * )z )->index );
     }
   }
 }
@@ -222,4 +282,115 @@ QVariant GraphicsScene::data( const QModelIndex &index, int role ) const {
   return model->data( index, role );
 }
 
+/*
+** mousePressEvent,mouseReleaseEvent,mouseMoveEvent are used to graphically connect two nodes
+** with each. even loops are possible just mouseRelease over the same node
+*/
+void GraphicsScene::mousePressEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
+  if ( items( mouseEvent->scenePos() ).count() && mouseEvent->button() == Qt::MidButton ) {
+    QGraphicsScene::mousePressEvent( mouseEvent );
+    line = new QGraphicsLineItem( QLineF( mouseEvent->scenePos(),
+                                          mouseEvent->scenePos() ) );
+    line->setPen( QPen( QColor( "RED" ), 2 ) );
+    addItem( line );
+  } else if (mouseEvent->button() == Qt::MidButton) {
 
+  } else {
+    QGraphicsScene::mousePressEvent( mouseEvent );
+  }
+}
+
+void GraphicsScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
+  if ( line != 0 ) {
+    QList<QGraphicsItem *> startItems = items( line->line().p1() );
+    if ( startItems.count() && startItems.first() == line )
+      startItems.removeFirst();
+    QList<QGraphicsItem *> endItems = items( line->line().p2() );
+    if ( endItems.count() && endItems.first() == line )
+      endItems.removeFirst();
+
+    removeItem( line );
+    delete line;
+    line = 0;
+
+//     qDebug() << "removing line";
+    if ( startItems.count() > 0 && endItems.count() > 0 &&
+         startItems.first()->type() == SceneItem_NodeType &&
+         endItems.first()->type() == SceneItem_NodeType
+         /*&& startItems.first() != endItems.first()*/ ) {
+      SceneItem_Node *startItem =
+        qgraphicsitem_cast<SceneItem_Node *>( startItems.first() );
+      SceneItem_Node *endItem =
+        qgraphicsitem_cast<SceneItem_Node *>( endItems.first() );
+      model->insertConnection( startItem->index, endItem->index );
+//       qDebug() << "adding a conneciton";
+    }
+  }
+  QGraphicsScene::mouseReleaseEvent( mouseEvent );
+}
+
+void GraphicsScene::mouseMoveEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
+  if ( line != 0 ) {
+    QLineF newLine( line->line().p1(), mouseEvent->scenePos() );
+    line->setLine( newLine );
+  } else {
+    QGraphicsScene::mouseMoveEvent( mouseEvent );
+  }
+}
+
+void GraphicsScene::toggleHighlight() {
+  m_want_highlight = !m_want_highlight;
+}
+
+void GraphicsScene::toggleBoundingBox() {
+  m_want_boundingBox = !m_want_boundingBox;
+  update();
+}
+
+bool GraphicsScene::want_highlight() {
+  return m_want_highlight;
+}
+
+bool GraphicsScene::want_boundingBox() {
+  return m_want_boundingBox;
+}
+
+void GraphicsScene::insertNode() {
+  model->insertNode();
+}
+
+void GraphicsScene::toggleDrawItemShape() {
+  m_want_drawItemShape = !m_want_drawItemShape;
+  update();
+}
+
+bool GraphicsScene::want_drawItemShape() {
+  return m_want_drawItemShape;
+}
+
+void GraphicsScene::toggle_coloredConnectionHelper() {
+  m_want_coloredConnectionHelper=!m_want_coloredConnectionHelper;
+  update();
+}
+
+bool GraphicsScene::want_coloredConnectionHelper() {
+  return m_want_coloredConnectionHelper;
+}
+
+bool GraphicsScene::want_customNodeLabels(){
+  return m_want_customNodeLabels;
+}
+
+void GraphicsScene::toggle_customNodeLabels() {
+  m_want_customNodeLabels=!m_want_customNodeLabels;
+  update();
+}
+
+bool GraphicsScene::want_customConnectionLabels(){
+  return m_want_customConnectionLabels;
+}
+
+ void GraphicsScene::toggle_customConnectionLabels() {
+   m_want_customConnectionLabels=!m_want_customConnectionLabels;
+   update();
+ }

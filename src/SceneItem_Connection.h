@@ -60,21 +60,21 @@
 #include "SceneItem_Types.h"
 
 class SceneItem_Node;
-class QPixmap;
-class QGraphicsItem;
-class QGraphicsScene;
-class QTextEdit;
-class QGraphicsSceneMouseEvent;
-class QMenu;
-class QGraphicsSceneContextMenuEvent;
-class QPainter;
-class QStyleOptionGraphicsItem;
-class QWidget;
-class QPolygonF;
+// class QPixmap;
+// class QGraphicsItem;
+// class QGraphicsScene;
+// class QTextEdit;
+// class QGraphicsSceneMouseEvent;
+// class QMenu;
+// class QGraphicsSceneContextMenuEvent;
+// class QPainter;
+// class QStyleOptionGraphicsItem;
+// class QWidget;
+// class QPolygonF;
 
 class SceneItem_Connection : public QGraphicsItem {
   public:
-    SceneItem_Connection( QPersistentModelIndex index);
+    SceneItem_Connection( QPersistentModelIndex index );
     ~SceneItem_Connection();
     void updateData();
     QRectF boundingRect() const;
@@ -87,13 +87,16 @@ class SceneItem_Connection : public QGraphicsItem {
     void updatePosition();
     int type() const;
     QPersistentModelIndex index;
-    void highlight(bool status);
-    void setSymbol_Index(unsigned int symbol_index);
+    void highlight( bool status );
+    void setSymbol_Index( unsigned int symbol_index );
   protected:
     bool m_highlight;
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
     QPainterPath shape() const;
   private:
+    void mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event );
+    void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
+    void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
     QLineF createLine( QPointF a, QPointF b );
     QPolygonF arrowHead;
     QPen pen;

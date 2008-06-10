@@ -1,26 +1,25 @@
 ======================================
  what is this?
 ======================================
-  a complete automate code base with a lightweight automatehandler
-  this codebase is converted into full MCV compatibility and
-  a new property system is evaluated for usage
+ this project features an automate editor with a graphical and tree like editor.
+ it was created at the University of Tuebingen, Germany as a 'Studienarbeit'.
+ Chair: Arbeitsbereich für Theoretische Informatik/Formale Sprachen
 
-  the main changes the the previous versions is that:
-   a) all objects derive from the same abstract base class nodeItem
-      all objects must be accessed from either the model (normal way)
-      or in special cases the automate can be copied without using
-      the model
-   b) all objects share their properties in a common array
+ most of the code was written by me:
+ thanks very much for the help from the people in #qt@irc.freenode.org namely
+  ahigerd, kibab, chakie, rohanpm, thiago, blight_, martin- and those i have forgotten
 
-======================================
- why?
-======================================
-i've implemented this as a library for later use in a more complex
-environment.
+ thanks for the help of Christian Behle and Andreas Krebs who created the specification
+ for this work and always had time when i needed them.
 
-see TODO for more information about what is still left to be done.
+ all the code in this distribution is licensed to the terms of the GPL v2 or v3
+ (if used with qt 4.4 or later)
+ all used icons are from the kde icon theme noia-kde-icons-1.00.tgz
 
-this automate class code is GPL v2, see GPL_V2 for more info
+ The Noia icons for KDE are under GNU LGPL license.
+
+ please feel free to comment on that code:
+     8.6.2008 (C) Joachim Schiele <js@dune2.de>
 
 ======================================
  class documentation using doxygen
@@ -30,5 +29,3 @@ run doxygen to get a nice html documentation with helpful comments
 doxygen class documentaion:
    http://www.stack.nl/~dimitri/doxygen/docblocks.html
 
-
-Joachim Schiele

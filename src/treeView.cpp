@@ -20,26 +20,19 @@
 
 #include "treeView.h"
 
-treeView::treeView( Model* model, QDialog* parent ) : AbstractView( parent ) {
+treeView::treeView( Model* model, QMainWindow* parent ) : AbstractView( parent ) {
   setupUi( this );
   this->model = model;
 
   proxyModel = new QSortFilterProxyModel( this );
   proxyModel->setSourceModel( model );
-
+  testTreeView->setModel(model);
   ism = new QItemSelectionModel( proxyModel, this );
 
-  debugTreeView->setModel( model );
-  debugTreeView->resizeColumnToContents( 0 );
-  debugTreeView->setColumnWidth( 0, 70 );
-  debugTreeView->resizeColumnToContents( 1 );
-  debugTreeView->resizeColumnToContents( 2 );
-  debugTreeView->resizeColumnToContents( 3 );
-  debugTreeView->resizeColumnToContents( 4 );
-  debugTreeView->resizeColumnToContents( 5 );
   nodeTreeView->sortByColumn( 3, Qt::AscendingOrder );
   proxyModel->setDynamicSortFilter( true );
-  proxyModel-> setFilterKeyColumn( -1 );
+  proxyModel->setFilterKeyColumn( -1 );
+  proxyModel->setSortRole ( customRole::SortRole );
 
   nodeTreeView->setModel( proxyModel );
   nodeTreeView->setSortingEnabled( true );
@@ -63,12 +56,10 @@ treeView::treeView( Model* model, QDialog* parent ) : AbstractView( parent ) {
 
   connect( ism, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
            this, SLOT( currentChanged( const QModelIndex &, const QModelIndex & ) ) );
-  connect( lineEdit, SIGNAL(
-             textChanged( QString ) ),
-           this, SLOT( setFilter( QString ) ) );
 }
 
 void treeView::currentChanged( const QModelIndex & current, const QModelIndex & /*previous*/ ) {
+//   qDebug() << __FUNCTION__;
   QString a;
   QModelIndex currentItem = proxyModel->mapToSource( current );
   if ( !currentItem.isValid() )
@@ -138,37 +129,75 @@ void treeView::addAbstractNodeItem( TreeItemType type ) {
   qDebug( "%i item(s) need to be appended", selectedcount );
   QList<QModelIndex> selectedItems;
   foreach( QModelIndex selectedItem, ism->selectedRows() )
-    selectedItems.append( proxyModel->mapToSource( selectedItem ) );
-  if (selectedcount == 0)
-    selectedItems.append(QModelIndex());
+  selectedItems.append( proxyModel->mapToSource( selectedItem ) );
+  if ( selectedcount == 0 )
+    selectedItems.append( QModelIndex() );
   foreach( QModelIndex item, selectedItems ) {
     switch ( type ) {
-      case AUTOMATE_ROOT:
-        qDebug() << "FATAL ERROR: AUTOMATE_ROOT";
-        exit(0);
-        continue;
-      case UNKNOWN:
-        qDebug() << "FATAL ERROR: UNKNOWN";
-        exit(0);
-        continue;
-      case NODE:
-      qDebug() << "addNODE clicked";
-      model->insertRows( model->rowCount(QModelIndex()), 1 );
+    case AUTOMATE_ROOT:
+      qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << "FATAL ERROR: AUTOMATE_ROOT";
+      exit( 0 );
+      continue;
+    case UNKNOWN:
+      qDebug() << __FILE__ << __FUNCTION__ << __LINE__ <<  "FATAL ERROR: UNKNOWN";
+      exit( 0 );
+      continue;
+    case NODE:
+//       qDebug() << "add NODE clicked";
+      model->insertNode();
       continue;
     case NODE_CONNECTION:
-      qDebug() << "addNODE_CONNECTION clicked";
+//       qDebug() << "add CONNECTION clicked";
       if ( model->getTreeItemType( item ) == NODE ) {
-        model->insertRows( model->rowCount(item), 1, item );
-      }  else if ( model->getTreeItemType( item ) == NODE_CONNECTION ) {
-        QModelIndex parentItem = model->parent( item );
-        model->insertRows( model->rowCount(parentItem), 1, parentItem );
+        model->insertConnection(item);
+      }  else
+        if ( model->getTreeItemType( item ) == NODE_CONNECTION ) {
+          QModelIndex parentItem = model->parent( item );
+          model->insertConnection(parentItem);
         }
       continue;
     }
   }
 }
 
-void treeView::setFilter( QString filterText ) {
-  proxyModel->setFilterRegExp( QRegExp( filterText, Qt::CaseInsensitive,
-                                        QRegExp::FixedString ) );
+void treeView::keyPressEvent( QKeyEvent * keyEvent ) {
+  if ( keyEvent->key() == Qt::Key_X ) {
+    delSelectedNodes();
+  }
+  if ( keyEvent->key() == Qt::Key_Escape ) {
+    hide();
+  }
+  if ( keyEvent->key() == Qt::Key_N ) {
+      addAbstractNodeItem( NODE );
+  }
+  if ( keyEvent->key() == Qt::Key_C ) {
+    addAbstractNodeItem( NODE_CONNECTION );
+  }
+  // node start toggle
+  if ( keyEvent->key() == Qt::Key_S ) {
+    startToggleEvent( customRole::StartRole );
+  }
+  // node final toggle
+  if ( keyEvent->key() == Qt::Key_F ) {
+    startToggleEvent( customRole::FinalRole );
+  }
+}
+
+void treeView::startToggleEvent( int role ) {
+  int selectedcount = ism->selectedRows().size();
+  QList<QModelIndex> selectedItems;
+  foreach( QModelIndex selectedItem, ism->selectedRows() )
+    selectedItems.append( proxyModel->mapToSource( selectedItem ) );
+
+  if ( selectedcount == 1 ) {
+    QModelIndex index = selectedItems.first();
+    if ( model->getSelectedItemType( index ) == NODE ) {
+      bool state = model->data( index, role ).toBool();
+      model->setData( index, !state, role );
+    } else {
+      qDebug() << "select a node to use this toggle";
+    }
+  } else {
+    qDebug() << "select only one item to use the toggle";
+  }
 }

@@ -21,9 +21,10 @@
 #include <QApplication>
 #include "automatehandler.h"
 
-int main(int argc, char* argv[]) {
-    QApplication app(argc, argv);
-    automatehandler* z = new automatehandler();
-    z->show();
-    return app.exec();
+int main( int argc, char* argv[] ) {
+  QApplication app( argc, argv );
+//   connect(&app,SIGNAL(lastWindowClosed()),&app,SLOT(quit()));
+  automatehandler* z = new automatehandler();
+  z->show();
+  return app.exec();
 }

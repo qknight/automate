@@ -37,8 +37,9 @@ enum CustomRole {
   IdRole = Qt::UserRole,
   FinalRole,
   StartRole,
-  IndexRole, // the connection index "a" -> (index) -> "b" of a connection
-  SymbolIndexRole
+  SymbolIndexRole,
+  CustomLabelRole,
+  SortRole
 };
 }
 
@@ -54,26 +55,24 @@ class Model : public QAbstractItemModel {
 
     unsigned int getSelectedItemType( const QModelIndex& );
     QModelIndex getQModelIndexFromAbstractNodeItem( AbstractTreeItem* item );
-    QModelIndex next_nodeModelIndex(QModelIndex item);
+    QModelIndex next_nodeModelIndex( QModelIndex item );
     QString objectTypeQString( unsigned int input );
     unsigned int getTreeItemType( const QModelIndex& item );
-    AbstractTreeItem* AbstractTreeItemFromId(unsigned int id);
+    AbstractTreeItem* AbstractTreeItemFromId( unsigned int id );
 
-    QModelIndex addNode();
-    QModelIndex addConnection();
+    bool insertNode();
+    bool insertConnection( QModelIndex startItem, QModelIndex endItem = QModelIndex() );
     bool removeNode( QModelIndex node );
     bool removeNodes( QList<QModelIndex> nodeList );
-    bool removeConnection(QModelIndex connection);
+    bool removeConnection( QModelIndex connection );
 
-    // TODO and FIXME this has to be done, err what? -> next to functions will get private! so keeep the hack out!
-//   private:
-    bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex() );
-    bool removeRows( int row, int count, const QModelIndex & parent );
   private:
     AbstractTreeItem* rootItem;
-    Qt::ItemFlags flags ( const QModelIndex & index ) const;
+    Qt::ItemFlags flags( const QModelIndex & index ) const;
 //     bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
+    bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex() );
+    bool removeRows( int row, int count, const QModelIndex & parent );
 };
 
 #endif

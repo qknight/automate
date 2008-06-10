@@ -13,6 +13,8 @@
 
 SceneItem_FlexibleConnection::SceneItem_FlexibleConnection( QGraphicsScene* scene ) : QGraphicsItem() {
   m_scene=scene;
+  setFlag( QGraphicsItem::ItemIsSelectable, true );
+
   QGraphicsItem* s1 = (QGraphicsItem*)addHandle(handleType::start,this);
   addHandle(handleType::start_handle,s1);
   QGraphicsItem* m1 = addHandle(handleType::intermediate,this);

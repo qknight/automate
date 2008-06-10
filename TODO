@@ -1,50 +1,119 @@
+FIXME add symbol editor
+  maps int to QString
+  0 - not defined
+  1 - epsilon connection
+  2. first symbol or string
+  3. ...
+FIXME we need an aditional modal dialog which pops up on doubleclick on an NODE|CONNECTION item
+      this dialog should contain:
+          case NODE:  - start/final
+                      - nodename
+                      - id and/or label
+          case CONN:  - connection symbol
+                      - destnode
+                      - id and/or label
+FIXME drawing of loops
+  we need a flex item
+FIXME removeNodes reverse lookup must be wrong, all incomming connections are NOT deleted
+      when the node goes offline ;P
+FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached connections VERY fast in the view sometimes
+      the program hangs with this error:
+  QPainterPath::cubicTo: Adding point where x or y is NaN, results are undefined
+  QPainterPath::lineTo: Adding point where x or y is NaN, results are undefined
+  QPainterPath::arcTo: Adding arc where a parameter is NaN, results are undefined
+  ...
+  HINT: this might be the drawing of an connection in the GraphicsScene
+FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
+       moving the mouse in the bbox results in the errors from FIXME1
+FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
+      HINT: check the row/column in dataChanged() call, maybe this is the fix?!
+      HINT: maybe implement hasChildren as well
+      HINT: if layouChanged() is used, it works BUT this is not good since it should work without!
+      HINT: it's working for removeRows however AND once '+' was clicked (meaning the item should expand)
+            it will be working when the item is removed and after no child is there anymore again an item is added
+            it will stop working again when you hit the '-' and try delete all + add one item again
+            - the view will update correctly if the widget is clicked anywhere?! why?
+      HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
 FIXME modeltest.cpp line 106 issue
-FIXME treeView, adding a new connection isn't marked with a + in the treeView node line!
-FIXME implement hasChildren
-FIXME BUG in drawing of SceneItem_Connection: items get invisible from time to time
+FIXME editing ohne MCV aufsatz z.b. fuer schnelle algorithmen (example code dafuer)
+      z.b. print auf console code
+FIXME profile drawing, make performance tests for final results
+FIXME program won't terminate on close
+FIXME remove this hackish c casts
+FIXME reset() in custom graphicsView
+FIXME doxygen comments on code and concepts
+ - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
+ - some documentation is needed, F1 should open a browser for that
+FIXME see TODO and BUG notices in the code as well
+ - clean all TODOs in the code
+FIXME ICONS for ACTIONS:
+  - enable/disable opengl rendering
+
+FINAL usability testing
+
+=================================================================================================
+        -- not in the scope of this work --
+=================================================================================================
+
+2008-06-09 abgabe
+  - cdrom mit programmen + doxygen
+  - ausarbeitung 2s+doxygen gedruckt, gelocht, geheftet
+    ca. 45 seiten, gelocht und verhaftet!
+2008-06-16 abschlussvortrag
+
 FIXME use parentWidget() and parent where possible
-FIXME 1. BUG when deleting a selection of connecvtions it crashes from time to time
-      and when deleting nodes sometimes head-less connections are left in the field
-      2. BUG when deleting sometimes connections are not removed from the grpahicsView but they
-         are removed from the model, tested with treeView since there are not connections left
-         it must be a bug in the graphicsView callback to remove the QGraphicItems... ;P
-FIXME we need a flex item
+FIXME nodes should appear under mouse cursor not randomly if added from the GraphicsView
+      fix it here: QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {
 
-graphicsview:
- - create a connection by draging with MMB from startnode to endnode
- - relocate a connection by draging with MMB from startnode/endnode to a startnode/endnode
- - connection: highlight on mouse over
- - enable opengl rendering
- - ICONS for ACTIONS:
-   - enable/disable opengl rendering
-   - enable/disable antialiasing
-   - enable/disable highlight by mouse over node / mouse over connection
+graphicsView:
  - grid
-   - show/hide grid
-   - enable/disable grid magnification
-   - inc/dec grid spacing
-
- - drawing of loops
+  - show/hide grid
+  - enable/disable grid magnification
+  - inc/dec grid spacing
  - implement 'flow' -> this feature will move overlapping nodes away from each and
                        it does so for connection labels as well
- - printing
-   is working with pressing 's' in graphicsView, needs some more love tough
- - mash modulator with radius modifier
-   this feature enables a mesh modification as seen in blender
+ - add rotation handle
 
+  misc:
+  add this to the documentaiton for futher reading
+ - http://www.graphviz.org/doc/libguide/libguide.pdf
+ - http://www.boost.org/doc/libs/1_35_0/libs/graph/doc/index.html
+ - http://www.graphviz.org/
+ - http://www.boost.org/libs/graph/doc/fruchterman_reingold.html
+
+todo
+      LMB                     -> select node/connection
+      LMB drag                -> bbox for selecting objects
+      MMB on nodes            -> connect them
+x     MMB on empty space      -> move view
+      RMB on node/connection  -> context menu
+      RMB on scene            -> ??????????????
+
+general:
+ - add 'invert all connections' to automate_algorithms
+ - re-merge automate_algorithms to trunk
+ - getAutomateType
+   create a better detection of automate type
+ - checkWord
+   iterative word check implementation for eNFA/NFA/DFA
+ - think about if automate/meta_automate need a
+   copy constructor ... -> rule of three
+   - copy an automate 1:1
+
+FIXME
 items which have to be editable:
                             treeView    graphicsview
- - start                    -           editable
- - final                    -           editable
- - connection symbol        editable    -
- - next_node                editable    visable,no editor yet
- - new connections          editable    -
- - new nodes                editable    -
+ - start                    editable    editable
+ - final                    editable    editable
+ - next_node                editable    visible,no editor yet
+ - new connections          editable    editable
+ - new nodes                editable    - (fixme, nearly works)
  - deletable nodes          editable    editable
  - deletable conns.         editable    editable
- - multiple selection       -           editable
+ - multiple selection       editable    editable
  - node label rename        editable    -
  - connection label ren     editable    -
+ - connection symbol        editable    -
  - move nodes/labels        sorting     mouse drag
  - ctrl+LMB add single      -           editable
    node to a selection
@@ -58,37 +127,3 @@ items which have to be editable:
    \ by click               editable    -
  - reconnect on the fly     editable    -
   (in the graphicsView we need a handle for this)
-
- - add symbol editor
- - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
-  - some documentation is needed, F1 should open a browser for that
-
-- see TODO and BUG notices in the code as well
-
- - cleanup automate
-   - clean all TODOs in the code
-
- - doxygen comments on code and concepts
- - think about if automate/meta_automate need a
-   copy constructor ... -> rule of three
-   - copy an automate 1:1
-
-Later
- - add 'invert all connections' to automate_algorithms
- - remerge automate_algorithms to trunk
-
- - getAutomateType
-   create a better detection of automate type
- - checkWord
-   iterative word check implementation for eNFA/NFA/DFA
- - editing ohne MCV aufsatz z.b. fuer schnelle algorithmen (example code dafuer)
-
- - skalieren(?) je nach dem wie du es implementierst.
-
--- not in the scope of this work --
-  misc:
-  add this to the documentaiton for futher reading
-  - http://www.graphviz.org/doc/libguide/libguide.pdf
-  - http://www.boost.org/doc/libs/1_35_0/libs/graph/doc/index.html
- - http://www.graphviz.org/
- - http://www.boost.org/libs/graph/doc/fruchterman_reingold.html

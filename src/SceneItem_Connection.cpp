@@ -59,14 +59,15 @@ const qreal Pi = 3.14;
 SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
 //   qDebug() << "Creating a new connection";
   this->index = index;
-  // FIXME needed for debugging, remove later
-  m_color = QColor(qrand()%255,qrand()%255,qrand()%255,255);
+  m_color = QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 );
 
   myStartItem = NULL;
   myEndItem = NULL;
 
   m_highlight = false;
   setFlag( QGraphicsItem::ItemIsSelectable, true );
+  setAcceptsHoverEvents( true );
+
   myColor = Qt::black;
   pen = QPen( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
   line = QLine();
@@ -75,39 +76,45 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
 SceneItem_Connection::~SceneItem_Connection() { }
 
 void SceneItem_Connection::updateData() {
-  bool redraw = false;
-  unsigned int symbol_index = ((GraphicsScene*)scene())->data( index, customRole::IndexRole ).toInt();
-  if (this->symbol_index != symbol_index) {
-    this->symbol_index=symbol_index;
-    redraw=true;
+  if ( scene() == NULL ) {
+    qDebug() << "item isn't in any scene, can't query for valid data";
+    return;
   }
 
- QGraphicsItem* a = ((GraphicsScene*)scene())->modelToSceenIndex( QPersistentModelIndex( index.parent() ) );
+  unsigned int id = (( GraphicsScene* )scene() )->data( index, customRole::IdRole ).toInt();
+  QString toolTip = QString( "c%1" ).arg( id );
+  setToolTip( toolTip );
+
+  prepareGeometryChange();
+  unsigned int symbol_index = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toInt();
+  this->symbol_index = symbol_index;
+
+  QGraphicsItem* a = (( GraphicsScene* )scene() )->modelToSceenIndex( QPersistentModelIndex( index.parent() ) );
   if ( a == NULL )
     return;
-  QModelIndex next_node_index = ((Model*)index.model())->next_nodeModelIndex( index );
+  QModelIndex next_node_index = (( Model* )index.model() )->next_nodeModelIndex( index );
   if ( !next_node_index.isValid() ) {
     qDebug() << "Critical error because next_node isn't a valid index";
+    qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
+    exit( 0 );
   }
-  QGraphicsItem* b = ((GraphicsScene*)scene())->modelToSceenIndex( next_node_index );
+  QGraphicsItem* b = (( GraphicsScene* )scene() )->modelToSceenIndex( next_node_index );
   if ( b == NULL )
     return;
-  symbol_index = ((GraphicsScene*)scene())->data( index, customRole::IndexRole ).toInt();
+  symbol_index = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toInt();
 
   (( SceneItem_Node * )a )->addConnection( this );
   (( SceneItem_Node * )b )->addConnection( this );
-  SceneItem_Node *s=(( SceneItem_Node * )a );
-  SceneItem_Node *e=(( SceneItem_Node * )b );
-  if (myStartItem != s || myEndItem != e)
-    redraw=true;
-  myStartItem=s;
-  myEndItem=e;
+  SceneItem_Node *s = (( SceneItem_Node * )a );
+  SceneItem_Node *e = (( SceneItem_Node * )b );
 
-  if(redraw) {
-    qDebug() << "id of changed item " << ((GraphicsScene*)scene())->data( index, customRole::IdRole ).toInt();
-    line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
-    update();
-  }
+  myStartItem = s;
+  myEndItem = e;
+
+//   qDebug() << "id of changed item " << ((GraphicsScene*)scene())->data( index, customRole::IdRole ).toInt();
+  line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
+
+  update();
 }
 
 QLineF SceneItem_Connection::createLine( QPointF a, QPointF b ) {
@@ -130,7 +137,7 @@ QRectF SceneItem_Connection::boundingRect() const {
                         line.p2().y() - line.p1().y() ) )
                 .normalized()
                 .adjusted( -extra, -extra, extra, extra );
-  int z = CIRCLE_FOR_SYNBOL_RADIUS/2;
+  int z = CIRCLE_FOR_SYNBOL_RADIUS / 2;
 
   if ( bbox.width() < 2*CIRCLE_FOR_SYNBOL_RADIUS ) {
     bbox = bbox.adjusted( -z, 0, z, 0 );
@@ -142,32 +149,55 @@ QRectF SceneItem_Connection::boundingRect() const {
 }
 
 QPainterPath SceneItem_Connection::shape() const {
-  QPainterPath path(line.p1());
-  path.lineTo(line.p2());
+#define CLICKABLERANGE 6
+  QPointF down1, down2, up1, up2, nv;
+  QPolygonF p;
+  // 1. create the normal vector NV on point line.p1()
+  // 2. and resize it to be CLICKABLERANGE pixels long
+  QLineF a = line.normalVector().unitVector();
+  a.setLength( CLICKABLERANGE );
+  nv = a.p1() - a.p2();
+  down1 = line.p1() + nv;
+  down2 = line.p1() - nv;
+  up1 = line.p2() - nv;
+  up2 = line.p2() + nv;
+
+  p << down1 << down2 << up1 << up2 << down1;
+  QPainterPath path;
+  path.addPolygon( p );
   path.addPolygon( arrowHead );
+  // maybe add labelbox as well?
   return path;
 }
 
 void SceneItem_Connection::updatePosition() {
+  prepareGeometryChange();
   line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
   update();
 }
 
 void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
-  if (myStartItem == NULL || myEndItem == NULL) {
+  if ( myStartItem ==  myEndItem ) {
+    return;
+  }
+
+  if ( myStartItem == NULL || myEndItem == NULL ) {
     qDebug() << "Can't draw anything since myStartItem||myEndItem isn't set yet";
     return;
   }
   painter->drawLine( line );
 // this is a nice feature for debugging
   QPen p = pen;
-  pen.setColor(m_color);
-  painter->setPen(pen);
-  QRectF r = boundingRect();
-  int extra = -4;
-  r.adjusted( extra, extra, -extra, -extra );
-//   painter->drawRect( r );painter->drawRect( boundingRect() );
-//   return;
+  pen.setColor( m_color );
+  painter->setPen( pen );
+
+  if ((( GraphicsScene* )scene() )->want_boundingBox() ) {
+    painter->drawRect( boundingRect() );
+  }
+  if ((( GraphicsScene* )scene() )->want_drawItemShape() ) {
+    painter->drawPath( shape() );
+  }
+
   pen = p;
 
   if ( myStartItem->collidesWithItem( myEndItem ) )
@@ -181,15 +211,17 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
     c.setAlphaF( 0.1 );
     painter->setPen( QPen( c, 8, Qt::SolidLine ) );
     painter->drawLine( line );
-  }
+  } else
+    if ((( GraphicsScene* )scene() )->want_coloredConnectionHelper() ) {
+      QColor c = m_color;
+      c.setAlphaF( 0.2 );
+      painter->setPen( QPen( c, 12, Qt::SolidLine ) );
+      painter->drawLine( line );
+    }
 
   if ( isSelected() ) {
-    //FIXME the line offset must be drawn by the normal of the line and not as done right now
-    painter->setPen( QPen( QColor( "red" ), 1, Qt::DashLine ) );
+    painter->setPen( QPen( QColor( "red" ), 4, Qt::DashLine ) );
     QLineF myLine = line;
-    myLine.translate( 0, 4.0 );
-    painter->drawLine( myLine );
-    myLine.translate( 0, -8.0 );
     painter->drawLine( myLine );
   }
 
@@ -215,29 +247,70 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
   painter->setPen( myPen );
   painter->setBrush( myColor );
 
-  QString label = QString( "%1" ).arg( symbol_index );
+  QString label;
+  if ((( GraphicsScene* )scene() )->want_customConnectionLabels() ) {
+    label = (( GraphicsScene * )scene() )->data( index, customRole::CustomLabelRole ).toString();
+    if (label.size() == 0)
+      label = QString( "%1" ).arg( symbol_index );
+  } else {
+    label = QString( "%1" ).arg( symbol_index );
+  }
   QFont f;
   QFontMetrics fm( f );
   int width = fm.width( label );
   int height = fm.height();
   painter->drawText( QPointF( -width / 2, height / 4 ) + vpos, label );
 
-  myPen.setColor( myColor );
-  painter->setPen( myPen );
+  int arrowMode = 2;
+  if ( arrowMode & 1 ) {
+    /*
+    ** draw the arrow head at the node
+    */
+    myPen.setColor( myColor );
+    painter->setPen( myPen );
 
-  double angle = ::acos( line.dx() / line.length() );
-  if ( line.dy() >= 0 )
-    angle = ( Pi * 2 ) - angle;
+    double angle = ::acos( line.dx() / line.length() );
+    if ( line.dy() >= 0 )
+      angle = ( Pi * 2 ) - angle;
 
-  QPointF arrowP1 = line.p2() - QPointF( sin( angle + Pi / 3 ) * arrowSize,
-                                         cos( angle + Pi / 3 ) * arrowSize );
-  QPointF arrowP2 = line.p2() - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
-                                         cos( angle + Pi - Pi / 3 ) * arrowSize );
+    QPointF arrowP1 = line.p2() - QPointF( sin( angle + Pi / 3 ) * arrowSize,
+                                           cos( angle + Pi / 3 ) * arrowSize );
+    QPointF arrowP2 = line.p2() - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
+                                           cos( angle + Pi - Pi / 3 ) * arrowSize );
 
-  arrowHead.clear();
-  arrowHead << line.p2() << arrowP1 << arrowP2;
+    arrowHead.clear();
+    arrowHead << line.p2() << arrowP1 << arrowP2;
 
-  painter->drawPolygon( arrowHead );
+    painter->drawPolygon( arrowHead );
+  }
+  if ( arrowMode & 2 ) {
+    /*
+    ** draw the arrow head at the label
+    */
+    myPen.setColor( myColor );
+    painter->setPen( myPen );
+
+    double angle = ::acos( line.dx() / line.length() );
+    if ( line.dy() >= 0 )
+      angle = ( Pi * 2 ) - angle;
+    QPointF drawPoint = line.pointAt( 0.5 );
+
+    QLineF uline = line.unitVector();
+    uline.setLength( CIRCLE_FOR_SYNBOL_RADIUS + 12 );
+    QPointF nv = uline.p1() - uline.p2();
+    drawPoint -= nv;
+
+    QPointF arrowP1 = drawPoint - QPointF( sin( angle + Pi / 3 ) * arrowSize,
+                                           cos( angle + Pi / 3 ) * arrowSize );
+    QPointF arrowP2 = drawPoint - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
+                                           cos( angle + Pi - Pi / 3 ) * arrowSize );
+
+    arrowHead.clear();
+    arrowHead << drawPoint << arrowP1 << arrowP2;
+
+    painter->drawPolygon( arrowHead );
+
+  }
 }
 
 int SceneItem_Connection::type() const {
@@ -251,9 +324,29 @@ void SceneItem_Connection::highlight( bool status ) {
     m_highlight = false;
 }
 
-void SceneItem_Connection::setSymbol_Index(unsigned int symbol_index){
-  if (this->symbol_index == symbol_index)
+void SceneItem_Connection::setSymbol_Index( unsigned int symbol_index ) {
+  if ( this->symbol_index == symbol_index )
     return;
   this->symbol_index = symbol_index;
   update();
+}
+
+void SceneItem_Connection::hoverEnterEvent( QGraphicsSceneHoverEvent * /*event*/ ) {
+//   qDebug() << "hoverEnterEvent";
+  if ( !(( GraphicsScene* )scene() )->want_highlight() )
+    return;
+
+  highlight( true );
+  updatePosition();
+}
+
+void SceneItem_Connection::hoverLeaveEvent( QGraphicsSceneHoverEvent * /*event*/ ) {
+//   qDebug() << "hoverLeaveEvent";
+  highlight( false );
+  updatePosition();
+}
+
+
+void SceneItem_Connection::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
+  qDebug() << __FUNCTION__;
 }

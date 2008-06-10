@@ -25,10 +25,12 @@
  @author Joachim Schiele <js@lastlog.de>
 */
 class ItemView : public QAbstractItemView {
+  Q_OBJECT
   public:
-    ItemView( QGraphicsView* view, Model *model, QWidget * parent );
+    ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWidget * parent );
     ~ItemView();
   private:
+    bool want_antialiasing;
     QGraphicsView* view;
     GraphicsScene* scene;
     Model *model;
@@ -47,6 +49,9 @@ class ItemView : public QAbstractItemView {
     void rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end );
     void dataChanged( const QModelIndex & , const QModelIndex & );
     void reset();
+    QModelIndex recurseTroughIndexes( QModelIndex index );
+  public slots:
+    void toggleRenderHints();
 };
 
 #endif

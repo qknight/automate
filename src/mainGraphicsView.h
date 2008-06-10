@@ -17,6 +17,7 @@
 #include <QSizePolicy>
 #include <QToolBar>
 #include <QAction>
+#include <QStatusBar>
 
 #include "Model.h"
 #include "AbstractView.h"
@@ -26,20 +27,25 @@
 ** This class is responsible for displaying the graph as graphical representation
 **  it makes use of a QAbstractItemView and a QGraphicsScene
 */
-class mainGraphicsView : public AbstractView { /*, public Ui::mainGraphicsViewWidget*/
+class mainGraphicsView : public AbstractView {
     Q_OBJECT
   public:
-    mainGraphicsView( Model *, QDialog* parent = 0 );
+    mainGraphicsView( Model *, QMainWindow* parent = 0 );
     ~mainGraphicsView();
+    QStatusBar* sb;
   private:
-//     void gDebug( QString input );
+    GraphicsScene* scene;
     QToolBar* tb;
     ItemView* itemView;
     Model *model;
     QGraphicsView* view;
     void populateMenu();
-//     QTextBrowser* textBrowser;
     QGraphicsItemGroup* generateNode( bool start, bool final, QString label, QString name );
+
+  private slots:
+    void zoomIn();
+    void zoomOut();
+    void zoomNormal();
 };
 
 #endif

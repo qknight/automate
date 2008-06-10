@@ -21,7 +21,7 @@
 #ifndef TREEVIEW__HH__
 #define TREEVIEW__HH__
 
-#include "ui_treeViewWidget.h"
+#include "ui_treeViewMainWindow.h"
 #include "Model.h"
 #include "AbstractView.h"
 
@@ -29,24 +29,26 @@
 #include <QDebug>
 #include <QSortFilterProxyModel>
 #include <QItemSelectionModel>
+#include <QKeyEvent>
 
-class treeView : public AbstractView, public Ui::treeViewWidget {
+class treeView : public AbstractView, public Ui::treeViewMainWindow {
     Q_OBJECT
 
   private:
     QItemSelectionModel* ism;
     QSortFilterProxyModel *proxyModel;
     void addAbstractNodeItem( TreeItemType type );
-
+    void keyPressEvent( QKeyEvent * keyEvent );
+    void startToggleEvent(int role);
+    void removeEvent();
   public:
-    treeView( Model *, QDialog* parent = 0 );
+    treeView( Model *, QMainWindow* parent = 0 );
     Model *model;
   public slots:
     void addNode();
     void addConnection();
     void delSelectedNodes();
   private slots:
-    void setFilter( QString filterText );
     void currentChanged( const QModelIndex & current, const QModelIndex & previous );
 };
 

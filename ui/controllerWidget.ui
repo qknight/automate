@@ -12,6 +12,9 @@
   <property name="windowTitle" >
    <string>automate controller widget</string>
   </property>
+  <property name="windowIcon" >
+   <iconset resource="../automatehandler.qrc" >:/icons/home_blue.png</iconset>
+  </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" colspan="3" >
     <widget class="QTreeWidget" name="treeWidget" >
@@ -142,6 +145,8 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../automatehandler.qrc" />
+ </resources>
  <connections/>
 </ui>
