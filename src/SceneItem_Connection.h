@@ -52,14 +52,21 @@
 
 #include <QGraphicsItem>
 #include <QPersistentModelIndex>
+#include <QPainterPath>
+#include <QPainterPathStroker>
 #include <QRectF>
 #include <QPainterPath>
 #include <math.h>
 
 #include "SceneItem_Node.h"
 #include "SceneItem_Types.h"
+#include "SceneItem_ConnectionLabel.h"
+
+#define CIRCLE_FOR_SYNBOL_RADIUS 14
+#define MAX_BRUSH_SIZE 5
 
 class SceneItem_Node;
+class SceneItem_ConnectionLabel;
 // class QPixmap;
 // class QGraphicsItem;
 // class QGraphicsScene;
@@ -88,12 +95,22 @@ class SceneItem_Connection : public QGraphicsItem {
     int type() const;
     QPersistentModelIndex index;
     void highlight( bool status );
-    void setSymbol_Index( unsigned int symbol_index );
+//     void setSymbol_Index( unsigned int symbol_index );
+    void labelItemPositionUpdate( const QPointF& oldPos, const QPointF& newPos );
   protected:
+    QString label;
     bool m_highlight;
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
     QPainterPath shape() const;
+//     QVariant itemChange( GraphicsItemChange change, const QVariant & value );
   private:
+    qreal ooffset;
+    qreal poffset;
+    QPainterPath connectionPath() const;
+//     QLineF oldLine;
+    QPointF labelItemOffset;
+    void updateLabel();
+    SceneItem_ConnectionLabel* labelItem;
     void mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event );
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );

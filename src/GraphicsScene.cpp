@@ -30,7 +30,7 @@ void GraphicsScene::selectionChanged() {
 }
 
 QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   SceneItem_Node* node = new SceneItem_Node( item );
   addItem( node );
   // FIXME need to implement this!
@@ -128,6 +128,12 @@ bool GraphicsScene::compareIndexes( const QPersistentModelIndex & a, const QPers
 }
 
 void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
+  //FIXME replace this code with QShortCut/QAction
+  if (focusItem() != NULL) {
+    QGraphicsScene::keyPressEvent(keyEvent);
+    return;
+  }
+
   if ( keyEvent->key() == Qt::Key_X ) {
     removeEvent();
   }
@@ -293,11 +299,12 @@ void GraphicsScene::mousePressEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
                                           mouseEvent->scenePos() ) );
     line->setPen( QPen( QColor( "RED" ), 2 ) );
     addItem( line );
-  } else if (mouseEvent->button() == Qt::MidButton) {
+  } else
+    if ( mouseEvent->button() == Qt::MidButton ) {
 
-  } else {
-    QGraphicsScene::mousePressEvent( mouseEvent );
-  }
+    } else {
+      QGraphicsScene::mousePressEvent( mouseEvent );
+    }
 }
 
 void GraphicsScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
@@ -369,7 +376,7 @@ bool GraphicsScene::want_drawItemShape() {
 }
 
 void GraphicsScene::toggle_coloredConnectionHelper() {
-  m_want_coloredConnectionHelper=!m_want_coloredConnectionHelper;
+  m_want_coloredConnectionHelper = !m_want_coloredConnectionHelper;
   update();
 }
 
@@ -377,20 +384,32 @@ bool GraphicsScene::want_coloredConnectionHelper() {
   return m_want_coloredConnectionHelper;
 }
 
-bool GraphicsScene::want_customNodeLabels(){
+bool GraphicsScene::want_customNodeLabels() {
   return m_want_customNodeLabels;
 }
 
 void GraphicsScene::toggle_customNodeLabels() {
-  m_want_customNodeLabels=!m_want_customNodeLabels;
+  m_want_customNodeLabels = !m_want_customNodeLabels;
   update();
 }
 
-bool GraphicsScene::want_customConnectionLabels(){
+bool GraphicsScene::want_customConnectionLabels() {
   return m_want_customConnectionLabels;
 }
 
- void GraphicsScene::toggle_customConnectionLabels() {
-   m_want_customConnectionLabels=!m_want_customConnectionLabels;
-   update();
- }
+void GraphicsScene::toggle_customConnectionLabels() {
+  m_want_customConnectionLabels = !m_want_customConnectionLabels;
+  update();
+}
+
+// void GraphicsScene::editorLostFocus(DiagramTextItem *item) {
+//   QTextCursor cursor = item->textCursor();
+//   cursor.clearSelection();
+//   item->setTextCursor(cursor);
+//
+//   if (item->toPlainText().isEmpty()) {
+//     removeItem(item);
+//     item->deleteLater();
+//   }
+// }
+

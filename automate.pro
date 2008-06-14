@@ -49,7 +49,9 @@ HEADERS += src/meta_automate.h \
  src/SceneItem_Connection.h \
  src/SceneItem_Types.h \
  src/SceneItem_FlexibleConnection.h \
- src/ScneItem_FlexibleHandle.h
+ src/ScneItem_FlexibleHandle.h \
+ src/SceneItem_ConnectionLabel.h \
+ src/SceneItem_ConnectionHandle.h
 SOURCES += src/main.cpp \
            src/meta_node.cpp \
            src/node.cpp \
@@ -70,7 +72,9 @@ SOURCES += src/main.cpp \
  src/SceneItem_Node.cpp \
  src/SceneItem_Connection.cpp \
  src/SceneItem_FlexibleConnection.cpp \
- src/ScneItem_FlexibleHandle.cpp
+ src/ScneItem_FlexibleHandle.cpp \
+ src/SceneItem_ConnectionLabel.cpp \
+ src/SceneItem_ConnectionHandle.cpp
 FORMS += ui/controllerWidget.ui \
          ui/treeViewMainWindow.ui
 DISTFILES += TODO README \

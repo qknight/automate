@@ -54,10 +54,10 @@
 #include <math.h>
 
 const qreal Pi = 3.14;
-#define CIRCLE_FOR_SYNBOL_RADIUS 14
 
 SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
 //   qDebug() << "Creating a new connection";
+  labelItem = new SceneItem_ConnectionLabel;
   this->index = index;
   m_color = QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 );
 
@@ -67,10 +67,13 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
   m_highlight = false;
   setFlag( QGraphicsItem::ItemIsSelectable, true );
   setAcceptsHoverEvents( true );
-
+  labelItem->setParentItem( this );
   myColor = Qt::black;
   pen = QPen( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
   line = QLine();
+
+  ooffset = 0.0;
+  poffset = 0.0;// this parameter means: -1 source node, 0.5 between mid and destnode, 1 destnode
 }
 
 SceneItem_Connection::~SceneItem_Connection() { }
@@ -88,6 +91,8 @@ void SceneItem_Connection::updateData() {
   prepareGeometryChange();
   unsigned int symbol_index = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toInt();
   this->symbol_index = symbol_index;
+
+  labelItem->setLabel( QString( "%1" ).arg( symbol_index ) );
 
   QGraphicsItem* a = (( GraphicsScene* )scene() )->modelToSceenIndex( QPersistentModelIndex( index.parent() ) );
   if ( a == NULL )
@@ -113,7 +118,79 @@ void SceneItem_Connection::updateData() {
 
 //   qDebug() << "id of changed item " << ((GraphicsScene*)scene())->data( index, customRole::IdRole ).toInt();
   line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
+//   labelItem->setPos(0,0);
+//   oldLine = line;
+  updateLabel();
+  update();
+}
 
+void SceneItem_Connection::updateLabel() {
+  // FIXME this is a hack not to deform the whole scene but should be handled BETTER!
+  if ( myStartItem->collidesWithItem( myEndItem ) )
+    return;
+
+  QPointF vpos = myStartItem->pos() / 2.0 + myEndItem->pos() / 2.0;
+  QLineF parallel_unitLine = line.unitVector();
+
+  // this offset is relative: we need to recompute the relations
+  qreal parallel_halfsize = line.length() / 2.0 * poffset;
+  QPointF parallel_unitVector = parallel_unitLine.p2() - parallel_unitLine.p1();
+  QPointF parallel_diffVector = QPointF( parallel_unitVector.x() * parallel_halfsize,
+                                         parallel_unitVector.y() * parallel_halfsize );
+
+  // this offset is absolute: we don't resize this dimension on node move
+  QLineF orthogonal_normalUnitLine = parallel_unitLine.normalVector();
+  QPointF orthogonal_normalUnitVector = orthogonal_normalUnitLine.p2() - orthogonal_normalUnitLine.p1();
+  QPointF orthogonal_diffVector = QPointF( ooffset * orthogonal_normalUnitVector.x(),
+                                  ooffset * orthogonal_normalUnitVector.y() );
+
+  labelItem->setPos( vpos + orthogonal_diffVector + parallel_diffVector );
+}
+
+// callback function from a ConnectionLabel item
+// basically this math inverts void SceneItem_Connection::updateLabel() functionality
+void SceneItem_Connection::labelItemPositionUpdate( const QPointF& oldPos, const QPointF& newPos ) {
+  // FIXME this is a hack not to deform the whole scene and should be handled BETTER!
+  if ( myStartItem->collidesWithItem( myEndItem ) )
+    return;
+
+  QPointF vpos = myStartItem->pos() / 2.0 + myEndItem->pos() / 2.0;
+
+  QLineF parallel_unitLine = line.unitVector();
+  QPointF parallel_unitVector = parallel_unitLine.p2() - parallel_unitLine.p1();
+  QLineF orthogonal_normalUnitLine = parallel_unitLine.normalVector();
+  QPointF orthogonal_normalUnitVector = orthogonal_normalUnitLine.p2() - orthogonal_normalUnitLine.p1();
+
+  // 1. solve a LGS
+  // http://en.wikipedia.org/wiki/Cramer's_rule
+  QPointF labelOffsetVector = vpos - newPos;
+
+// we need to find the two factors of our two unitComponents used to generate labelOffsetVector
+// Equation:
+//   parallel_unitVector*x +  orthogonal_normalUnitVector*y = labelOffsetVector;
+
+  qreal det = parallel_unitVector.x() * orthogonal_normalUnitVector.y() -
+              parallel_unitVector.y() * orthogonal_normalUnitVector.x();
+  qreal x = ( labelOffsetVector.x() * orthogonal_normalUnitVector.y() -
+              orthogonal_normalUnitVector.x() * labelOffsetVector.y() )
+            / det;
+
+  qreal y = ( parallel_unitVector.x() * labelOffsetVector.y() -
+              labelOffsetVector.x() * parallel_unitVector.y() )
+            / det;
+  ooffset = -y;
+
+  // 2. translate the parallel offset into the paramter we need
+  poffset = -x / ( line.length() / 2 );
+
+  // 3. finally update what we see
+  update();
+}
+
+void SceneItem_Connection::updatePosition() {
+  prepareGeometryChange();
+  line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
+  updateLabel();
   update();
 }
 
@@ -132,52 +209,63 @@ QLineF SceneItem_Connection::createLine( QPointF a, QPointF b ) {
 }
 
 QRectF SceneItem_Connection::boundingRect() const {
-  qreal extra = ( pen.width() + 20 ) / 2.0;
-  QRectF bbox = QRectF( line.p1(), QSizeF( line.p2().x() - line.p1().x(),
-                        line.p2().y() - line.p1().y() ) )
-                .normalized()
-                .adjusted( -extra, -extra, extra, extra );
-  int z = CIRCLE_FOR_SYNBOL_RADIUS / 2;
-
-  if ( bbox.width() < 2*CIRCLE_FOR_SYNBOL_RADIUS ) {
-    bbox = bbox.adjusted( -z, 0, z, 0 );
-  }
-  if ( bbox.height() < 2*CIRCLE_FOR_SYNBOL_RADIUS ) {
-    bbox = bbox.adjusted( 0, -z, 0, z );
-  }
-  return bbox;
+  QRectF bbox = connectionPath().boundingRect();
+  return bbox.adjusted( -MAX_BRUSH_SIZE, -MAX_BRUSH_SIZE, MAX_BRUSH_SIZE, MAX_BRUSH_SIZE );
 }
 
 QPainterPath SceneItem_Connection::shape() const {
-#define CLICKABLERANGE 6
-  QPointF down1, down2, up1, up2, nv;
-  QPolygonF p;
-  // 1. create the normal vector NV on point line.p1()
-  // 2. and resize it to be CLICKABLERANGE pixels long
-  QLineF a = line.normalVector().unitVector();
-  a.setLength( CLICKABLERANGE );
-  nv = a.p1() - a.p2();
-  down1 = line.p1() + nv;
-  down2 = line.p1() - nv;
-  up1 = line.p2() - nv;
-  up2 = line.p2() + nv;
-
-  p << down1 << down2 << up1 << up2 << down1;
-  QPainterPath path;
-  path.addPolygon( p );
-  path.addPolygon( arrowHead );
-  // maybe add labelbox as well?
+#define CLICKABLERANGE 12
+  QPainterPathStroker s;
+  s.setWidth( CLICKABLERANGE );
+  QPainterPath p = connectionPath();
+  QPainterPath path = s.createStroke( p );
   return path;
 }
 
-void SceneItem_Connection::updatePosition() {
-  prepareGeometryChange();
-  line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
-  update();
+QPainterPath SceneItem_Connection::connectionPath() const {
+  // FIXME this is a hack not to deform the whole scene and should be handled BETTER!
+  if ( myStartItem == NULL || myEndItem == NULL )
+    return QPainterPath();
+  if ( myStartItem->collidesWithItem( myEndItem ) )
+    return QPainterPath();
+
+  QPointF vpos = myStartItem->pos() / 2.0 + myEndItem->pos() / 2.0;
+  QLineF parallel_unitLine = line.unitVector();
+
+  // this offset is relative: we need to recompute the relations
+  qreal parallel_halfsize = line.length() / 2.0 * poffset;
+  QPointF parallel_unitVector = parallel_unitLine.p2() - parallel_unitLine.p1();
+  QPointF parallel_diffVector = QPointF( parallel_unitVector.x() * parallel_halfsize,
+                                         parallel_unitVector.y() * parallel_halfsize );
+
+  // this offset is absolute: we don't resize this dimension on node move
+  QLineF orthogonal_normalUnitLine = parallel_unitLine.normalVector();
+  QPointF orthogonal_normalUnitVector = orthogonal_normalUnitLine.p2() - orthogonal_normalUnitLine.p1();
+  QPointF orthogonal_diffVector = QPointF( ooffset * orthogonal_normalUnitVector.x(),
+                                  ooffset * orthogonal_normalUnitVector.y() );
+
+//   labelItem->setPos( vpos + orthogonal_diffVector + parallel_diffVector );
+
+  QPainterPath path( mapFromItem( myStartItem, 0, 0 ) );
+  QPointF offset = orthogonal_diffVector / 2;
+  qreal f = ( line.length() / 2 + poffset ) / 2;
+  qreal v = ( line.length() / 2 - poffset ) / 2;
+
+  QPointF a1 = /*offset +*/ mapFromItem( myStartItem, 0, 0 );
+  QPointF a2 = parallel_unitVector * f + orthogonal_diffVector + mapFromItem( myStartItem, 0, 0 );
+  path.cubicTo( a1, a2, labelItem->pos() );
+
+  path.lineTo( labelItem->pos() );
+  QPointF d1 = -parallel_unitVector * v + orthogonal_diffVector + mapFromItem( myEndItem, 0, 0 );
+  QPointF d2 = /*offset +*/ mapFromItem( myEndItem, 0, 0 );
+  path.cubicTo( d1, d2, mapFromItem( myEndItem, 0, 0 ) );
+
+  return path;
 }
 
 void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
-  if ( myStartItem ==  myEndItem ) {
+
+  if ( myStartItem == myEndItem ) {
     return;
   }
 
@@ -185,20 +273,24 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
     qDebug() << "Can't draw anything since myStartItem||myEndItem isn't set yet";
     return;
   }
-  painter->drawLine( line );
-// this is a nice feature for debugging
+
   QPen p = pen;
   pen.setColor( m_color );
-  painter->setPen( pen );
+  if ( isSelected() )
+    painter->setPen( pen );
+
+  painter->drawPath( connectionPath() );
 
   if ((( GraphicsScene* )scene() )->want_boundingBox() ) {
-    painter->drawRect( boundingRect() );
+    QPen p = pen;
+    pen.setColor( m_color );
+    painter->setPen( pen );
+    QRectF bbox = connectionPath().boundingRect();
+    painter->drawRect( bbox.adjusted( MAX_BRUSH_SIZE, MAX_BRUSH_SIZE, -MAX_BRUSH_SIZE, -MAX_BRUSH_SIZE ) );
   }
   if ((( GraphicsScene* )scene() )->want_drawItemShape() ) {
     painter->drawPath( shape() );
   }
-
-  pen = p;
 
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return;
@@ -207,110 +299,80 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
     QColor c = QColor( "blue" );
     c.setAlphaF( 0.05 );
     painter->setPen( QPen( c, 22, Qt::SolidLine ) );
-    painter->drawLine( line );
+    painter->drawPath( shape() );
     c.setAlphaF( 0.1 );
     painter->setPen( QPen( c, 8, Qt::SolidLine ) );
-    painter->drawLine( line );
+    painter->drawPath( shape() );
   } else
     if ((( GraphicsScene* )scene() )->want_coloredConnectionHelper() ) {
       QColor c = m_color;
       c.setAlphaF( 0.2 );
       painter->setPen( QPen( c, 12, Qt::SolidLine ) );
-      painter->drawLine( line );
+      painter->drawPath( shape() );
     }
 
   if ( isSelected() ) {
     painter->setPen( QPen( QColor( "red" ), 4, Qt::DashLine ) );
     QLineF myLine = line;
-    painter->drawLine( myLine );
+    painter->drawPath( connectionPath() );
   }
-
-  QPen myPen = pen;
-  myPen.setColor( myColor );
-  qreal arrowSize = 10;
-  painter->setPen( myPen );
-  painter->setBrush( myColor );
-
-  // additional label code
-  QPointF vpos = myStartItem->pos() / 2 + myEndItem->pos() / 2;
-
-  QColor c = QColor( "lightgrey" );
-  c.setAlphaF( 0.9 );
-  myPen.setColor( c );
-  painter->setPen( myPen );
-  painter->setBrush( c );
-  QRectF rectangle( vpos.x() - CIRCLE_FOR_SYNBOL_RADIUS, vpos.y() -
-                    CIRCLE_FOR_SYNBOL_RADIUS, 2*CIRCLE_FOR_SYNBOL_RADIUS, 2*CIRCLE_FOR_SYNBOL_RADIUS );
-  painter->drawEllipse( rectangle );
-
-  myPen.setColor( myColor );
-  painter->setPen( myPen );
-  painter->setBrush( myColor );
-
-  QString label;
-  if ((( GraphicsScene* )scene() )->want_customConnectionLabels() ) {
-    label = (( GraphicsScene * )scene() )->data( index, customRole::CustomLabelRole ).toString();
-    if (label.size() == 0)
-      label = QString( "%1" ).arg( symbol_index );
-  } else {
-    label = QString( "%1" ).arg( symbol_index );
-  }
-  QFont f;
-  QFontMetrics fm( f );
-  int width = fm.width( label );
-  int height = fm.height();
-  painter->drawText( QPointF( -width / 2, height / 4 ) + vpos, label );
-
-  int arrowMode = 2;
-  if ( arrowMode & 1 ) {
-    /*
-    ** draw the arrow head at the node
-    */
-    myPen.setColor( myColor );
-    painter->setPen( myPen );
-
-    double angle = ::acos( line.dx() / line.length() );
-    if ( line.dy() >= 0 )
-      angle = ( Pi * 2 ) - angle;
-
-    QPointF arrowP1 = line.p2() - QPointF( sin( angle + Pi / 3 ) * arrowSize,
-                                           cos( angle + Pi / 3 ) * arrowSize );
-    QPointF arrowP2 = line.p2() - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
-                                           cos( angle + Pi - Pi / 3 ) * arrowSize );
-
-    arrowHead.clear();
-    arrowHead << line.p2() << arrowP1 << arrowP2;
-
-    painter->drawPolygon( arrowHead );
-  }
-  if ( arrowMode & 2 ) {
-    /*
-    ** draw the arrow head at the label
-    */
-    myPen.setColor( myColor );
-    painter->setPen( myPen );
-
-    double angle = ::acos( line.dx() / line.length() );
-    if ( line.dy() >= 0 )
-      angle = ( Pi * 2 ) - angle;
-    QPointF drawPoint = line.pointAt( 0.5 );
-
-    QLineF uline = line.unitVector();
-    uline.setLength( CIRCLE_FOR_SYNBOL_RADIUS + 12 );
-    QPointF nv = uline.p1() - uline.p2();
-    drawPoint -= nv;
-
-    QPointF arrowP1 = drawPoint - QPointF( sin( angle + Pi / 3 ) * arrowSize,
-                                           cos( angle + Pi / 3 ) * arrowSize );
-    QPointF arrowP2 = drawPoint - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
-                                           cos( angle + Pi - Pi / 3 ) * arrowSize );
-
-    arrowHead.clear();
-    arrowHead << drawPoint << arrowP1 << arrowP2;
-
-    painter->drawPolygon( arrowHead );
-
-  }
+//
+//   QPen myPen = pen;
+//   myPen.setColor( myColor );
+//   qreal arrowSize = 10;
+//   painter->setPen( myPen );
+//   painter->setBrush( myColor );
+//
+//   int arrowMode = 2;
+//   if ( arrowMode & 1 ) {
+//     /*
+//     ** draw the arrow head at the node
+//     */
+//     myPen.setColor( myColor );
+//     painter->setPen( myPen );
+//
+//     double angle = ::acos( line.dx() / line.length() );
+//     if ( line.dy() >= 0 )
+//       angle = ( Pi * 2 ) - angle;
+//
+//     QPointF arrowP1 = line.p2() - QPointF( sin( angle + Pi / 3 ) * arrowSize,
+//                                            cos( angle + Pi / 3 ) * arrowSize );
+//     QPointF arrowP2 = line.p2() - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
+//                                            cos( angle + Pi - Pi / 3 ) * arrowSize );
+//
+//     arrowHead.clear();
+//     arrowHead << line.p2() << arrowP1 << arrowP2;
+//
+//     painter->drawPolygon( arrowHead );
+//   }
+//   if ( arrowMode & 2 ) {
+//     /*
+//     ** draw the arrow head at the label
+//     */
+//     myPen.setColor( myColor );
+//     painter->setPen( myPen );
+//
+//     double angle = ::acos( line.dx() / line.length() );
+//     if ( line.dy() >= 0 )
+//       angle = ( Pi * 2 ) - angle;
+//     QPointF drawPoint = line.pointAt( 0.5 );
+//
+//     QLineF uline = line.unitVector();
+//     uline.setLength( CIRCLE_FOR_SYNBOL_RADIUS + 12 );
+//     QPointF nv = uline.p1() - uline.p2();
+//     drawPoint -= nv;
+//
+//     QPointF arrowP1 = drawPoint - QPointF( sin( angle + Pi / 3 ) * arrowSize,
+//                                            cos( angle + Pi / 3 ) * arrowSize );
+//     QPointF arrowP2 = drawPoint - QPointF( sin( angle + Pi - Pi / 3 ) * arrowSize,
+//                                            cos( angle + Pi - Pi / 3 ) * arrowSize );
+//
+//     arrowHead.clear();
+//     arrowHead << drawPoint << arrowP1 << arrowP2;
+//
+//     painter->drawPolygon( arrowHead );
+//
+//   }
 }
 
 int SceneItem_Connection::type() const {
@@ -322,13 +384,6 @@ void SceneItem_Connection::highlight( bool status ) {
     m_highlight = true;
   else
     m_highlight = false;
-}
-
-void SceneItem_Connection::setSymbol_Index( unsigned int symbol_index ) {
-  if ( this->symbol_index == symbol_index )
-    return;
-  this->symbol_index = symbol_index;
-  update();
 }
 
 void SceneItem_Connection::hoverEnterEvent( QGraphicsSceneHoverEvent * /*event*/ ) {
@@ -348,5 +403,22 @@ void SceneItem_Connection::hoverLeaveEvent( QGraphicsSceneHoverEvent * /*event*/
 
 
 void SceneItem_Connection::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
+  //FIXME add editor here
   qDebug() << __FUNCTION__;
 }
+
+// QVariant SceneItem_Connection::itemChange( GraphicsItemChange change, const QVariant & value ) {
+// //   if ( change == QGraphicsItem::ItemSceneChange ) {
+// //     //FIXME
+// //     if ( value == NULL ) {
+// //       qDebug() << "call scene destructor here";
+// // //       scene()->removeItem(labelItem);
+// //     } else {
+// //       qDebug() << "added a labelItem";
+// //
+// //     }
+// //   }
+//   return QGraphicsItem::itemChange( change, value );
+// }
+//
+

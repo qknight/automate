@@ -50,7 +50,7 @@
 #include "SceneItem_Node.h"
 
 SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() {
-  setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemIsFocusable );
+  setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable /*| QGraphicsItem::ItemIsFocusable*/ );
   setAcceptsHoverEvents( true );
 //   setData( 0, &index );
 //   hovering = false;
@@ -62,11 +62,10 @@ SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() 
 }
 
 SceneItem_Node::~SceneItem_Node() {
-//   foreach( SceneItem_Connection* ci, ConnectionItems ) {
-//     ci->startItem()->removeConnection( ci );
-//     ci->endItem()->removeConnection( ci );
-//     scene()->removeItem( ci );
-//   }
+  if (ConnectionItems.size() != 0) {
+    qDebug() << "FATAL ERROR: not all nodes have been deleted!!!";
+    qDebug() << "inconsistency between the graphicsView and the data (model) might exist";
+  }
 }
 
 void SceneItem_Node::updateData() {

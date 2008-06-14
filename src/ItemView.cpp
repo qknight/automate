@@ -22,7 +22,18 @@ ItemView::ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWi
   view->setScene( scene );
   view->setDragMode( QGraphicsView::RubberBandDrag );
 
-//   SceneItem_FlexibleConnection* flex = new SceneItem_FlexibleConnection(scene);
+/*#ifndef QT_NO_OPENGL
+  openGlButton->setEnabled(QGLFormat::hasOpenGL());
+#else
+  openGlButton->setEnabled(false);
+#endif
+
+#ifndef QT_NO_OPENGL
+  graphicsView->setViewport(openGlButton->isChecked() ? new QGLWidget(QGLFormat(QGL::SampleBuffers)) : new QWidget);
+#endif
+  view->setViewport(new QGLWidget(QGLFormat(QGL::SampleBuffers)))*/;
+
+  //   SceneItem_FlexibleConnection* flex = new SceneItem_FlexibleConnection(scene);
 //   scene->addItem(flex);
 
   // Special layout functionality should go here!

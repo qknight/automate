@@ -1,21 +1,23 @@
-FIXME add symbol editor
-  maps int to QString
-  0 - not defined
-  1 - epsilon connection
-  2. first symbol or string
-  3. ...
-FIXME we need an aditional modal dialog which pops up on doubleclick on an NODE|CONNECTION item
-      this dialog should contain:
-          case NODE:  - start/final
-                      - nodename
-                      - id and/or label
-          case CONN:  - connection symbol
-                      - destnode
-                      - id and/or label
-FIXME drawing of loops
-  we need a flex item
-FIXME removeNodes reverse lookup must be wrong, all incomming connections are NOT deleted
-      when the node goes offline ;P
+FIXME graphicsitem
+  - fix object initialisation of a connection
+  - fix connectionItem bbox
+  - make it draw bezier even better!
+    current issue: when connectionLabel comes near to start or end node it's screwed
+  - two overlapping connectionLabels should be drawn RED!
+  - drawing of loops
+  - remove trembling when moving an connectionLabel
+  - adding a new connection should invoke a auto connection adder routine with auto-layout
+FIXME node/connection label editor with QGraphicsTextItem
+    void DiagramTextItem::focusOutEvent(QFocusEvent *event)
+    {
+        setTextInteractionFlags(Qt::NoTextInteraction);
+        emit lostFocus(this);
+        QGraphicsTextItem::focusOutEvent(event);
+        qDebug() << toPlainText ();
+    }
+FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
+       moving the mouse in the bbox results in the errors from FIXME1
+FIXME label needs caching inside a node/connection since each redraw triggers a model query
 FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached connections VERY fast in the view sometimes
       the program hangs with this error:
   QPainterPath::cubicTo: Adding point where x or y is NaN, results are undefined
@@ -23,8 +25,37 @@ FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached
   QPainterPath::arcTo: Adding arc where a parameter is NaN, results are undefined
   ...
   HINT: this might be the drawing of an connection in the GraphicsScene
-FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
-       moving the mouse in the bbox results in the errors from FIXME1
+  HINT: it is the presumption form above: when two nodes nearly overlap this can happen
+      CODE if ( myStartItem->collidesWithItem( myEndItem ) )
+      CODE  return;
+      when this two lines in SceneItem_Connection are commented we can trigger this issue
+FIXME label and symboleditor
+  - nodes display the customLabel item all the time, this custom label is initially set based on the id
+    id is only shown in the toolTip
+  - connections show the QString based on the symbol_index they contain
+    id is only shown in the toolTip
+FIXME add symbol editor featuring a QStringList model
+  maps int to QString
+  0 - not defined
+  1 - epsilon connection
+  2. first symbol or string
+  3. ...
+
+
+
+
+
+
+
+
+
+
+
+FIXME zoomFit
+FIXME profile drawing, make performance tests for final results
+FIXME reset() in custom graphicsView
+FIXME removeNodes reverse lookup must be wrong, all incomming connections are NOT deleted
+      when the node goes offline ;P
 FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
       HINT: check the row/column in dataChanged() call, maybe this is the fix?!
       HINT: maybe implement hasChildren as well
@@ -37,10 +68,8 @@ FIXME treeView, adding a new connection isn't marked with a '+' sign in the tree
 FIXME modeltest.cpp line 106 issue
 FIXME editing ohne MCV aufsatz z.b. fuer schnelle algorithmen (example code dafuer)
       z.b. print auf console code
-FIXME profile drawing, make performance tests for final results
 FIXME program won't terminate on close
 FIXME remove this hackish c casts
-FIXME reset() in custom graphicsView
 FIXME doxygen comments on code and concepts
  - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
  - some documentation is needed, F1 should open a browser for that
@@ -48,8 +77,11 @@ FIXME see TODO and BUG notices in the code as well
  - clean all TODOs in the code
 FIXME ICONS for ACTIONS:
   - enable/disable opengl rendering
+FIXME GraphicsScene: replace keyPressEvent code with QShortCut/QAction
 
-FINAL usability testing
+FINAL
+ - usability testing
+ - remove debug output
 
 =================================================================================================
         -- not in the scope of this work --

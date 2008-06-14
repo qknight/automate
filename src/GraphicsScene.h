@@ -43,6 +43,8 @@ class GraphicsScene : public QGraphicsScene {
     bool want_coloredConnectionHelper();
     bool want_customNodeLabels();
     bool want_customConnectionLabels();
+//     void lockKeyBoard();
+//     void ulockKeyBoard();
   protected:
     QGraphicsItem* nodeInserted( QPersistentModelIndex item );
     QGraphicsItem* connectionInserted( QPersistentModelIndex item );
