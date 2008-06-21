@@ -1,12 +1,18 @@
 FIXME graphicsitem
+  - connectionItem FIXME why is this function never called?! even making it virtual didn't help
+  - BUG if connectionLabel is moved between two nodes it's resizing on node move is correct
+    BUT if the connectionLabel is moved beyond on node it's resizing is done into the wrong direction
+    -> while the distance between the nodes shrinks the object moves even farer away
+  - add arrow
+  - drawing of loops
+  - adding a new connection should invoke a auto connection adder routine with auto-layout
   - fix object initialisation of a connection
+    - two overlapping connectionLabels should be drawn RED!
   - fix connectionItem bbox
   - make it draw bezier even better!
-    current issue: when connectionLabel comes near to start or end node it's screwed
-  - two overlapping connectionLabels should be drawn RED!
-  - drawing of loops
-  - remove trembling when moving an connectionLabel
-  - adding a new connection should invoke a auto connection adder routine with auto-layout
+    - current issue: when connectionLabel comes near to start or end node it's screwed
+    - bezier is drawn right from the beginning of a node not outside of it's shape
+  DONE  - remove trembling when moving an connectionLabel
 FIXME node/connection label editor with QGraphicsTextItem
     void DiagramTextItem::focusOutEvent(QFocusEvent *event)
     {
@@ -52,7 +58,6 @@ FIXME add symbol editor featuring a QStringList model
 
 
 FIXME zoomFit
-FIXME profile drawing, make performance tests for final results
 FIXME reset() in custom graphicsView
 FIXME removeNodes reverse lookup must be wrong, all incomming connections are NOT deleted
       when the node goes offline ;P
@@ -69,15 +74,11 @@ FIXME modeltest.cpp line 106 issue
 FIXME editing ohne MCV aufsatz z.b. fuer schnelle algorithmen (example code dafuer)
       z.b. print auf console code
 FIXME program won't terminate on close
-FIXME remove this hackish c casts
 FIXME doxygen comments on code and concepts
  - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
  - some documentation is needed, F1 should open a browser for that
 FIXME see TODO and BUG notices in the code as well
  - clean all TODOs in the code
-FIXME ICONS for ACTIONS:
-  - enable/disable opengl rendering
-FIXME GraphicsScene: replace keyPressEvent code with QShortCut/QAction
 
 FINAL
  - usability testing
@@ -91,11 +92,13 @@ FINAL
   - cdrom mit programmen + doxygen
   - ausarbeitung 2s+doxygen gedruckt, gelocht, geheftet
     ca. 45 seiten, gelocht und verhaftet!
-2008-06-16 abschlussvortrag
 
 FIXME use parentWidget() and parent where possible
 FIXME nodes should appear under mouse cursor not randomly if added from the GraphicsView
       fix it here: QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {
+FIXME ICONS for ACTIONS:
+  - enable/disable opengl rendering
+FIXME GraphicsScene: replace keyPressEvent code with QShortCut/QAction
 
 graphicsView:
  - grid

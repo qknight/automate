@@ -1,52 +1,34 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="15" >
-  <Doc0 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ItemView.cpp" >
-   <View0 Encoding="" line="28" Type="Source" />
-  </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ScneItem_FlexibleHandle.cpp" >
-   <View0 Encoding="" line="58" Type="Source" />
-  </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_FlexibleConnection.cpp" >
-   <View0 Encoding="" line="91" Type="Source" />
-  </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_FlexibleConnection.h" >
-   <View0 Encoding="" line="39" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ItemView.h" >
-   <View0 Encoding="" line="14" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/GraphicsScene.cpp" >
-   <View0 Encoding="" line="130" Type="Source" />
-  </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/GraphicsScene.h" >
-   <View0 Encoding="" line="69" Type="Source" />
-  </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ScneItem_FlexibleHandle.h" >
-   <View0 Encoding="" line="40" Type="Source" />
-  </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Connection.cpp" >
+ <DocsAndViews NumberOfDocuments="9" >
+  <Doc0 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Connection.cpp" >
    <View0 Encoding="" line="129" Type="Source" />
-  </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Connection.h" >
-   <View0 Encoding="" line="104" Type="Source" />
-  </Doc9>
-  <Doc10 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionLabel.cpp" >
-   <View0 Encoding="" line="109" Type="Source" />
-  </Doc10>
-  <Doc11 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionLabel.h" >
-   <View0 Encoding="" line="32" Type="Source" />
-  </Doc11>
-  <Doc12 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Node.cpp" >
-   <View0 Encoding="" line="63" Type="Source" />
-  </Doc12>
-  <Doc13 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Node.h" >
+  </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionLabel.cpp" >
    <View0 Encoding="" line="0" Type="Source" />
-  </Doc13>
-  <Doc14 NumberOfViews="1" URL="file:///usr/include/qt4/QtGui/qgraphicsitem.h" >
-   <View0 Encoding="" line="285" Type="Source" />
-  </Doc14>
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionLabel.h" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Node.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Node.h" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionHandle.cpp" >
+   <View0 Encoding="" line="107" Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionHandle.h" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc6>
+  <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/main.cpp" >
+   <View0 Encoding="" line="10" Type="Source" />
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/TODO" >
+   <View0 Encoding="" line="2" Type="Source" />
+  </Doc8>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
@@ -58,16 +40,6 @@
    <showInternalCommands value="0" />
   </kdevdebugger>
   <kdevfilelist>
-   <projectview name="AbstractNodes" >
-    <file line="0" url="src/AutomateRoot.cpp" col="0" encoding="" />
-    <file line="0" url="src/AutomateRoot.h" col="0" encoding="" />
-    <file line="0" url="src/node.cpp" col="0" encoding="" />
-    <file line="0" url="src/node.h" col="0" encoding="" />
-    <file line="0" url="src/node_connection.cpp" col="0" encoding="" />
-    <file line="2" url="src/node_connection.h" col="50" encoding="" />
-    <file line="0" url="src/AbstractTreeItem.cpp" col="0" encoding="" />
-    <file line="0" url="src/AbstractTreeItem.h" col="0" encoding="" />
-   </projectview>
    <projectview name="graphicsScene" >
     <file line="0" url="src/Model.cpp" col="0" encoding="" />
     <file line="0" url="src/ItemView.cpp" col="0" encoding="" />

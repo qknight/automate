@@ -55,14 +55,13 @@ SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() 
 //   setData( 0, &index );
 //   hovering = false;
   penWidth = 3;
-  r = 24; /*radius*/
+
   setZValue( 10 );
   this->index = index;
-  //   updateData();
 }
 
 SceneItem_Node::~SceneItem_Node() {
-  if (ConnectionItems.size() != 0) {
+  if ( ConnectionItems.size() != 0 ) {
     qDebug() << "FATAL ERROR: not all nodes have been deleted!!!";
     qDebug() << "inconsistency between the graphicsView and the data (model) might exist";
   }
@@ -85,43 +84,43 @@ void SceneItem_Node::updateData() {
 }
 
 QRectF SceneItem_Node::boundingRect() const {
-  return QRectF( -r - penWidth, -r - penWidth,
-                 2*( r + penWidth ), 2*( r + penWidth ) );
+  return QRectF( -NODERADIUS  - penWidth, -NODERADIUS  - penWidth,
+                 2*( NODERADIUS  + penWidth ), 2*( NODERADIUS  + penWidth ) );
 }
 
 void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
-  if ( (( GraphicsScene* )scene() )->want_boundingBox() )
+  if ((( GraphicsScene* )scene() )->want_boundingBox() )
     painter->drawRect( boundingRect() );
-  if ( (( GraphicsScene* )scene() )->want_drawItemShape() )
-    painter->drawPath(shape());
+  if ((( GraphicsScene* )scene() )->want_drawItemShape() )
+    painter->drawPath( shape() );
 
   QBrush brush( Qt::lightGray, Qt::SolidPattern );
 
   painter->setBrush( brush );
   painter->setPen( Qt::lightGray );
   if ( start ) {
-    QRectF rectangle( -r, -r, 2*r, 2*r );
+    QRectF rectangle( -NODERADIUS , -NODERADIUS , 2*NODERADIUS , 2*NODERADIUS );
     int startAngle = 120 * 16;
     int spanAngle = 120 * 16;
     painter->drawChord( rectangle, startAngle, spanAngle );
   }
 
   if ( final ) {
-    QRectF rectangle( -r, -r, 2*r, 2*r );
+    QRectF rectangle( -NODERADIUS , -NODERADIUS , 2*NODERADIUS , 2*NODERADIUS );
     int startAngle = 300 * 16;
     int spanAngle = 120 * 16;
     painter->drawChord( rectangle, startAngle, spanAngle );
   }
 
   QPainterPath path;
-  path.addEllipse( -r, -r, 2*r, 2*r );
+  path.addEllipse( -NODERADIUS , -NODERADIUS , 2*NODERADIUS , 2*NODERADIUS );
   QPen pen;
   if ( isSelected() ) {
     pen = QPen( Qt::red, penWidth, Qt::DotLine , Qt::RoundCap, Qt::RoundJoin );
     painter->setPen( pen );
     painter->setBrush( QBrush() );
     QPainterPath path1;
-    path1.addEllipse( -r - 3, -r - 3, 2*r + 6, 2*r + 6 );
+    path1.addEllipse( -NODERADIUS - 3, -NODERADIUS - 3, 2*NODERADIUS + 6, 2*NODERADIUS + 6 );
     painter->drawPath( path1 );
   }
   pen = QPen( Qt::black, penWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
@@ -133,7 +132,7 @@ void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */
   QString label;
   if ((( GraphicsScene* )scene() )->want_customNodeLabels() ) {
     label = (( GraphicsScene * )scene() )->data( index, customRole::CustomLabelRole ).toString();
-    if (label.size() == 0)
+    if ( label.size() == 0 )
       label = this->label;
   } else {
     label = this->label;
@@ -159,14 +158,48 @@ QVariant SceneItem_Node::itemChange( GraphicsItemChange change, const QVariant &
 }
 
 void SceneItem_Node::removeConnection( SceneItem_Connection *ci ) {
+//   qDebug() << __FUNCTION__ << (unsigned int)this << " " << (unsigned int)ci ;
   int index = ConnectionItems.indexOf( ci );
 
   if ( index != -1 )
     ConnectionItems.removeAt( index );
 }
 
+// only add new connections if they are not referenced yet
 void SceneItem_Node::addConnection( SceneItem_Connection* ci ) {
+//   qDebug() << "request to add a connection to this node: " << (unsigned int)this;
+  foreach( SceneItem_Connection* c, ConnectionItems ) {
+//     qDebug() << "is " << (unsigned int)c << " == " << (unsigned int)ci << " ?";
+    if (c == ci) {
+//       qDebug() << "item found in node's connection list:, not adding twice";
+      return;
+    }
+  }
+//   qDebug() << "item not found in node's connection list: adding a new connection to this node: " << (unsigned int)this;
   ConnectionItems.append( ci );
+}
+
+void SceneItem_Node::layoutChange() {
+  QVector<SceneItem_Connection *> itemsToAutoLayout;
+  foreach( SceneItem_Connection* c, ConnectionItems )
+  if ( !c->customTransformation() && !c->isLoop() )
+    itemsToAutoLayout.push_back( c );
+
+  qDebug() << "layoutChange(): " << ConnectionItems.size() << "items to layout";
+
+  // we have to build groups of items since we only can handle
+  // connections which go to the same destination
+
+
+
+  unsigned int size = itemsToAutoLayout.size();
+  for(int i=0; i < size; ++i) {
+    SceneItem_Connection* c = itemsToAutoLayout[i];
+    qreal owner = c->startItem() == this ? 1 : -1;
+    qreal factor = (i-(int)(size/2))*owner;
+    qDebug() << factor;
+    c->setAutoLayoutFactor(factor);
+  }
 }
 
 QPainterPath SceneItem_Node::shape() const {
@@ -212,4 +245,8 @@ void SceneItem_Node::contextMenuEvent( QGraphicsSceneContextMenuEvent * /*event*
 
 void SceneItem_Node::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   qDebug() << __FUNCTION__;
+  qDebug() << "Node: " << (unsigned int)this;
+  foreach( SceneItem_Connection* c, ConnectionItems )
+    qDebug() << "  \\------- " << (unsigned int)c;
+
 }

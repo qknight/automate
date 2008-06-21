@@ -50,7 +50,7 @@ class ItemView : public QAbstractItemView {
     void rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end );
     void dataChanged( const QModelIndex & , const QModelIndex & );
     void reset();
-    QModelIndex recurseTroughIndexes( QModelIndex index );
+    QModelIndex traverseTroughIndexes( QModelIndex index );
   public slots:
     void toggleRenderHints();
 };

@@ -58,27 +58,30 @@
 #include <QGraphicsView>
 #include <QMenu>
 #include <QGraphicsSceneMouseEvent>
+#include <QMap>
 
 #include "GraphicsScene.h"
 #include "SceneItem_Connection.h"
 #include "SceneItem_Types.h"
+
+#define NODERADIUS 24
 
 class SceneItem_Connection;
 /**
  @author Joachim Schiele <js@lastlog.de>
 */
 class SceneItem_Node : public QGraphicsItem {
+  friend class SceneItem_Connection;
   public:
     SceneItem_Node( QPersistentModelIndex index );
     ~SceneItem_Node();
-    void addConnection( SceneItem_Connection* ci );
     int type() const;
     void updateData();
     QPersistentModelIndex index;
+    void layoutChange();
   private:
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
     QPainterPath shape() const;
-    void removeConnection( SceneItem_Connection* ci );
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
     QRectF boundingRect() const;
@@ -87,11 +90,11 @@ class SceneItem_Node : public QGraphicsItem {
     bool start;
     bool final;
     bool hovering;
-    int r; /*radius*/
     qreal penWidth;
-
     void contextMenuEvent( QGraphicsSceneContextMenuEvent * event );
   protected:
+    void addConnection( SceneItem_Connection* ci );
+    void removeConnection( SceneItem_Connection* ci );
     QVariant itemChange( GraphicsItemChange change, const QVariant &value );
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
 };

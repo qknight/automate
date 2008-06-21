@@ -251,6 +251,7 @@ bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
 //     return false;
   }
   removeItem( nItem );
+  delete nItem;
   return true;
 }
 
@@ -263,6 +264,7 @@ bool GraphicsScene::connectionRemoved( QPersistentModelIndex item ) {
 //     return false;
   }
   removeItem( cItem );
+  delete cItem;
 //   delete cItem; // seems to be an bad idea, triggers a lot of program terminations?!
   return true;
 }

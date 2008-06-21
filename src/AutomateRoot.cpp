@@ -28,6 +28,12 @@ AutomateRoot::AutomateRoot( AbstractTreeItem* parent ) : AbstractTreeItem( paren
   objCnt_nodeconnection = new objectCounter;
   ID = generateUniqueID( getObjectType() );
 //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
+
+  /*  qDebug() << symbolTable.setSymbol("foo");
+  qDebug() << symbolTable.setSymbol("foo1");
+  qDebug() << symbolTable.setSymbol("foo");
+  qDebug() << symbolTable.setSymbol("foo2");
+  symbolTable.dump();*/
 }
 
 AutomateRoot::~AutomateRoot() {

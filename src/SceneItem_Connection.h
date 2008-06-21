@@ -60,26 +60,16 @@
 
 #include "SceneItem_Node.h"
 #include "SceneItem_Types.h"
-#include "SceneItem_ConnectionLabel.h"
+#include "SceneItem_ConnectionHandle.h"
 
 #define CIRCLE_FOR_SYNBOL_RADIUS 14
-#define MAX_BRUSH_SIZE 5
+#define MAX_BRUSH_SIZE 15
 
 class SceneItem_Node;
-class SceneItem_ConnectionLabel;
-// class QPixmap;
-// class QGraphicsItem;
-// class QGraphicsScene;
-// class QTextEdit;
-// class QGraphicsSceneMouseEvent;
-// class QMenu;
-// class QGraphicsSceneContextMenuEvent;
-// class QPainter;
-// class QStyleOptionGraphicsItem;
-// class QWidget;
-// class QPolygonF;
+class SceneItem_ConnectionHandle;
 
 class SceneItem_Connection : public QGraphicsItem {
+  friend class SceneItem_ConnectionHandle;
   public:
     SceneItem_Connection( QPersistentModelIndex index );
     ~SceneItem_Connection();
@@ -97,21 +87,25 @@ class SceneItem_Connection : public QGraphicsItem {
     void highlight( bool status );
 //     void setSymbol_Index( unsigned int symbol_index );
     void labelItemPositionUpdate( const QPointF& oldPos, const QPointF& newPos );
+    bool customTransformation();
+    bool isLoop();
+    void setAutoLayoutFactor(qreal factor);
   protected:
+    void setCustomTransformation(bool value);
     QString label;
     bool m_highlight;
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
     QPainterPath shape() const;
 //     QVariant itemChange( GraphicsItemChange change, const QVariant & value );
   private:
+    bool m_customTransformation;
     qreal ooffset;
     qreal poffset;
     QPainterPath connectionPath() const;
 //     QLineF oldLine;
-    QPointF labelItemOffset;
+//     QPointF labelItemOffset;
     void updateLabel();
-    SceneItem_ConnectionLabel* labelItem;
-    void mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event );
+    SceneItem_ConnectionHandle* labelItem;
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
     QLineF createLine( QPointF a, QPointF b );

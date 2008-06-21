@@ -125,7 +125,7 @@ void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int 
 }
 
 /*
-** This algorithm recurses trough the QModelIndex hierarchy
+** This algorithm traverses trough the QModelIndex hierarchy
 **  topleft -- itemA -- connection1
 **             \---- -- connection2       given the topLeft item it returns itemA
 **          -- itemB                      given itemA it returns connection1
@@ -135,7 +135,7 @@ void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int 
 **             \---- -- connection1
 **             \---- -- connection2     <- given this last item, it returns QModelIndex()
 */
-QModelIndex ItemView::recurseTroughIndexes( QModelIndex index ) {
+QModelIndex ItemView::traverseTroughIndexes( QModelIndex index ) {
 //   qDebug() << "  " << index.row() << " ";
   // 1. dive deep into the structure until we found the bottom (not bottomRight)
   QModelIndex childIndex = model->index(0,0,index);
@@ -178,7 +178,7 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
     }
     if (tmpIndex == bottomRight)
       break;
-    tmpIndex = recurseTroughIndexes( tmpIndex );
+    tmpIndex = traverseTroughIndexes( tmpIndex );
   } while ( tmpIndex.isValid());
 }
 

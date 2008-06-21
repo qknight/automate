@@ -18,6 +18,7 @@
 
 #include "AbstractTreeItem.h"
 #include "objectCounter.h"
+#include "SymbolTable.h"
 
 class AutomateRoot : public AbstractTreeItem {
   public:
@@ -31,6 +32,7 @@ class AutomateRoot : public AbstractTreeItem {
     objectCounter* objCnt_automateroot;
     objectCounter* objCnt_nodeconnection;
     unsigned int generateUniqueID( unsigned int );
+    SymbolTable symbolTable;
 };
 
 #endif

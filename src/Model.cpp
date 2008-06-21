@@ -442,7 +442,7 @@ unsigned int Model::getSelectedItemType( const QModelIndex& a ) {
 };
 
 bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
-  qDebug() << "want to remove " << count << " item(s) beginning at row " << row;
+//   qDebug() << "want to remove " << count << " item(s) beginning at row " << row;
   AbstractTreeItem* abstractitem;
   if ( !parent.isValid() ) {
     abstractitem = rootItem;
@@ -453,9 +453,9 @@ bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
 //   qDebug() << "The id of the object to delete is id::" << abstractitem->getId();
   int from_row = row;
   int to_row = row + count - 1;
+//   qDebug() << "  beginRemoveRows(parent, row_first, row_last);" << from_row << " " <<  to_row;
   beginRemoveRows( parent, from_row, to_row );
   {
-    qDebug() << "  beginRemoveRows(parent, row_first, row_last);" << from_row << " " <<  to_row;
     int i = count;
     // FIXME deleting could be speeded up by better code design here
     while ( i-- )

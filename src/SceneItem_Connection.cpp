@@ -57,7 +57,8 @@ const qreal Pi = 3.14;
 
 SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
 //   qDebug() << "Creating a new connection";
-  labelItem = new SceneItem_ConnectionLabel;
+  m_customTransformation = false;
+  labelItem = new SceneItem_ConnectionHandle;
   this->index = index;
   m_color = QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 );
 
@@ -76,13 +77,27 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
   poffset = 0.0;// this parameter means: -1 source node, 0.5 between mid and destnode, 1 destnode
 }
 
-SceneItem_Connection::~SceneItem_Connection() { }
+// - connection is removed -> remove the reference from the two associated nodes
+SceneItem_Connection::~SceneItem_Connection() {
+//   qDebug() << __FUNCTION__;
+  if (myEndItem != NULL)
+    myEndItem->removeConnection(this);
+  if (myStartItem != NULL)
+    myStartItem->removeConnection(this);
+}
 
+/*
+** tracks destination changes of a connection (reference of a connection updates)
+** updates the toolTipLabel for on mouse over
+** tracks source and dest QModelIndex and QGraphicsItem
+*/
 void SceneItem_Connection::updateData() {
+//   qDebug() << __FUNCTION__;
   if ( scene() == NULL ) {
     qDebug() << "item isn't in any scene, can't query for valid data";
     return;
   }
+  bool forceLayoutUpdate=false;
 
   unsigned int id = (( GraphicsScene* )scene() )->data( index, customRole::IdRole ).toInt();
   QString toolTip = QString( "c%1" ).arg( id );
@@ -108,19 +123,48 @@ void SceneItem_Connection::updateData() {
     return;
   symbol_index = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toInt();
 
-  (( SceneItem_Node * )a )->addConnection( this );
-  (( SceneItem_Node * )b )->addConnection( this );
-  SceneItem_Node *s = (( SceneItem_Node * )a );
-  SceneItem_Node *e = (( SceneItem_Node * )b );
+  // - a new connection is made (usual case)
+  SceneItem_Node *s = ( SceneItem_Node * )a;
+  SceneItem_Node *e = ( SceneItem_Node * )b;
+  s->addConnection( this );
+
+  if (myStartItem == NULL || myEndItem == NULL || myEndItem != e)
+    forceLayoutUpdate=true;
 
   myStartItem = s;
+
+  // Note: all connections which are just added are loops, once the connection
+  //       is in all views it's modified and updates via updateConnection
+  //       -> in case the destnode is changed, we need to remove the old reference
+  //          which can either be a loop or if the treeView was used to alter the
+  //          destination we can redirect a connection as well
+  //
+  if (myEndItem != NULL && myEndItem != e && myStartItem != myEndItem ) {
+//     qDebug() << " ----> e" << (unsigned int)e;
+//     qDebug() << " ----> myEndItem" << (unsigned int)myEndItem;
+    myEndItem->removeConnection(this);
+    e->addConnection( this );
+  }
+
   myEndItem = e;
+
+  if (s != e) {
+//     qDebug() << "adding connection to new endItem";
+    myEndItem->addConnection( this );
+  }
 
 //   qDebug() << "id of changed item " << ((GraphicsScene*)scene())->data( index, customRole::IdRole ).toInt();
   line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
-//   labelItem->setPos(0,0);
-//   oldLine = line;
   updateLabel();
+
+  // create a new layout since connections have changed
+  if (forceLayoutUpdate)
+    s->layoutChange();
+
+//   qDebug() << "myStartItem" << (unsigned int)myStartItem;
+//   qDebug() << "myEndItem" << (unsigned int)myEndItem;
+
+  // redraw the Connection
   update();
 }
 
@@ -149,7 +193,7 @@ void SceneItem_Connection::updateLabel() {
 
 // callback function from a ConnectionLabel item
 // basically this math inverts void SceneItem_Connection::updateLabel() functionality
-void SceneItem_Connection::labelItemPositionUpdate( const QPointF& oldPos, const QPointF& newPos ) {
+void SceneItem_Connection::labelItemPositionUpdate( const QPointF& /*oldPos*/, const QPointF& newPos ) {
   // FIXME this is a hack not to deform the whole scene and should be handled BETTER!
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return;
@@ -229,6 +273,7 @@ QPainterPath SceneItem_Connection::connectionPath() const {
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return QPainterPath();
 
+  // REDUNDANT CODE BELOW
   QPointF vpos = myStartItem->pos() / 2.0 + myEndItem->pos() / 2.0;
   QLineF parallel_unitLine = line.unitVector();
 
@@ -243,8 +288,7 @@ QPainterPath SceneItem_Connection::connectionPath() const {
   QPointF orthogonal_normalUnitVector = orthogonal_normalUnitLine.p2() - orthogonal_normalUnitLine.p1();
   QPointF orthogonal_diffVector = QPointF( ooffset * orthogonal_normalUnitVector.x(),
                                   ooffset * orthogonal_normalUnitVector.y() );
-
-//   labelItem->setPos( vpos + orthogonal_diffVector + parallel_diffVector );
+  // REDUNDANT CODE ABOVE
 
   QPainterPath path( mapFromItem( myStartItem, 0, 0 ) );
   QPointF offset = orthogonal_diffVector / 2;
@@ -259,12 +303,10 @@ QPainterPath SceneItem_Connection::connectionPath() const {
   QPointF d1 = -parallel_unitVector * v + orthogonal_diffVector + mapFromItem( myEndItem, 0, 0 );
   QPointF d2 = /*offset +*/ mapFromItem( myEndItem, 0, 0 );
   path.cubicTo( d1, d2, mapFromItem( myEndItem, 0, 0 ) );
-
   return path;
 }
 
 void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
-
   if ( myStartItem == myEndItem ) {
     return;
   }
@@ -402,23 +444,30 @@ void SceneItem_Connection::hoverLeaveEvent( QGraphicsSceneHoverEvent * /*event*/
 }
 
 
-void SceneItem_Connection::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
-  //FIXME add editor here
-  qDebug() << __FUNCTION__;
+void SceneItem_Connection::setCustomTransformation( bool value ) {
+  m_customTransformation = value;
+  if ( !value ) {
+    if (myStartItem != NULL)
+    ((SceneItem_Node *)myStartItem)->layoutChange();
+  }
 }
 
-// QVariant SceneItem_Connection::itemChange( GraphicsItemChange change, const QVariant & value ) {
-// //   if ( change == QGraphicsItem::ItemSceneChange ) {
-// //     //FIXME
-// //     if ( value == NULL ) {
-// //       qDebug() << "call scene destructor here";
-// // //       scene()->removeItem(labelItem);
-// //     } else {
-// //       qDebug() << "added a labelItem";
-// //
-// //     }
-// //   }
-//   return QGraphicsItem::itemChange( change, value );
-// }
-//
+bool SceneItem_Connection::customTransformation() {
+  return m_customTransformation;
+}
+
+bool SceneItem_Connection::isLoop() {
+  if ( myStartItem != NULL && myEndItem != NULL )
+    return ( myStartItem == myEndItem );
+  else {
+    qDebug() << "critical error: this case is not handled yet " << __FUNCTION__;
+    return true;
+  }
+}
+
+void SceneItem_Connection::setAutoLayoutFactor(qreal factor) {
+  ooffset = factor * (2*CIRCLE_FOR_SYNBOL_RADIUS + 2);
+  updateLabel();
+}
+
 
