@@ -170,7 +170,7 @@ void SceneItem_Node::addConnection( SceneItem_Connection* ci ) {
 //   qDebug() << "request to add a connection to this node: " << (unsigned int)this;
   foreach( SceneItem_Connection* c, ConnectionItems ) {
 //     qDebug() << "is " << (unsigned int)c << " == " << (unsigned int)ci << " ?";
-    if (c == ci) {
+    if ( c == ci ) {
 //       qDebug() << "item found in node's connection list:, not adding twice";
       return;
     }
@@ -180,26 +180,38 @@ void SceneItem_Node::addConnection( SceneItem_Connection* ci ) {
 }
 
 void SceneItem_Node::layoutChange() {
-  QVector<SceneItem_Connection *> itemsToAutoLayout;
+//   qDebug() << "layoutChange(): " << ConnectionItems.size() << "items to layout";
+
+  QList<SceneItem_Connection *> itemsToAutoLayout;
   foreach( SceneItem_Connection* c, ConnectionItems )
-  if ( !c->customTransformation() && !c->isLoop() )
+  if ( !c->customTransformation() && !c->isLoop() ) {
     itemsToAutoLayout.push_back( c );
-
-  qDebug() << "layoutChange(): " << ConnectionItems.size() << "items to layout";
-
-  // we have to build groups of items since we only can handle
-  // connections which go to the same destination
-
-
+  }
 
   unsigned int size = itemsToAutoLayout.size();
-  for(int i=0; i < size; ++i) {
-    SceneItem_Connection* c = itemsToAutoLayout[i];
-    qreal owner = c->startItem() == this ? 1 : -1;
-    qreal factor = (i-(int)(size/2))*owner;
-    qDebug() << factor;
-    c->setAutoLayoutFactor(factor);
+  int groupCount = 0;
+  QVector<SceneItem_Connection *> itemsToAutoLayoutGroup;
+  while ( itemsToAutoLayout.size() > 0 ) {
+    ++groupCount;
+    itemsToAutoLayoutGroup.clear();
+    SceneItem_Connection *a = itemsToAutoLayout.takeFirst();
+    unsigned int w = (unsigned int)((unsigned int)a->endItem() ^ (unsigned int)a->startItem());
+    itemsToAutoLayoutGroup.push_back(a);
+    for ( int i = 0; i < itemsToAutoLayout.size(); ) {
+      if ((unsigned int)((unsigned int)itemsToAutoLayout[i]->endItem() ^ (unsigned int)itemsToAutoLayout[i]->startItem()) == w)
+        itemsToAutoLayoutGroup.push_back(itemsToAutoLayout.takeAt(i));
+      else
+        ++i;
+    }
+    for ( int i = 0; i < itemsToAutoLayoutGroup.size(); ++i ) {
+      SceneItem_Connection* c = itemsToAutoLayoutGroup[i];
+      qreal owner = c->startItem() == this ? 1 : -1;
+      qreal factor = ( i - ( int )( itemsToAutoLayoutGroup.size() / 2 ) ) * owner;
+//       qDebug() << factor;
+      c->setAutoLayoutFactor( factor );
+    }
   }
+//   qDebug() << "groupCount ==" << groupCount;
 }
 
 QPainterPath SceneItem_Node::shape() const {
@@ -245,8 +257,8 @@ void SceneItem_Node::contextMenuEvent( QGraphicsSceneContextMenuEvent * /*event*
 
 void SceneItem_Node::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   qDebug() << __FUNCTION__;
-  qDebug() << "Node: " << (unsigned int)this;
+  qDebug() << "Node: " << ( unsigned int )this;
   foreach( SceneItem_Connection* c, ConnectionItems )
-    qDebug() << "  \\------- " << (unsigned int)c;
+  qDebug() << "  \\------- " << ( unsigned int )c;
 
 }

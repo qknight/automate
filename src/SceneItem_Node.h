@@ -58,7 +58,7 @@
 #include <QGraphicsView>
 #include <QMenu>
 #include <QGraphicsSceneMouseEvent>
-#include <QMap>
+#include <QMultiMap>
 
 #include "GraphicsScene.h"
 #include "SceneItem_Connection.h"

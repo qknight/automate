@@ -1,11 +1,9 @@
 FIXME graphicsitem
-  - connectionItem FIXME why is this function never called?! even making it virtual didn't help
   - BUG if connectionLabel is moved between two nodes it's resizing on node move is correct
     BUT if the connectionLabel is moved beyond on node it's resizing is done into the wrong direction
     -> while the distance between the nodes shrinks the object moves even farer away
   - add arrow
   - drawing of loops
-  - adding a new connection should invoke a auto connection adder routine with auto-layout
   - fix object initialisation of a connection
     - two overlapping connectionLabels should be drawn RED!
   - fix connectionItem bbox
