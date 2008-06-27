@@ -54,15 +54,13 @@ class Model : public QAbstractItemModel {
     QVariant data( const QModelIndex &, int role ) const;
     bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
 
-    unsigned int getSelectedItemType( const QModelIndex& );
-    QModelIndex next_nodeModelIndex( QModelIndex item );
-    QString objectTypeQString( unsigned int input );
-    unsigned int getTreeItemType( const QModelIndex& item );
-    AbstractTreeItem* AbstractTreeItemFromId( unsigned int id );
-
     bool removeItems( QList<QPersistentModelIndex> itemList );
     bool insertNode();
     bool insertConnection( QModelIndex startItem, QModelIndex endItem = QModelIndex() );
+
+    unsigned int getSelectedItemType( const QModelIndex& );
+    unsigned int getTreeItemType( const QModelIndex& item );
+    QModelIndex next_nodeModelIndex( QModelIndex item );
 
     // symbolTable specific stuff
     int symbol(QString symbol);
@@ -71,6 +69,8 @@ class Model : public QAbstractItemModel {
     int size();
 
   private:
+    QString objectTypeQString( unsigned int input );
+    AbstractTreeItem* AbstractTreeItemFromId( unsigned int id );
     bool removeNode( QPersistentModelIndex node );
     bool removeNodes( QList<QPersistentModelIndex> nodeList );
     bool removeConnection( QPersistentModelIndex connection );

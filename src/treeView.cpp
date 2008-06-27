@@ -58,7 +58,7 @@ treeView::treeView( Model* model, QMainWindow* parent ) : AbstractView( parent )
 }
 
 void treeView::currentChanged( const QModelIndex & current, const QModelIndex & /*previous*/ ) {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   QString a;
   QModelIndex currentItem = proxyModel->mapToSource( current );
   if ( !currentItem.isValid() ) {
@@ -106,11 +106,12 @@ void treeView::delSelectedItems( ) {
   QList<QPersistentModelIndex> selectedItems;
   foreach( QModelIndex selectedItem, ism->selectedRows() )
     selectedItems.append( QPersistentModelIndex(proxyModel->mapToSource( selectedItem ) ) );
-  qDebug( "%i selected item(s) to remove", selectedItems.size() );
-  if ( model->removeItems( selectedItems ) )
+//   qDebug( "%i selected item(s) to remove", selectedItems.size() );
+  /*bool s =*/ model->removeItems( selectedItems );
+/*  if ( s )
     qDebug() << "success removing all selected nodes";
   else
-    qDebug() << "FAILED removing all selected nodes";
+    qDebug() << "FAILED removing all selected nodes";*/
 }
 
 void treeView::addNode() {
