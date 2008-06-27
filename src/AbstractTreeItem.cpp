@@ -28,9 +28,11 @@ AbstractTreeItem::AbstractTreeItem( AbstractTreeItem *parent ) {
   ID = 0; //initialize the id, 0 is rootNode or
 }
 
+// WARNING: never delete objects as for instance childItems in the structure here
+// since this will create inconsistencies between the model and this data structure.
+// A better way is to fail with exit(0) since this problem must be handled with great care!
 AbstractTreeItem::~AbstractTreeItem() {
 //   qDebug() << "AbstractTreeItem Destructor called";
-  qDeleteAll( childItems );
 }
 
 void AbstractTreeItem::appendChild( AbstractTreeItem *item ) {
@@ -38,15 +40,15 @@ void AbstractTreeItem::appendChild( AbstractTreeItem *item ) {
     qDebug( "ERROR: you can't add a child to a parent item where \
             the parent of the child doesn't match the parent you want to add it to!" );
   }
-  childItems.append( item );
+  m_childItems.append( item );
 }
 
 AbstractTreeItem *AbstractTreeItem::child( int row ) {
-  return childItems.value( row );
+  return m_childItems.value( row );
 }
 
 int AbstractTreeItem::childCount() const {
-  return childItems.count();
+  return m_childItems.count();
 }
 
 int AbstractTreeItem::columnCount() const {
@@ -64,7 +66,7 @@ AbstractTreeItem *AbstractTreeItem::parent() {
 int AbstractTreeItem::row() const {
 //   qDebug() << (unsigned int) parentItem;
   if ( parentItem )
-    return parentItem->childItems.indexOf( const_cast<AbstractTreeItem*>( this ) );
+    return parentItem->m_childItems.indexOf( const_cast<AbstractTreeItem*>( this ) );
 
   return 0;
 }
@@ -73,4 +75,10 @@ unsigned int AbstractTreeItem::getId() {
   return ID;
 }
 
+QList<AbstractTreeItem*> AbstractTreeItem::childItems() const {
+  return m_childItems;
+}
 
+void AbstractTreeItem::setParent(AbstractTreeItem *parent) {
+  parentItem = parent;
+}

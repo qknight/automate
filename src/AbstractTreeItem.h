@@ -36,34 +36,34 @@ enum TreeItemType {
 };
 
 class AbstractTreeItem : public objectProperty {
-  friend class node;
-  friend class node_connection;
-  friend class AutomateRoot;
+    friend class node;
+    friend class node_connection;
+    friend class AutomateRoot;
 
-    protected:
-      AbstractTreeItem( AbstractTreeItem *parent = 0 );
-    public:
-      //FIXME make this protected later
-      virtual ~AbstractTreeItem();
-      virtual void removeChild( unsigned int index ) = 0;
-      virtual void dump() = 0;
-      virtual unsigned int getObjectType() = 0;
-      void appendChild( AbstractTreeItem *child );
-      AbstractTreeItem *child( int row );
-      int childCount() const;
-      int columnCount() const;
-      QVariant data( int column ) const;
-      int row() const;
-      AbstractTreeItem *parent();
-      QList<AbstractTreeItem*> childItems;
-      QList<QVariant> itemData;
-      AbstractTreeItem *parentItem;
-      unsigned int getId();
-
-    protected:
-      virtual unsigned int generateUniqueID( unsigned int )=0;
-      unsigned int ID;
-      unsigned int objectType;
-  };
+  protected:
+    AbstractTreeItem( AbstractTreeItem *parent = 0 );
+    virtual unsigned int generateUniqueID( unsigned int ) = 0;
+    unsigned int ID;
+    unsigned int objectType;
+    QList<AbstractTreeItem*> m_childItems;
+    void setParent(AbstractTreeItem *parent);
+  public:
+    virtual ~AbstractTreeItem();
+    virtual void removeChild( unsigned int index ) = 0;
+    virtual void appendChild( AbstractTreeItem *child );
+    virtual void dump() = 0;
+    virtual unsigned int getObjectType() = 0;
+    AbstractTreeItem *child( int row );
+    int childCount() const;
+    int columnCount() const;
+    QVariant data( int column ) const;
+    int row() const;
+    AbstractTreeItem *parent();
+    unsigned int getId();
+    QList<AbstractTreeItem*> childItems() const;
+  private:
+    AbstractTreeItem *parentItem;
+    QList<QVariant> itemData;
+};
 
 #endif

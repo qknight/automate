@@ -20,7 +20,7 @@
 #include "objectCounter.h"
 #include "SymbolTable.h"
 
-class AutomateRoot : public AbstractTreeItem {
+class AutomateRoot : public AbstractTreeItem, protected SymbolTable {
   public:
     AutomateRoot( AbstractTreeItem* parent = 0 );
     ~AutomateRoot();
@@ -32,7 +32,8 @@ class AutomateRoot : public AbstractTreeItem {
     objectCounter* objCnt_automateroot;
     objectCounter* objCnt_nodeconnection;
     unsigned int generateUniqueID( unsigned int );
-    SymbolTable symbolTable;
+/*  protected:
+    SymbolTable symbolTable;*/
 };
 
 #endif

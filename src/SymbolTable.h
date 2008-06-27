@@ -17,16 +17,20 @@
 #include <QDebug>
 
 /**
-	@author Joachim Schiele <js@lastlog.de>
-*/
+  @author Joachim Schiele <js@lastlog.de>
+ */
+
 class SymbolTable{
-  friend class AutomateRoot;
-public:
+  friend class Model;
+  friend class automatehandler;
+  public:
     SymbolTable();
     ~SymbolTable();
   protected:
-    int setSymbol(QString symbol);
-    QString symbol(int symbol_index);
+    int symbol(QString symbol);
+    QString symbol(int symbol_index) const;
+    int modifySymbol( int position, QString newsymbol);
+    int size();
     void dump();
   private:
     QHash<int,QString> hash;

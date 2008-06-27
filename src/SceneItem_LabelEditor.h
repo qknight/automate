@@ -35,14 +35,13 @@ class SceneItem_ConnectionHandle;
  */
 class SceneItem_LabelEditor : public QGraphicsTextItem {
   public:
-    SceneItem_LabelEditor( SceneItem_ConnectionHandle* parent );
+    SceneItem_LabelEditor(QGraphicsItem* parent);
     ~SceneItem_LabelEditor();
+    int type() const;
   private:
-    SceneItem_ConnectionHandle* parent;
     QTextDocument* d;
     void focusInEvent( QFocusEvent *event );
     void focusOutEvent( QFocusEvent *event );
-//     QVariant itemChange ( GraphicsItemChange change, const QVariant & value );
 };
 
 #endif

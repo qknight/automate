@@ -31,14 +31,13 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
  */
-class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
-  Q_OBJECT
+class SceneItem_ConnectionHandle : public QGraphicsItem {
   friend class SceneItem_ConnectionLabel;
   public:
     SceneItem_ConnectionHandle();
     ~SceneItem_ConnectionHandle();
     void setLabel(QString label);
-    void requestLabelChange(QString label);
+    int type() const;
   protected:
     QPainterPath shape() const;
     QRectF boundingRect() const;

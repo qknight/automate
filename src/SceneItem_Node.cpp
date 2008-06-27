@@ -58,6 +58,7 @@ SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() 
 
   setZValue( 10 );
   this->index = index;
+  labelEditor = NULL;
 }
 
 SceneItem_Node::~SceneItem_Node() {
@@ -89,15 +90,24 @@ QRectF SceneItem_Node::boundingRect() const {
 }
 
 void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
+
   if ((( GraphicsScene* )scene() )->want_boundingBox() )
     painter->drawRect( boundingRect() );
   if ((( GraphicsScene* )scene() )->want_drawItemShape() )
     painter->drawPath( shape() );
 
+  //FIXME this can be done better: lines should be drawn from outside the circle
+  QBrush wbrush( Qt::white, Qt::SolidPattern );
+  painter->setBrush( wbrush );
+
+  QRectF pad( -NODERADIUS , -NODERADIUS , 2*NODERADIUS , 2*NODERADIUS );
+  painter->drawChord( pad, 0, 16*320 );
+
   QBrush brush( Qt::lightGray, Qt::SolidPattern );
 
   painter->setBrush( brush );
   painter->setPen( Qt::lightGray );
+
   if ( start ) {
     QRectF rectangle( -NODERADIUS , -NODERADIUS , 2*NODERADIUS , 2*NODERADIUS );
     int startAngle = 120 * 16;
@@ -195,16 +205,18 @@ void SceneItem_Node::layoutChange() {
     ++groupCount;
     itemsToAutoLayoutGroup.clear();
     SceneItem_Connection *a = itemsToAutoLayout.takeFirst();
-    unsigned int w = (unsigned int)((unsigned int)a->endItem() ^ (unsigned int)a->startItem());
-    itemsToAutoLayoutGroup.push_back(a);
+    unsigned int w = ( unsigned int )(( unsigned int )a->endItem() ^( unsigned int )a->startItem() );
+    itemsToAutoLayoutGroup.push_back( a );
     for ( int i = 0; i < itemsToAutoLayout.size(); ) {
-      if ((unsigned int)((unsigned int)itemsToAutoLayout[i]->endItem() ^ (unsigned int)itemsToAutoLayout[i]->startItem()) == w)
-        itemsToAutoLayoutGroup.push_back(itemsToAutoLayout.takeAt(i));
+      if (( unsigned int )(( unsigned int )itemsToAutoLayout[i]->endItem() ^( unsigned int )itemsToAutoLayout[i]->startItem() ) == w )
+        itemsToAutoLayoutGroup.push_back( itemsToAutoLayout.takeAt( i ) );
       else
         ++i;
     }
     for ( int i = 0; i < itemsToAutoLayoutGroup.size(); ++i ) {
+//       bool oddOrEven = itemsToAutoLayoutGroup.size() % 2;
       SceneItem_Connection* c = itemsToAutoLayoutGroup[i];
+      // either the owner is (this node) or (connection item's next_node)
       qreal owner = c->startItem() == this ? 1 : -1;
       qreal factor = ( i - ( int )( itemsToAutoLayoutGroup.size() / 2 ) ) * owner;
 //       qDebug() << factor;
@@ -257,8 +269,10 @@ void SceneItem_Node::contextMenuEvent( QGraphicsSceneContextMenuEvent * /*event*
 
 void SceneItem_Node::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   qDebug() << __FUNCTION__;
-  qDebug() << "Node: " << ( unsigned int )this;
-  foreach( SceneItem_Connection* c, ConnectionItems )
-  qDebug() << "  \\------- " << ( unsigned int )c;
+  labelEditor = new SceneItem_LabelEditor( this );
+  labelEditor->setZValue( 1000.0 );
+  labelEditor->setTextInteractionFlags( Qt::TextEditorInteraction );
+  scene()->addItem( labelEditor );
 
+  qDebug() << ConnectionItems.size();
 }

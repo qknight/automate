@@ -28,6 +28,7 @@
 #include <QDebug>
 #include <QIcon>
 
+#include "AutomateRoot.h"
 #include "AbstractTreeItem.h"
 #include "node_connection.h"
 #include "node.h"
@@ -54,19 +55,27 @@ class Model : public QAbstractItemModel {
     bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
 
     unsigned int getSelectedItemType( const QModelIndex& );
-    QModelIndex getQModelIndexFromAbstractNodeItem( AbstractTreeItem* item );
     QModelIndex next_nodeModelIndex( QModelIndex item );
     QString objectTypeQString( unsigned int input );
     unsigned int getTreeItemType( const QModelIndex& item );
     AbstractTreeItem* AbstractTreeItemFromId( unsigned int id );
 
+    bool removeItems( QList<QPersistentModelIndex> itemList );
     bool insertNode();
     bool insertConnection( QModelIndex startItem, QModelIndex endItem = QModelIndex() );
-    bool removeNode( QModelIndex node );
-    bool removeNodes( QList<QModelIndex> nodeList );
-    bool removeConnection( QModelIndex connection );
+
+    // symbolTable specific stuff
+    int symbol(QString symbol);
+    QString symbol(int symbol_index) const;
+    int modifySymbol( int position, QString newsymbol);
+    int size();
 
   private:
+    bool removeNode( QPersistentModelIndex node );
+    bool removeNodes( QList<QPersistentModelIndex> nodeList );
+    bool removeConnection( QPersistentModelIndex connection );
+    bool removeConnections( QList<QPersistentModelIndex> nodeList );
+    QModelIndex getQModelIndexFromAbstractNodeItem( AbstractTreeItem* item );
     AbstractTreeItem* rootItem;
     Qt::ItemFlags flags( const QModelIndex & index ) const;
 //     bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;

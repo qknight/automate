@@ -54,9 +54,9 @@ class GraphicsScene : public QGraphicsScene {
     bool connectionRemoved( QPersistentModelIndex item );
     void reset();
 
-  protected:
+  public:
     QVariant data( const QModelIndex &index, int role ) const;
-
+    bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
   private:
     bool m_want_highlight;
     bool m_want_boundingBox;
@@ -99,6 +99,7 @@ class GraphicsScene : public QGraphicsScene {
     void toggleRenderHints();
     void zoomOut();
     void zoomIn();
+    void zoomFit();
 };
 
 #endif

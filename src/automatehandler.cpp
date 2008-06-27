@@ -83,7 +83,11 @@ void automatehandler::addRandomAutomate() {
   //  the automateRoot() function will be made protected
   //  and not pulic as it is right now!
   AbstractTreeItem* rootnode = myautomate1->automateRootPtr();
-
+  AutomateRoot* r = (AutomateRoot*)rootnode;
+  r->symbol("a");
+  r->symbol("Q");
+  r->symbol("f");
+  r->symbol("_%");
 //   qDebug() << "rootnode=" << (unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
@@ -118,8 +122,8 @@ void automatehandler::addRandomAutomate() {
       node* node1 = static_cast<node*>( z );
 
       node_connection* nc1 =  new node_connection( node1 );
-      nc1->symbol_index = qrand() % 10;
-      nc1->next_node = rootnode->child( qrand() % rootnode->childCount() );
+      nc1->symbol_index = qrand() % r->size();
+      nc1->setNext_node( rootnode->child( qrand() % rootnode->childCount() ));
       // add connection to the picked node
       node1->appendChild( static_cast<AbstractTreeItem*>( nc1 ) );
     }

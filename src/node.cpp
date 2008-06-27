@@ -25,13 +25,19 @@ node::node( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
 //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 }
 
+// WARNING: never delete objects as for instance childItems in the structure here
+// since this will create inconsistencies between the model and this data structure.
+// A better way is to fail with exit(0) since this problem must be handled with great care!
 node::~node() {
 //   qDebug() << "~node()";
-//   if ( childItems.size() > 0 )
-//     qDebug() << "Warning, still have " << childItems.size() << " childItems";
-//   if ( reverseChildItems.size() > 0 )
-//     qDebug() << "Warning, still have " << reverseChildItems.size() << " reverseChildItems";
-  qDeleteAll( reverseChildItems );
+  if ( m_childItems.size() > 0 ) {
+    qDebug() << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
+    exit(0);
+  }
+  if ( m_reverseChildItems.size() > 0 ) {
+    qDebug() << "FATAL ERROR: Still have " << m_reverseChildItems.size() << " reverseChildItems";
+    exit(0);
+  }
 }
 
 void node::dump() {
@@ -44,8 +50,8 @@ void node::dump() {
   }
 
   qDebug() << "     |-backward childs";
-  for ( int i = 0; i < reverseChildItems.size(); ++i ) {
-    reverseChildItems[i]->dump();
+  for ( int i = 0; i < reverseChildItems().size(); ++i ) {
+    reverseChildItems()[i]->dump();
   }
 }
 
@@ -62,40 +68,72 @@ void node::appendChild( AbstractTreeItem *item ) {
 
   // this is the inverted connection item: r_item
   node_connection* f_item = static_cast<node_connection*>( item );
-  node_connection* r_item = new node_connection( f_item->next_node );
-  r_item->next_node = this;
+  node_connection* r_item = new node_connection( f_item->next_node() );
+  r_item->setNext_node(this);
   r_item->symbol_index = f_item->symbol_index;
 
-  node* dst = static_cast<node*>( f_item->next_node );
+  node* dst = static_cast<node*>( f_item->next_node() );
 
-  f_item->inverseConnectionId = r_item->getId();
-  r_item->inverseConnectionId = f_item->getId();
+  f_item->inverseConnection = r_item;
+  r_item->inverseConnection = f_item;
   dst->appendChildReversePath( r_item );
   appendChildForwardPath( f_item );
 }
 
+void node::removeChild( unsigned int index ) {
+  // 1. first delete the reverse connection
+  node_connection* f_item = ((node_connection*)m_childItems[index]);
+  node_connection* r_item = f_item->inverseConnection;
+//   qDebug() << (unsigned int)f_item->inverseConnection;
+//   qDebug() << (unsigned int)r_item->inverseConnection;
+//   ((node*)r_item->parent())->removeChildReversePath(r_item);
+
+  AbstractTreeItem* rItem = r_item;//inverseConnection;
+  AbstractTreeItem* rItemParent = rItem->parent();
+  (( node* )rItemParent )->removeChildReversePath( rItem );
+
+//   node_connection* f_item = ((node_connection*)m_childItems[index]);
+//   node_connection* r_item = f_item->inverseConnection;
+//   ((node*)r_item->parent())->removeChildReversePath(r_item);
+
+  // 2. now finally delete the forward connection
+  m_childItems.removeAt( index );
+}
+
 void node::appendChildForwardPath( AbstractTreeItem *item ) {
-  if ( childItems.contains( item ) ) {
+  if ( m_childItems.contains( item ) ) {
     qDebug( "ERROR: detected an attepmt to add an already existing child!" );
     return;
   }
-  childItems.append( item );
+  m_childItems.append( item );
 }
 
 void node::appendChildReversePath( AbstractTreeItem *r_item ) {
   //TODO symbol needs to be set as well
-  if ( reverseChildItems.contains( r_item ) ) {
+  if ( m_reverseChildItems.contains( r_item ) ) {
     qDebug( "ERROR: detected an attepmt to add an already existing reverseChild!" );
     return;
   }
 
-  reverseChildItems.append( r_item );
+  m_reverseChildItems.append( r_item );
 }
 
-void node::removeChild( unsigned int index ) {
-  childItems.removeAt( index );
+void node::removeChildReversePath( AbstractTreeItem *item ){
+  for(int i=0; i < m_reverseChildItems.size(); ++i)
+    if (item == m_reverseChildItems[i]) {
+//       qDebug() << (unsigned int) this << "Item to delete found";
+      m_reverseChildItems.removeAt(i);
+      return;
+    }
+//     qDebug() << (unsigned int) this <<  "Item to delete NOT found";
 }
 
 unsigned int node::generateUniqueID( unsigned int a ) {
   return parentItem->generateUniqueID( a );
 }
+
+const QList<AbstractTreeItem*> node::reverseChildItems() {
+  return m_reverseChildItems;
+}
+
+

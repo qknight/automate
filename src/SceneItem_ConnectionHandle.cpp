@@ -12,17 +12,10 @@
 
 #include "SceneItem_ConnectionHandle.h"
 // http://lists.trolltech.com/qt-interest/2007-03/thread00929-0.html
-SceneItem_ConnectionHandle::SceneItem_ConnectionHandle() : QGraphicsItem() {
-  setFlag( QGraphicsItem::ItemIsFocusable );
-  setFlag( QGraphicsItem::ItemIsMovable );
-//   setFlag(QGraphicsItem::ItemIsSelectable);
-//   setZValue( 100 );
-  move_object_on_mouseMove = false;
-}
 
-void SceneItem_ConnectionHandle::requestLabelChange( QString label ) {
-  //FIXME?? is this code complete?
-  m_label = label;
+SceneItem_ConnectionHandle::SceneItem_ConnectionHandle() : QGraphicsItem() {
+  setFlag( QGraphicsItem::ItemIsMovable );
+  move_object_on_mouseMove = false;
 }
 
 void SceneItem_ConnectionHandle::setLabel( QString label ) {
@@ -30,7 +23,6 @@ void SceneItem_ConnectionHandle::setLabel( QString label ) {
 }
 
 SceneItem_ConnectionHandle::~SceneItem_ConnectionHandle() {
-
 }
 
 QPainterPath SceneItem_ConnectionHandle::shape() const {
@@ -104,12 +96,10 @@ void SceneItem_ConnectionHandle::mouseReleaseEvent( QGraphicsSceneMouseEvent * e
 }
 
 void SceneItem_ConnectionHandle::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event ) {
-  qDebug() << __FUNCTION__ << "now";
-  SceneItem_LabelEditor* f = new SceneItem_LabelEditor( this );
-
+  qDebug() << __FUNCTION__;
+  SceneItem_LabelEditor* f = new SceneItem_LabelEditor(this);
   f->setZValue( 1000.0 );
   f->setTextInteractionFlags( Qt::TextEditorInteraction );
-  f->setPos( pos()/*+QPointF(20,20)*/ );
   scene()->addItem( f );
 }
 
@@ -118,10 +108,10 @@ QVariant SceneItem_ConnectionHandle::itemChange( GraphicsItemChange change, cons
   if ( move_object_on_mouseMove ) {
     if ( parentItem() != NULL )
       (( SceneItem_Connection* )parentItem() )->setCustomTransformation(true);
-    if ( change == ItemPositionChange && scene() ) {
+    if ( scene() && change == ItemPositionChange ) {
       // pos() is the old position, value is the new position.
       if ( parentItem() != NULL ) {
-        (( SceneItem_Connection* )parentItem() )->labelItemPositionUpdate( pos(), value.toPointF() );
+        (( SceneItem_Connection* )parentItem() )->labelItemPositionCallback( pos(), value.toPointF() );
       }
     }
   }
@@ -136,3 +126,7 @@ void SceneItem_ConnectionHandle::contextMenuEvent( QGraphicsSceneContextMenuEven
   menu.exec( event->screenPos() );
 }
 
+
+int SceneItem_ConnectionHandle::type() const {
+  return SceneItem_ConnectionHandleType;
+}

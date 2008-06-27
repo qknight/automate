@@ -36,6 +36,9 @@ AutomateRoot::AutomateRoot( AbstractTreeItem* parent ) : AbstractTreeItem( paren
   symbolTable.dump();*/
 }
 
+// WARNING: never delete objects as for instance childItems in the structure here
+// since this will create inconsistencies between the model and this data structure.
+// A better way is to fail with exit(0) since this problem must be handled with great care!
 AutomateRoot::~AutomateRoot() {
   delete objCnt_node;
   delete objCnt_automateroot;
@@ -55,12 +58,12 @@ unsigned int AutomateRoot::getObjectType() {
 }
 
 void AutomateRoot::removeChild( unsigned int index ) {
-  if ( (unsigned int)childItems.size() < index ) {
+  if ( (unsigned int)m_childItems.size() < index ) {
     qDebug() << "Fatal error, childItems.size() < index!";
-    qDebug() << "having " << childItems.size() << " childs";
+    qDebug() << "having " << m_childItems.size() << " childs";
     exit( 0 );
   }
-  childItems.removeAt( index );
+  m_childItems.removeAt( index );
 }
 
 unsigned int AutomateRoot::generateUniqueID( unsigned int a ) {

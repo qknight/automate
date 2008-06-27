@@ -30,6 +30,7 @@ mainGraphicsView::mainGraphicsView( Model *model, QMainWindow* parent ) : Abstra
 
   connect(scene,SIGNAL(zoomOut()), this, SLOT(zoomOut()));
   connect(scene,SIGNAL(zoomIn()), this, SLOT(zoomIn()));
+  connect(scene,SIGNAL(zoomFit()), this, SLOT(zoomFit()));
   connect(scene, SIGNAL(hideView()), this, SLOT(hide()));
   connect(scene, SIGNAL(toggleRenderHints()), itemView, SLOT(toggleRenderHints()));
 }
@@ -75,6 +76,10 @@ void mainGraphicsView::populateMenu() {
   tb->addAction(zoomNormalAction);
   connect(zoomNormalAction, SIGNAL(triggered()), this, SLOT(zoomNormal()));
 
+  QAction* zoomFitAction = new QAction(QIcon(":/icons/viewmagfit.png"),"Zoom Fit '/'", this);
+  tb->addAction(zoomFitAction);
+  connect(zoomFitAction, SIGNAL(triggered()), this, SLOT(zoomFit()));
+
   tb->addSeparator();
 
   QAction* toggleHighlightAction = new QAction(QIcon(":/icons/highlighting.png"),"'h' - toggleHighlightAction", this);
@@ -111,9 +116,18 @@ void mainGraphicsView::populateMenu() {
 void mainGraphicsView::zoomIn() {
   view->scale( 1.2, 1.2 );
 }
+
 void mainGraphicsView::zoomOut() {
   view->scale( 0.8, 0.8 );
 }
+
 void mainGraphicsView::zoomNormal() {
   view->resetMatrix();
+}
+
+void mainGraphicsView::zoomFit() {
+  qDebug() << "FIXME zoomFit() not implemented yet";
+  //FIXME put your code here
+//   view->resetMatrix();
+//   view->setSceneRect(scene->sceneRect());
 }

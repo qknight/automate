@@ -10,7 +10,6 @@
 //
 //
 #include "ItemView.h"
-#include "SceneItem_FlexibleConnection.h"
 
 ItemView::ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWidget * parent ) : QAbstractItemView( parent ) {
   this->view = view;
@@ -101,7 +100,7 @@ void ItemView::processNewNodes() {
 }
 
 void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
-  qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
+//   qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
   for ( int i = start; i <= end; ++i ) {
     QModelIndex item = model->index( i, 0, parent );
     if ( model->getTreeItemType( item ) == NODE )

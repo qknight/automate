@@ -25,6 +25,7 @@
 #include "node_connection.h"
 
 class node : public AbstractTreeItem {
+  friend class node_connection;
   public:
     node( AbstractTreeItem* parent );
     ~node();
@@ -32,12 +33,16 @@ class node : public AbstractTreeItem {
     unsigned int getObjectType();
     void appendChild( AbstractTreeItem *child );
     void removeChild( unsigned int index );
-
-    QList<AbstractTreeItem*> reverseChildItems;
+    const QList<AbstractTreeItem*> reverseChildItems();
   private:
-    void appendChildForwardPath( AbstractTreeItem *item );
-    void appendChildReversePath( AbstractTreeItem *item );
     unsigned int generateUniqueID( unsigned int );
+    QList<AbstractTreeItem*> m_reverseChildItems;
+  protected:
+    void appendChildReversePath( AbstractTreeItem *item );
+    void appendChildForwardPath( AbstractTreeItem *item );
+    void removeChildReversePath( AbstractTreeItem *item );
 };
 
 #endif
+
+

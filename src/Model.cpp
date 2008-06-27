@@ -113,7 +113,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     return QVariant();
 
   AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
-  if ( role == customRole::CustomLabelRole)
+  if ( role == customRole::CustomLabelRole )
     return n->getProperty( "CustomLabelRole" );
   if ( role == customRole::FinalRole )
     if ( n->getObjectType() == NODE )
@@ -124,16 +124,17 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
   if ( role == customRole::SymbolIndexRole )
     if ( n->getObjectType() == NODE_CONNECTION ) {
       node_connection* nc = static_cast<node_connection*>( index.internalPointer() );
-      return nc->symbol_index;
+//       qDebug() << __FUNCTION__ << symbol( nc->symbol_index ) << nc->symbol_index;
+      return symbol( nc->symbol_index ) ;
     }
   if ( role == customRole::IdRole )
     if ( n->getObjectType() == NODE || n->getObjectType() == NODE_CONNECTION )
       return n->getId();
   if ( role == Qt::BackgroundRole ) {
     if ( n->getObjectType() == NODE )
-      return QBrush( QColor( 50, 160, 170 ) );
+      return QBrush( QColor( 50, 160, 170, 150 ) );
     if ( n->getObjectType() == NODE_CONNECTION )
-      return QBrush( QColor( 180, 200, 200 ) );
+      return QBrush( QColor( 180, 200, 200, 50 ) );
   }
   switch ( index.column() ) {
   case 0:
@@ -161,11 +162,11 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     case Qt::DecorationRole:
       if ( n->getObjectType() == NODE ) {
         if ( n->getProperty( "start" ).toBool() ) {
-          if (role ==customRole::SortRole)
+          if ( role == customRole::SortRole )
             return 1;
           return QIcon( ":/icons/startNode.png" );
         } else {
-          if (role ==customRole::SortRole)
+          if ( role == customRole::SortRole )
             return 0;
         }
       }
@@ -180,11 +181,11 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     case Qt::DecorationRole:
       if ( n->getObjectType() == NODE ) {
         if ( n->getProperty( "final" ).toBool() ) {
-          if (role ==customRole::SortRole)
+          if ( role == customRole::SortRole )
             return 1;
           return QIcon( ":/icons/finalNode.png" );
         } else {
-          if (role ==customRole::SortRole)
+          if ( role == customRole::SortRole )
             return 0;
         }
       }
@@ -217,8 +218,8 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
       if ( n->getObjectType() == NODE_CONNECTION ) {
         if ( role == customRole::SortRole )
           return ( static_cast<node_connection*>( n ) )->symbol_index;// "node_connection";
-      if ( role == Qt::DisplayRole )
-          return QString( "%1" ).arg(( static_cast<node_connection*>( n ) )->symbol_index );// "node_connection";
+        if ( role == Qt::DisplayRole )
+          return symbol(( static_cast<node_connection*>( n ) )->symbol_index );// "node_connection";
       }
     }
 
@@ -228,7 +229,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     case customRole::SortRole:
     case Qt::DisplayRole:
       if ( n->getObjectType() == NODE_CONNECTION ) {
-        AbstractTreeItem* next_node = ( static_cast<node_connection*>( n ) )->next_node;
+        AbstractTreeItem* next_node = ( static_cast<node_connection*>( n ) )->next_node();
         if ( role == customRole::SortRole )
           return next_node->getId();// "node_connection";
         if ( role == Qt::DisplayRole )
@@ -241,8 +242,8 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
       return n->getProperty( "CustomLabelRole" );
     }
     break;
-/*  case 7:
-    break;*/
+    /*  case 7:
+        break;*/
   }
   return QVariant();
 }
@@ -272,7 +273,7 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
 bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
   if ( !parent.isValid() ) { // no valid parent -> it's a node to add
     AbstractTreeItem* abstractitem = rootItem;
-    qDebug() << "case node";
+//     qDebug() << "case node";
     beginInsertRows( parent, row, row + count - 1 );
     {
       node* n = new node( abstractitem );
@@ -285,9 +286,9 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
   }
   if ( getTreeItemType( parent ) == NODE ) {
     AbstractTreeItem* abstractitem = static_cast<AbstractTreeItem*>( parent.internalPointer() );
-    qDebug() << "case node_connection";
-    int id = abstractitem->getId();
-    qDebug() << "beginInsertRows( n"  << id << " , " << row << ", " << row + count - 1 << ");";
+//     qDebug() << "case node_connection";
+//     int id = abstractitem->getId();
+//     qDebug() << "beginInsertRows( n"  << id << " , " << row << ", " << row + count - 1 << ");";
     beginInsertRows( parent, row, row + count - 1 );
     {
       int i = count ;
@@ -319,10 +320,12 @@ Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
 
 bool Model::setData( const QModelIndex & index, const QVariant & value, int role ) {
 //   qDebug() << "setData " << index.column();
-  if ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && index.column() == 4 && role == Qt::EditRole ) {
+  if (( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && index.column() == 4 && role == Qt::EditRole ) ||
+      ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && role == customRole::SymbolIndexRole ) ) {
     AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
     node_connection* nc = static_cast<node_connection*>( n );
-    nc->symbol_index = value.toInt();
+    nc->symbol_index = symbol( value.toString() );
+    qDebug() << __FUNCTION__ << value.toString() << " " << nc->symbol_index << " " << symbol( nc->symbol_index );
     emit dataChanged( index, index );
     return true;
   }
@@ -334,27 +337,14 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
       qDebug() << "can't redirect connection because the given node id was not found in the graph, please try again later!";
       return false;
     }
-    nc->next_node = a;
+    nc->setNext_node( a );
     emit dataChanged( index, index );
     return true;
   }
-  if ( index.isValid() && index.column() == 6 && role == Qt::EditRole ) {
-    qDebug() << "here";
+  if (( index.isValid() && index.column() == 6 && role == Qt::EditRole ) ||
+      ( index.isValid() && role == customRole::CustomLabelRole ) ) {
     AbstractTreeItem* nItem = static_cast<AbstractTreeItem*>( index.internalPointer() );
     nItem->setProperty( "CustomLabelRole", value );
-//     if ( getTreeItemType( index ) == NODE ) {
-//       node* n = static_cast<node*>( nItem );
-
-//     }
-//     if ( getTreeItemType( index ) == NODE_CONNECTION ) {
-//       node_connection* nc = static_cast<node_connection*>( nItem );
-//     AbstractTreeItem* a = AbstractTreeItemFromId( value.toInt() );
-    /*    if ( a == NULL ) {
-          qDebug() << "can't redirect connection because the given node id was not found in the graph, please try again later!";
-          return false;
-        }
-        nc->next_node = a;*/
-//     }
     emit dataChanged( index, index );
     return true;
   }
@@ -377,7 +367,7 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
 }
 
 AbstractTreeItem* Model::AbstractTreeItemFromId( unsigned int id ) {
-  foreach( AbstractTreeItem* item, rootItem->childItems )
+  foreach( AbstractTreeItem* item, rootItem->childItems() )
   if ( item->getId() == id )
     return item;
   return NULL;
@@ -406,10 +396,10 @@ QVariant Model::headerData( int section, Qt::Orientation orientation, int role )
           return "Is this node a final?";
     case 3:
       if ( role == Qt::DisplayRole )
-        return "Node/Link";
+        return "Node";
       else
         if ( role == Qt::ToolTipRole )
-          return "AbstractTreeItem -> AUTOMATE_ROOT(invisible), NODE or NODE_CONNECTION";
+          return "AbstractTreeItem -> can be a NODE or a NODE_CONNECTION";
     case 4:
       if ( role == Qt::DisplayRole )
         return "Symbol";
@@ -526,8 +516,8 @@ unsigned int Model::getTreeItemType( const QModelIndex& item ) {
 QModelIndex Model::next_nodeModelIndex( QModelIndex cItem ) {
   if ( getTreeItemType( cItem ) == NODE_CONNECTION ) {
     node_connection* t = static_cast<node_connection*>( cItem.internalPointer() );
-    if ( t->next_node != NULL )
-      return getQModelIndexFromAbstractNodeItem( t->next_node );
+    if ( t->next_node() != NULL )
+      return getQModelIndexFromAbstractNodeItem( t->next_node() );
   }
   return QModelIndex();
 }
@@ -551,112 +541,122 @@ bool Model::insertConnection( QModelIndex startItem, QModelIndex endItem ) {
     AbstractTreeItem* n = static_cast<AbstractTreeItem*>( cItem.internalPointer() );
     node_connection* nc = static_cast<node_connection*>( n );
 
-    nc->next_node = dest_ptr;
+    nc->setNext_node( dest_ptr );
     emit dataChanged( cItem, cItem );
   }
   return success;
 }
 
-bool Model::removeConnection( QModelIndex connection ) {
+bool Model::removeConnection( QPersistentModelIndex connection ) {
+  if ( !connection.isValid() ) {
+//     qDebug() << "connection is not a valid QModelIndex (anymore?), not deleting anything";
+    return true;
+  }
+
+//   qDebug() << "removing a connection";
   return removeRow( connection.row(), connection.parent() );
+}
+
+bool Model::removeConnections( QList<QPersistentModelIndex> nodeList ) {
+//   qDebug() << __FUNCTION__;
+  bool s = true;
+  foreach( QModelIndex item, nodeList )
+    if ( !removeConnection( item ) && s )
+      s = false;
+  return s;
+}
+
+bool Model::removeItems( QList<QPersistentModelIndex> itemList ) {
+  QList<QPersistentModelIndex> nodeItems;
+  QList<QPersistentModelIndex> connectionItems;
+  foreach( QModelIndex m, itemList ) {
+    if ( getTreeItemType( m ) == NODE )
+      nodeItems.append( QPersistentModelIndex(m) );
+    if ( getTreeItemType( m ) == NODE_CONNECTION )
+      connectionItems.append( QPersistentModelIndex(m) );
+  }
+  return removeNodes( nodeItems ) && removeConnections( connectionItems );
+}
+
+/// this function is provided for convenience
+bool Model::removeNodes( QList<QPersistentModelIndex> nodeList ) {
+  bool s = true;
+  foreach( QModelIndex item, nodeList )
+  if ( !removeNode( item ) && s )
+    s = false;
+  return s;
+}
+
+/*
+** removeNodes removes nodes only
+** removing a node implies:
+**  - delete all outgoing connections
+**  - delete all incomming connections (references)
+**  - delete the node itself
+*/
+bool Model::removeNode( QPersistentModelIndex abstractQModelIndex ) {
+  if ( !abstractQModelIndex.isValid() ) {
+//     qDebug() << "abstractQModelIndex is not a valid QModelIndex (anymore?), can't delete anything, already deleted...";
+    return true;
+  }
+
+  if ( getSelectedItemType( abstractQModelIndex ) == NODE ) {
+//     qDebug() << "   ###### object to delete is a node ######";
+    // for all childs which are connections
+    //     delete connection
+//     qDebug() << "     ###### step one: delete all childs ######";
+    node* n = static_cast<node*>( abstractQModelIndex.internalPointer() );
+    if ( n->childCount() ) {
+//       qDebug() << "removing " << n->childCount() << " child items";
+      removeRows( 0, n->childCount(), abstractQModelIndex );
+    }
+
+    //   for all reverse connections to this connection
+//     qDebug() << "     ###### step two: delete all references (connections) to this node ######";
+
+//     qDebug() << "n" << n->getId() << " has " << n->reverseChildItems().size() << " reverse connections";
+    while ( n->reverseChildItems().size() ) {
+//       qDebug() << "deleting the first connection from " << n->reverseChildItems().size()  << " which are to be deleted";
+      node_connection* r_item = static_cast<node_connection*>( n->reverseChildItems().first() );
+
+      // find the f_item for this r_item
+      node_connection* f_item = r_item->inverseConnection;
+      QModelIndex f_itemIndex = getQModelIndexFromAbstractNodeItem( f_item );
+      if ( f_itemIndex == QModelIndex() ) {
+        qDebug() << __FUNCTION__ << "FATAL ERROR: object f_item was expected to be a valid node* item but something is wrong.";
+        exit( 0 );
+      }
+      removeConnection( f_itemIndex );
+    }
+
+//     qDebug() << "     ###### step three: delete this node ######";
+//       qDebug() << "found " << objectTypeQString( getSelectedItemType( abstractQModelIndex.parent() ) );
+    removeRow( abstractQModelIndex.row(), abstractQModelIndex.parent() );
+  } else {
+    qDebug() << "WARNING: removeNodes should remove an object which is no NODE?! maybe use removeItems(...)";
+    exit( 0 );
+  }
+//   qDebug() << __FUNCTION__ << "END: return success";
+  return true;
+}
+
+QString Model::symbol( int symbol_index ) const {
+  return (( AutomateRoot* )rootItem )->symbol( symbol_index );
+}
+
+int Model::symbol( QString symbol ) {
+  return (( AutomateRoot* )rootItem )->symbol( symbol );
+}
+
+int Model::modifySymbol( int position, QString newsymbol ) {
+  return (( AutomateRoot* )rootItem )->modifySymbol( position, newsymbol );
+}
+
+int Model::size() {
+  return (( AutomateRoot* )rootItem )->size();
 }
 
 bool Model::insertNode() {
   return insertRows( rowCount( QModelIndex() ), 1 );
 }
-
-/// this function is provided for convenience
-bool Model::removeNode( QModelIndex node ) {
-  QList<QModelIndex> l;
-  l.append( node );
-  return removeNodes( l );
-}
-
-bool Model::removeNodes( QList<QModelIndex> nodeList ) {
-// FIXME WARNING: this code needs a cleanup
-
-//   qDebug() << "###### need to delte " << nodeList.size() << " AbstractTreeItems ######";
-//   FIXME why doesn't nodeList.size() reflect the amount of selecte items?!
-  for ( int i = 0; i < nodeList.size(); ++i ) {
-//     qDebug() << "###### now deleting AbstractTreeItem " << i << " ######";
-    QModelIndex abstractQModelIndex = nodeList[i];
-    if ( !abstractQModelIndex.isValid() ) {
-      qDebug() << "abstractQModelIndex is not a valid QModelIndex, not deleting anything";
-      continue;
-      //FIXME return in this place is wrong since the list might be incomplete
-    }
-
-    if ( getSelectedItemType( abstractQModelIndex ) == NODE ) {
-//       qDebug() << "   ###### object to delete is a node ######";
-      // for all childs which are connections
-      //     delete connection
-//       qDebug() << "     ###### step one: delete all childs ######";
-      node* n = static_cast<node*>( abstractQModelIndex.internalPointer() );
-      if ( n->childCount() )
-        removeRows( 0, n->childCount(), abstractQModelIndex );
-      //   for all reverse connections to this connection
-//       qDebug() << "     ###### step tow: delete all references (connections) to this node ######";
-
-//       qDebug() << "n" << n->getId() << " has " << n->reverseChildItems.size() << " reverse connections";
-//       for ( int i = 0; i < n->reverseChildItems.size(); ++i ) {
-//         node_connection* r_item = static_cast<node_connection*>( n->reverseChildItems[i] );
-//         unsigned int reverse_connection_id = r_item->inverseConnectionId;
-//         qDebug() << "  element no.: " << i << ": c" << reverse_connection_id;
-//       }
-
-      while ( n->reverseChildItems.size() ) {
-        node_connection* r_item = static_cast<node_connection*>( n->reverseChildItems[0] );
-        n->reverseChildItems.removeAt( 0 );
-        unsigned int reverse_connection_id = r_item->inverseConnectionId;
-        node* r_n = static_cast<node*>( r_item->next_node );
-        //     delete connection in reverse connected node, based on there
-        //              reverseconnection we have
-//         qDebug() << "Searching ...";
-        for ( int i = 0; i < r_n->childCount(); ++i ) {
-//           qDebug() << "r_n->childItems[i]->getId() == " << r_n->childItems[i]->getId() << "==?==" <<
-//               "reverse_connection_id==" << reverse_connection_id;
-          if ( r_n->childItems[i]->getId() == reverse_connection_id ) {
-            node_connection* found_r_connection = static_cast<node_connection*>( r_n->childItems[i] );
-//             qDebug() << " [ success ] object found in container with index: " << i;
-//             qDebug() << "reverse connection for c" << r_item->getId() <<
-//             ", is c" << found_r_connection->getId();
-            QModelIndex reverseConnectionQModelIndex =
-              getQModelIndexFromAbstractNodeItem( static_cast<AbstractTreeItem*>( found_r_connection ) );
-//             qDebug() << "row: " << reverseConnectionQModelIndex.row();
-
-            if ( reverseConnectionQModelIndex.isValid() )
-              removeRow( reverseConnectionQModelIndex.row(), reverseConnectionQModelIndex.parent() );
-            else
-              return false;
-            break;
-          }
-          if ( i == r_n->childCount() ) {
-            qDebug() << " [ fail ] not found? this should not happen";
-            qDebug() << "It's very likely that your data structure suffers some inconsistency, exiting";
-            exit( 0 );
-          }
-        }
-      }
-//       qDebug() << "     ###### step trhee: delete this node ######";
-//       delete node
-//       qDebug() << "found " << objectTypeQString( getSelectedItemType( abstractQModelIndex.parent() ) );
-      return removeRow( abstractQModelIndex.row(), abstractQModelIndex.parent() );
-    } else {
-//       qDebug() << "   ###### object to delete is a node_connection ######";
-      if ( getSelectedItemType( abstractQModelIndex ) == NODE_CONNECTION ) {
-        // FIXME: reverse connections aren't handled yet, this leads to unsync data structures
-        // delete node
-//               node_connection* nc = static_cast<node_connection*>( abstractQModelIndex.internalPointer() );
-//               qDebug() << "should remove a NODE_CONNECTION id = " << nc->getId();
-        return removeRow( abstractQModelIndex.row(), abstractQModelIndex.parent() );
-      } else {
-        qDebug() << "FATAL ERROR, should i delete a node of unknown type? nodetype=" <<
-        getSelectedItemType( abstractQModelIndex );
-        exit( 0 );
-      }
-    }
-  }
-  return false;
-}
-
 

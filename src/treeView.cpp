@@ -26,7 +26,6 @@ treeView::treeView( Model* model, QMainWindow* parent ) : AbstractView( parent )
 
   proxyModel = new QSortFilterProxyModel( this );
   proxyModel->setSourceModel( model );
-  testTreeView->setModel(model);
   ism = new QItemSelectionModel( proxyModel, this );
 
   nodeTreeView->sortByColumn( 3, Qt::AscendingOrder );
@@ -48,22 +47,24 @@ treeView::treeView( Model* model, QMainWindow* parent ) : AbstractView( parent )
   connect( addNodeBtn, SIGNAL( clicked() ),
            this, SLOT( addNode() ) );
   connect( delNodeBtn, SIGNAL( clicked() ),
-           this, SLOT( delSelectedNodes() ) );
+           this, SLOT( delSelectedItems() ) );
   connect( addConnectionBtn, SIGNAL( clicked() ),
            this, SLOT( addConnection() ) );
   connect( delConnectionBtn, SIGNAL( clicked() ),
-           this, SLOT( delSelectedNodes() ) );
+           this, SLOT( delSelectedItems() ) );
 
   connect( ism, SIGNAL( currentChanged( const QModelIndex &, const QModelIndex & ) ),
            this, SLOT( currentChanged( const QModelIndex &, const QModelIndex & ) ) );
 }
 
 void treeView::currentChanged( const QModelIndex & current, const QModelIndex & /*previous*/ ) {
-//   qDebug() << __FUNCTION__;
+  qDebug() << __FUNCTION__;
   QString a;
   QModelIndex currentItem = proxyModel->mapToSource( current );
-  if ( !currentItem.isValid() )
+  if ( !currentItem.isValid() ) {
+    textBrowser->setText( "no element selected" );
     return;
+  }
   switch ( model->getSelectedItemType( currentItem ) ) {
   case AUTOMATE_ROOT:
     a = "AUTOMATE_ROOT";
@@ -101,13 +102,12 @@ void treeView::currentChanged( const QModelIndex & current, const QModelIndex & 
   textBrowser->setText( text );
 }
 
-void treeView::delSelectedNodes( ) {
-  int selectedcount = ism->selectedRows().size();
-  qDebug( "%i selected item(s) to remove", selectedcount );
-  QList<QModelIndex> selectedItems;
-  foreach( QModelIndex selectedItem, ism->selectedIndexes() )
-  selectedItems.append( proxyModel->mapToSource( selectedItem ) );
-  if ( model->removeNodes( selectedItems ) )
+void treeView::delSelectedItems( ) {
+  QList<QPersistentModelIndex> selectedItems;
+  foreach( QModelIndex selectedItem, ism->selectedRows() )
+    selectedItems.append( QPersistentModelIndex(proxyModel->mapToSource( selectedItem ) ) );
+  qDebug( "%i selected item(s) to remove", selectedItems.size() );
+  if ( model->removeItems( selectedItems ) )
     qDebug() << "success removing all selected nodes";
   else
     qDebug() << "FAILED removing all selected nodes";
@@ -162,7 +162,7 @@ void treeView::addAbstractNodeItem( TreeItemType type ) {
 
 void treeView::keyPressEvent( QKeyEvent * keyEvent ) {
   if ( keyEvent->key() == Qt::Key_X ) {
-    delSelectedNodes();
+    delSelectedItems();
   }
   if ( keyEvent->key() == Qt::Key_Escape ) {
     hide();

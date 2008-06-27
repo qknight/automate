@@ -56,6 +56,7 @@
 #include <QPainterPathStroker>
 #include <QRectF>
 #include <QPainterPath>
+#include <QtGui>
 #include <math.h>
 
 #include "SceneItem_Node.h"
@@ -63,7 +64,7 @@
 #include "SceneItem_ConnectionHandle.h"
 
 #define CIRCLE_FOR_SYNBOL_RADIUS 14
-#define MAX_BRUSH_SIZE 15
+#define MAX_BRUSH_SIZE 8
 
 class SceneItem_Node;
 class SceneItem_ConnectionHandle;
@@ -83,35 +84,30 @@ class SceneItem_Connection : public QGraphicsItem {
     }
     void updatePosition();
     int type() const;
-    QPersistentModelIndex index;
     void highlight( bool status );
-//     void setSymbol_Index( unsigned int symbol_index );
-    void labelItemPositionUpdate( const QPointF& oldPos, const QPointF& newPos );
+    void labelItemPositionCallback( const QPointF& oldPos, const QPointF& newPos );
     bool customTransformation();
     bool isLoop();
     void setAutoLayoutFactor(qreal factor);
+    QPersistentModelIndex index;
   protected:
     void setCustomTransformation(bool value);
     QString label;
     bool m_highlight;
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
     QPainterPath shape() const;
-//     QVariant itemChange( GraphicsItemChange change, const QVariant & value );
   private:
     bool m_customTransformation;
     qreal ooffset;
     qreal poffset;
     QPainterPath connectionPath() const;
-//     QLineF oldLine;
-//     QPointF labelItemOffset;
-    void updateLabel();
+    void updateLabelPosition();
     SceneItem_ConnectionHandle* labelItem;
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
     QLineF createLine( QPointF a, QPointF b );
     QPolygonF arrowHead;
     QPen pen;
-    unsigned int symbol_index;
     void setColor( const QColor &color ) {
       myColor = color;
     }

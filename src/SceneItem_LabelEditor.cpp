@@ -13,13 +13,9 @@
 #include "SceneItem_LabelEditor.h"
 
 // http://lists.trolltech.com/qt-interest/2007-03/thread00929-0.html
-SceneItem_LabelEditor::SceneItem_LabelEditor( SceneItem_ConnectionHandle* parent ) : QGraphicsTextItem() {
-  this->parent = parent;
-//   d = document();//new QTextDocument;
-//   d->setPlainText( "unset" );
-//   setTextInteractionFlags( Qt::TextEditable );
-//   d->find(QRegExp("(.*"));
-//   qDebug() << __FUNCTION__;
+SceneItem_LabelEditor::SceneItem_LabelEditor( QGraphicsItem* parent ) : QGraphicsTextItem() {
+  qDebug() << __FUNCTION__;
+  setParentItem( parent );
 }
 
 SceneItem_LabelEditor::~SceneItem_LabelEditor() {
@@ -32,20 +28,30 @@ void SceneItem_LabelEditor::focusInEvent( QFocusEvent *event ) {
 
 void SceneItem_LabelEditor::focusOutEvent( QFocusEvent *event ) {
   QGraphicsTextItem::focusOutEvent( event );
-  parent->requestLabelChange( document()->toPlainText() );
+  SceneItem_ConnectionHandle* h;
+  SceneItem_Node* w;
+  SceneItem_Connection* z;
+
+  if ( parentItem() != NULL ) {
+    switch ( parentItem()->type() ) {
+    case SceneItem_ConnectionHandleType:
+      h = ( SceneItem_ConnectionHandle* )parentItem();
+      z = ( SceneItem_Connection* )h->parentItem();
+      (( GraphicsScene* )scene() )->setData( z->index, toPlainText(), customRole::SymbolIndexRole );
+      break;
+    case SceneItem_NodeType:
+      w = ( SceneItem_Node* )parentItem();
+      (( GraphicsScene* )scene() )->setData( w->index, toPlainText(), customRole::CustomLabelRole );
+      break;
+    default:
+      qDebug() << __FUNCTION__ << "ERROR, case not handled yet";
+      break;
+    }
+  }
+  scene()->removeItem( this );
   delete this;
 }
 
-// QVariant SceneItem_LabelEditor::itemChange( GraphicsItemChange change, const QVariant & value ) {
-//   // only send this event when the labelItem is moved manually
-//   if ( move_object_on_mouseMove ) {
-//     if ( change == ItemPositionChange && scene() ) {
-//       // pos() is the old position, value is the new position.
-//       if ( parentItem() != NULL )
-//         (( SceneItem_Connection* )parentItem() )->labelItemPositionUpdate( pos(), value.toPointF() );
-//     }
-//   }
-//   return QGraphicsItem::itemChange( change, value );
-// }
-
-
+int SceneItem_LabelEditor::type() const {
+  return SceneItem_LabelEditorType;
+}

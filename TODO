@@ -1,27 +1,16 @@
-FIXME graphicsitem
-  - BUG if connectionLabel is moved between two nodes it's resizing on node move is correct
-    BUT if the connectionLabel is moved beyond on node it's resizing is done into the wrong direction
-    -> while the distance between the nodes shrinks the object moves even farer away
-  - add arrow
+FIXME graphicsView: red line needs to be drawn above all items
+FIXME reset() in custom graphicsView
+FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
+FIXME
   - drawing of loops
-  - fix object initialisation of a connection
-    - two overlapping connectionLabels should be drawn RED!
+  - add arrow
+FIXME graphicsitem
   - fix connectionItem bbox
-  - make it draw bezier even better!
+  - bezier drawing:
     - current issue: when connectionLabel comes near to start or end node it's screwed
     - bezier is drawn right from the beginning of a node not outside of it's shape
-  DONE  - remove trembling when moving an connectionLabel
-FIXME node/connection label editor with QGraphicsTextItem
-    void DiagramTextItem::focusOutEvent(QFocusEvent *event)
-    {
-        setTextInteractionFlags(Qt::NoTextInteraction);
-        emit lostFocus(this);
-        QGraphicsTextItem::focusOutEvent(event);
-        qDebug() << toPlainText ();
-    }
 FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
        moving the mouse in the bbox results in the errors from FIXME1
-FIXME label needs caching inside a node/connection since each redraw triggers a model query
 FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached connections VERY fast in the view sometimes
       the program hangs with this error:
   QPainterPath::cubicTo: Adding point where x or y is NaN, results are undefined
@@ -33,32 +22,6 @@ FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached
       CODE if ( myStartItem->collidesWithItem( myEndItem ) )
       CODE  return;
       when this two lines in SceneItem_Connection are commented we can trigger this issue
-FIXME label and symboleditor
-  - nodes display the customLabel item all the time, this custom label is initially set based on the id
-    id is only shown in the toolTip
-  - connections show the QString based on the symbol_index they contain
-    id is only shown in the toolTip
-FIXME add symbol editor featuring a QStringList model
-  maps int to QString
-  0 - not defined
-  1 - epsilon connection
-  2. first symbol or string
-  3. ...
-
-
-
-
-
-
-
-
-
-
-
-FIXME zoomFit
-FIXME reset() in custom graphicsView
-FIXME removeNodes reverse lookup must be wrong, all incomming connections are NOT deleted
-      when the node goes offline ;P
 FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
       HINT: check the row/column in dataChanged() call, maybe this is the fix?!
       HINT: maybe implement hasChildren as well
@@ -69,9 +32,6 @@ FIXME treeView, adding a new connection isn't marked with a '+' sign in the tree
             - the view will update correctly if the widget is clicked anywhere?! why?
       HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
 FIXME modeltest.cpp line 106 issue
-FIXME editing ohne MCV aufsatz z.b. fuer schnelle algorithmen (example code dafuer)
-      z.b. print auf console code
-FIXME program won't terminate on close
 FIXME doxygen comments on code and concepts
  - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
  - some documentation is needed, F1 should open a browser for that
@@ -91,6 +51,22 @@ FINAL
   - ausarbeitung 2s+doxygen gedruckt, gelocht, geheftet
     ca. 45 seiten, gelocht und verhaftet!
 
+FIXME zoomFit
+  - andreas wanted to do that, nearly everything is there now, see
+    void mainGraphicsView::zoomFit() { in mainGraphicsView.cpp
+FIXME graphicsitem
+  - remove trembling when moving an connectionLabel -> FIXED in qt 4.4
+FIXME program won't terminate on close
+FIXME treeView flags should only be editable if editable!
+  right now it's just ignoring edits which don't affect anything
+FIXME add symbol editor featuring a QStringList model
+FIXME label needs caching inside a node/connection since each redraw triggers a model query
+FIXME if connectionLabel is moved between two nodes it's resizing on node move is correct
+    BUT if the connectionLabel is moved beyond on node it's resizing is done into the wrong direction
+    -> while the distance between the nodes shrinks the object moves even farer away
+FIXME moving two nodes in a way they will overlap should be handled better: connection drawing is disabled then!
+  - also fix object initialisation of a connection
+    because two overlapping connectionLabels should be drawn RED!
 FIXME use parentWidget() and parent where possible
 FIXME nodes should appear under mouse cursor not randomly if added from the GraphicsView
       fix it here: QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {

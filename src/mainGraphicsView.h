@@ -46,6 +46,7 @@ class mainGraphicsView : public AbstractView {
     void zoomIn();
     void zoomOut();
     void zoomNormal();
+    void zoomFit();
 };
 
 #endif

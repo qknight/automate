@@ -33,7 +33,6 @@
 
 class treeView : public AbstractView, public Ui::treeViewMainWindow {
     Q_OBJECT
-
   private:
     QItemSelectionModel* ism;
     QSortFilterProxyModel *proxyModel;
@@ -47,7 +46,7 @@ class treeView : public AbstractView, public Ui::treeViewMainWindow {
   public slots:
     void addNode();
     void addConnection();
-    void delSelectedNodes();
+    void delSelectedItems();
   private slots:
     void currentChanged( const QModelIndex & current, const QModelIndex & previous );
 };

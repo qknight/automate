@@ -63,10 +63,13 @@
 #include "GraphicsScene.h"
 #include "SceneItem_Connection.h"
 #include "SceneItem_Types.h"
+#include "SceneItem_LabelEditor.h"
 
 #define NODERADIUS 24
 
 class SceneItem_Connection;
+class SceneItem_LabelEditor;
+
 /**
  @author Joachim Schiele <js@lastlog.de>
 */
@@ -80,6 +83,7 @@ class SceneItem_Node : public QGraphicsItem {
     QPersistentModelIndex index;
     void layoutChange();
   private:
+    SceneItem_LabelEditor* labelEditor;
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
     QPainterPath shape() const;
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );

@@ -22,17 +22,23 @@
 
 node_connection::node_connection( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
   ID = generateUniqueID( getObjectType() );
-  next_node=parent;
-  symbol_index=0;
+  m_next_node = parent;
+  symbol_index = 0;
+  inverseConnection = NULL;
   //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 }
 
+// WARNING: never delete objects as for instance childItems in the structure here
+// since this will create inconsistencies between the model and this data structure.
+// A better way is to fail with exit(0) since this problem must be handled with great care!
+node_connection::~node_connection() {
+}
 
 void node_connection::dump() {
   qDebug() << "     |  \\---((node_connection " << ID /*<< "@" << (unsigned int) this*/ << "))" <<
 //       parent()->getId() << "@" << (unsigned int)parent() <<
   " >> " << symbol_index << " >> DEST = " <<
-  next_node->getId() /*<< "@" << (unsigned int)next_node*/;
+  m_next_node->getId() /*<< "@" << (unsigned int)next_node*/;
 
   // call dump for all children
   if ( childCount() > 0 )
@@ -48,14 +54,55 @@ unsigned int node_connection::getObjectType() {
 }
 
 void node_connection::removeChild( unsigned int index ) {
-  if ( (unsigned int)childItems.size() < index ) {
+  if (( unsigned int )m_childItems.size() < index ) {
     qDebug() << "Fatal error, childItems.size() < index!";
-    qDebug() << "having " << childItems.size() << " childs";
+    qDebug() << "having " << m_childItems.size() << " childs";
     exit( 0 );
   }
-  childItems.removeAt( index );
+  m_childItems.removeAt( index );
 }
 
 unsigned int node_connection::generateUniqueID( unsigned int a ) {
   return parentItem->generateUniqueID( a );
 }
+
+AbstractTreeItem* node_connection::next_node() {
+  return m_next_node;
+}
+
+void node_connection::setNext_node( AbstractTreeItem* newNextNode ) {
+  if ( m_next_node == newNextNode )
+    return;
+//   qDebug() << "warning: we have to relocate the reverseconnection as well";
+
+  if ( inverseConnection == NULL ) {
+    m_next_node = newNextNode;
+    return;
+  }
+  // 1. remove the m_next_node's reverse connection reference (remove the reverse connection)
+  AbstractTreeItem* rItem = inverseConnection;
+  AbstractTreeItem* rItemParent = rItem->parent();
+  (( node* )rItemParent )->removeChildReversePath( rItem );
+
+  // 2. next add the reverse connection
+  (( node* )newNextNode )->appendChildReversePath( rItem );
+
+  // 3. reset the parent entry
+  rItem->setParent(newNextNode);
+
+  // 4. overwrite current m_next_node with node
+  m_next_node = newNextNode;
+  return;
+}
+
+
+
+
+
+
+
+
+
+
+
+

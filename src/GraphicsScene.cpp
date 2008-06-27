@@ -17,7 +17,7 @@ GraphicsScene::GraphicsScene( Model *model ) : QGraphicsScene() {
   m_want_boundingBox = false;
   m_want_drawItemShape = false;
   m_want_coloredConnectionHelper = false;
-  m_want_customNodeLabels = false;
+  m_want_customNodeLabels = true;
   m_want_customConnectionLabels = false;
   line = 0;
   connect( this, SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
@@ -129,8 +129,8 @@ bool GraphicsScene::compareIndexes( const QPersistentModelIndex & a, const QPers
 
 void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
   //FIXME replace this code with QShortCut/QAction
-  if (focusItem() != NULL) {
-    QGraphicsScene::keyPressEvent(keyEvent);
+  if ( focusItem() != NULL ) {
+    QGraphicsScene::keyPressEvent( keyEvent );
     return;
   }
 
@@ -163,6 +163,9 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
   if ( keyEvent->key() == Qt::Key_Minus ) {
     emit zoomOut();
 //     qDebug() << "zoom out";
+  }
+  if ( keyEvent->key() == Qt::Key_Slash ) {
+    emit zoomFit();
   }
   if ( keyEvent->key() == Qt::Key_G ) {
     qDebug() << "NOT IMPLEMENTED YET FIXME enable/disable grid";
@@ -243,6 +246,7 @@ void GraphicsScene::print() {
 }
 
 bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
+//   qDebug() << __FUNCTION__;
   QGraphicsItem* nItem = modelToSceenIndex( item );
   if ( nItem == NULL ) {
     qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
@@ -256,6 +260,7 @@ bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
 }
 
 bool GraphicsScene::connectionRemoved( QPersistentModelIndex item ) {
+//   qDebug() << __FUNCTION__;
   QGraphicsItem* cItem = modelToSceenIndex( item );
   if ( cItem == NULL ) {
     qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
@@ -263,146 +268,154 @@ bool GraphicsScene::connectionRemoved( QPersistentModelIndex item ) {
     exit( 0 );
 //     return false;
   }
-  removeItem( cItem );
+
   delete cItem;
-//   delete cItem; // seems to be an bad idea, triggers a lot of program terminations?!
   return true;
 }
 
 void GraphicsScene::removeEvent() {
 //   qDebug() << "removeEvent, removing at least" << selectedItems().size() << " items";
+  QList<QPersistentModelIndex> list;
   foreach( QGraphicsItem* z, selectedItems() ) {
-    if ( z->type() == SceneItem_NodeType ) {
-      model->removeNode((( SceneItem_Node * )z )->index );
+    QModelIndex index;
+    if ( z->type() == SceneItem_NodeType )
+      index = (( SceneItem_Node* )z )->index;
+    else if ( z->type() == SceneItem_ConnectionType )
+      index = (( SceneItem_Connection * )z )->index;
+    else {
+      qDebug() << "FATAL ERROR: no node nor a connection, what item type is it?";
+      exit( 0 );
     }
+    list.append( QPersistentModelIndex(index) );
   }
-  foreach( QGraphicsItem* z, selectedItems() ) {
-    if ( z->type() == SceneItem_ConnectionType ) {
-      model->removeConnection((( SceneItem_Connection * )z )->index );
-    }
-  }
+  model->removeItems(list);
 }
 
 /// this wrapper function is here to enable all QGraphicsItems to query for data
 /// this is handy since all important querying can now be done from within the item,
 /// and creates true object encapsulation
-QVariant GraphicsScene::data( const QModelIndex &index, int role ) const {
-  return model->data( index, role );
-}
+  QVariant GraphicsScene::data( const QModelIndex &index, int role ) const {
+    return model->data( index, role );
+  }
 
-/*
-** mousePressEvent,mouseReleaseEvent,mouseMoveEvent are used to graphically connect two nodes
-** with each. even loops are possible just mouseRelease over the same node
-*/
-void GraphicsScene::mousePressEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
-  if ( items( mouseEvent->scenePos() ).count() && mouseEvent->button() == Qt::MidButton ) {
-    QGraphicsScene::mousePressEvent( mouseEvent );
-    line = new QGraphicsLineItem( QLineF( mouseEvent->scenePos(),
-                                          mouseEvent->scenePos() ) );
-    line->setPen( QPen( QColor( "RED" ), 2 ) );
-    addItem( line );
-  } else
-    if ( mouseEvent->button() == Qt::MidButton ) {
+/// this wrapper function is here to enable all QGraphicsItems to set data
+  bool GraphicsScene::setData( const QModelIndex & index, const QVariant & value, int role ) {
+    return model->setData( index, value, role );
+  }
 
-    } else {
+  /*
+  ** mousePressEvent,mouseReleaseEvent,mouseMoveEvent are used to graphically connect two nodes
+  ** with each. even loops are possible just mouseRelease over the same node
+  */
+  void GraphicsScene::mousePressEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
+    if ( items( mouseEvent->scenePos() ).count() && mouseEvent->button() == Qt::MidButton ) {
       QGraphicsScene::mousePressEvent( mouseEvent );
-    }
-}
+      line = new QGraphicsLineItem( QLineF( mouseEvent->scenePos(),
+                                            mouseEvent->scenePos() ) );
+      line->setPen( QPen( QColor( "RED" ), 2 ) );
+      addItem( line );
+    } else
+      if ( mouseEvent->button() == Qt::MidButton ) {
 
-void GraphicsScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
-  if ( line != 0 ) {
-    QList<QGraphicsItem *> startItems = items( line->line().p1() );
-    if ( startItems.count() && startItems.first() == line )
-      startItems.removeFirst();
-    QList<QGraphicsItem *> endItems = items( line->line().p2() );
-    if ( endItems.count() && endItems.first() == line )
-      endItems.removeFirst();
+      } else {
+        QGraphicsScene::mousePressEvent( mouseEvent );
+      }
+  }
 
-    removeItem( line );
-    delete line;
-    line = 0;
+  void GraphicsScene::mouseReleaseEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
+    if ( line != 0 ) {
+      QList<QGraphicsItem *> startItems = items( line->line().p1() );
+      if ( startItems.count() && startItems.first() == line )
+        startItems.removeFirst();
+      QList<QGraphicsItem *> endItems = items( line->line().p2() );
+      if ( endItems.count() && endItems.first() == line )
+        endItems.removeFirst();
+
+      removeItem( line );
+      delete line;
+      line = 0;
 
 //     qDebug() << "removing line";
-    if ( startItems.count() > 0 && endItems.count() > 0 &&
-         startItems.first()->type() == SceneItem_NodeType &&
-         endItems.first()->type() == SceneItem_NodeType
-         /*&& startItems.first() != endItems.first()*/ ) {
-      SceneItem_Node *startItem =
-        qgraphicsitem_cast<SceneItem_Node *>( startItems.first() );
-      SceneItem_Node *endItem =
-        qgraphicsitem_cast<SceneItem_Node *>( endItems.first() );
-      model->insertConnection( startItem->index, endItem->index );
+      if ( startItems.count() > 0 && endItems.count() > 0 &&
+           startItems.first()->type() == SceneItem_NodeType &&
+           endItems.first()->type() == SceneItem_NodeType
+           /*&& startItems.first() != endItems.first()*/ ) {
+        SceneItem_Node *startItem =
+          qgraphicsitem_cast<SceneItem_Node *>( startItems.first() );
+        SceneItem_Node *endItem =
+          qgraphicsitem_cast<SceneItem_Node *>( endItems.first() );
+        model->insertConnection( startItem->index, endItem->index );
 //       qDebug() << "adding a conneciton";
+      }
+    }
+    QGraphicsScene::mouseReleaseEvent( mouseEvent );
+  }
+
+  void GraphicsScene::mouseMoveEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
+    if ( line != 0 ) {
+      QLineF newLine( line->line().p1(), mouseEvent->scenePos() );
+      line->setLine( newLine );
+    } else {
+      QGraphicsScene::mouseMoveEvent( mouseEvent );
     }
   }
-  QGraphicsScene::mouseReleaseEvent( mouseEvent );
-}
 
-void GraphicsScene::mouseMoveEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
-  if ( line != 0 ) {
-    QLineF newLine( line->line().p1(), mouseEvent->scenePos() );
-    line->setLine( newLine );
-  } else {
-    QGraphicsScene::mouseMoveEvent( mouseEvent );
+  void GraphicsScene::toggleHighlight() {
+    m_want_highlight = !m_want_highlight;
   }
-}
 
-void GraphicsScene::toggleHighlight() {
-  m_want_highlight = !m_want_highlight;
-}
+  void GraphicsScene::toggleBoundingBox() {
+    m_want_boundingBox = !m_want_boundingBox;
+    update();
+  }
 
-void GraphicsScene::toggleBoundingBox() {
-  m_want_boundingBox = !m_want_boundingBox;
-  update();
-}
+  bool GraphicsScene::want_highlight() {
+    return m_want_highlight;
+  }
 
-bool GraphicsScene::want_highlight() {
-  return m_want_highlight;
-}
+  bool GraphicsScene::want_boundingBox() {
+    return m_want_boundingBox;
+  }
 
-bool GraphicsScene::want_boundingBox() {
-  return m_want_boundingBox;
-}
+  void GraphicsScene::insertNode() {
+    model->insertNode();
+  }
 
-void GraphicsScene::insertNode() {
-  model->insertNode();
-}
+  void GraphicsScene::toggleDrawItemShape() {
+    m_want_drawItemShape = !m_want_drawItemShape;
+    update();
+  }
 
-void GraphicsScene::toggleDrawItemShape() {
-  m_want_drawItemShape = !m_want_drawItemShape;
-  update();
-}
+  bool GraphicsScene::want_drawItemShape() {
+    return m_want_drawItemShape;
+  }
 
-bool GraphicsScene::want_drawItemShape() {
-  return m_want_drawItemShape;
-}
+  void GraphicsScene::toggle_coloredConnectionHelper() {
+    m_want_coloredConnectionHelper = !m_want_coloredConnectionHelper;
+    update();
+  }
 
-void GraphicsScene::toggle_coloredConnectionHelper() {
-  m_want_coloredConnectionHelper = !m_want_coloredConnectionHelper;
-  update();
-}
+  bool GraphicsScene::want_coloredConnectionHelper() {
+    return m_want_coloredConnectionHelper;
+  }
 
-bool GraphicsScene::want_coloredConnectionHelper() {
-  return m_want_coloredConnectionHelper;
-}
+  bool GraphicsScene::want_customNodeLabels() {
+    return m_want_customNodeLabels;
+  }
 
-bool GraphicsScene::want_customNodeLabels() {
-  return m_want_customNodeLabels;
-}
+  void GraphicsScene::toggle_customNodeLabels() {
+    m_want_customNodeLabels = !m_want_customNodeLabels;
+    update();
+  }
 
-void GraphicsScene::toggle_customNodeLabels() {
-  m_want_customNodeLabels = !m_want_customNodeLabels;
-  update();
-}
+  bool GraphicsScene::want_customConnectionLabels() {
+    return m_want_customConnectionLabels;
+  }
 
-bool GraphicsScene::want_customConnectionLabels() {
-  return m_want_customConnectionLabels;
-}
-
-void GraphicsScene::toggle_customConnectionLabels() {
-  m_want_customConnectionLabels = !m_want_customConnectionLabels;
-  update();
-}
+  void GraphicsScene::toggle_customConnectionLabels() {
+    m_want_customConnectionLabels = !m_want_customConnectionLabels;
+    update();
+  }
 
 // void GraphicsScene::editorLostFocus(DiagramTextItem *item) {
 //   QTextCursor cursor = item->textCursor();

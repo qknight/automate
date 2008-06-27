@@ -48,8 +48,6 @@ HEADERS += src/meta_automate.h \
  src/SceneItem_Node.h \
  src/SceneItem_Connection.h \
  src/SceneItem_Types.h \
- src/SceneItem_FlexibleConnection.h \
- src/ScneItem_FlexibleHandle.h \
  src/SceneItem_ConnectionHandle.h \
  src/SymbolTable.h \
  src/SceneItem_LabelEditor.h
@@ -72,8 +70,6 @@ SOURCES += src/main.cpp \
  src/GraphicsScene.cpp \
  src/SceneItem_Node.cpp \
  src/SceneItem_Connection.cpp \
- src/SceneItem_FlexibleConnection.cpp \
- src/ScneItem_FlexibleHandle.cpp \
  src/SceneItem_ConnectionHandle.cpp \
  src/SymbolTable.cpp \
  src/SceneItem_LabelEditor.cpp

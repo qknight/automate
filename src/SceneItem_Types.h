@@ -10,7 +10,9 @@
 
 enum {
   SceneItem_NodeType = QGraphicsItem::UserType + 1,
-  SceneItem_ConnectionType = QGraphicsItem::UserType + 2
+  SceneItem_ConnectionType,
+  SceneItem_ConnectionHandleType,
+  SceneItem_LabelEditorType
 };
 
 #endif
