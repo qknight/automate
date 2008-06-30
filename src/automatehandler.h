@@ -58,6 +58,7 @@ class automatehandler : public QDialog, private Ui::controllerWidget {
     void openNewTreeView();
     void popQMenu( const QPoint & );
     void todo();
+    void quit();
 };
 
 #endif

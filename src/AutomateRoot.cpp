@@ -29,11 +29,11 @@ AutomateRoot::AutomateRoot( AbstractTreeItem* parent ) : AbstractTreeItem( paren
   ID = generateUniqueID( getObjectType() );
 //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 
-  /*  qDebug() << symbolTable.setSymbol("foo");
-  qDebug() << symbolTable.setSymbol("foo1");
-  qDebug() << symbolTable.setSymbol("foo");
-  qDebug() << symbolTable.setSymbol("foo2");
-  symbolTable.dump();*/
+  /*  qDebug() << setSymbol("foo");
+  qDebug() << setSymbol("foo1");
+  qDebug() << setSymbol("foo");
+  qDebug() << setSymbol("foo2");
+  dump();*/
 }
 
 // WARNING: never delete objects as for instance childItems in the structure here

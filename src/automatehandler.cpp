@@ -40,11 +40,7 @@ automatehandler::automatehandler( QWidget* parent ) : QDialog( parent ) {
 }
 
 automatehandler::~automatehandler() {
-  qDebug( "automatehandler::~automatehandler" );
-  for ( int i = 0; i < automates.size(); ++i ) {
-    delete automates[i];
-  }
-  automates.clear();
+  // see quit()
 }
 
 void automatehandler::updateTreeWidget() {
@@ -114,7 +110,7 @@ void automatehandler::addRandomAutomate() {
       int pick = rand % nodes;
 
       if ( pick >= nodes ) {
-        qDebug() << "choosing node " << pick << " out of " << nodes << " nodes";
+        qDebug() << "FATAL ERROR: choosing node " << pick << " out of " << nodes << " nodes";
         exit( 0 );
       }
 
@@ -267,7 +263,17 @@ void automatehandler::keyPressEvent( QKeyEvent * keyEvent ) {
       automates[z]->openNewView( GraphicsViewType );
   }
   if ( keyEvent->key() == Qt::Key_Escape ) {
-    exit(0);
+    quit();
   }
 }
+
+void automatehandler::quit() {
+  qDebug( "automatehandler::~automatehandler" );
+  for ( int i = 0; i < automates.size(); ++i ) {
+    delete automates[i];
+  }
+  automates.clear();
+  exit(0);
+}
+
 

@@ -55,7 +55,8 @@ const qreal Pi = 3.14;
 SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
 //   qDebug() << "Creating a new connection";
   m_customTransformation = false;
-  labelItem = new SceneItem_ConnectionHandle;
+  labelItem = new SceneItem_ConnectionHandle();
+  labelItem->setParentItem( this );
   this->index = index;
   m_color = QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 );
 
@@ -65,7 +66,7 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
   m_highlight = false;
   setFlag( QGraphicsItem::ItemIsSelectable, true );
   setAcceptsHoverEvents( true );
-  labelItem->setParentItem( this );
+
   myColor = Qt::black;
   pen = QPen( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
   line = QLine();
@@ -77,12 +78,13 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
 // - connection is removed -> remove the reference from the two associated nodes
 SceneItem_Connection::~SceneItem_Connection() {
 //   qDebug() << __FUNCTION__;
-  if (myEndItem != NULL)
-    myEndItem->removeConnection(this);
-  if (myStartItem != NULL)
-    myStartItem->removeConnection(this);
 
-  scene()->removeItem(this);
+  if (myEndItem != NULL)
+    if (!myEndItem->removeConnection(this))
+      qDebug() << "Connection wasn't removed propperly @ myEndItem";
+  if (myStartItem != NULL && myStartItem != myEndItem)
+    if (!myStartItem->removeConnection(this))
+      qDebug() << "Connection wasn't removed propperly @ myStartItem";
 
   if (myStartItem != NULL)
     ((SceneItem_Node *)myStartItem)->layoutChange();
@@ -473,6 +475,14 @@ bool SceneItem_Connection::isLoop() {
 void SceneItem_Connection::setAutoLayoutFactor(qreal factor) {
   ooffset = factor * (2*CIRCLE_FOR_SYNBOL_RADIUS /*+ 2*/);
   updateLabelPosition();
+}
+
+unsigned int SceneItem_Connection::id(){
+//   unsigned int id=999;
+//   if (index.isValid())
+//     id = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toInt();
+//   qDebug() << id;
+//   return id;
 }
 
 

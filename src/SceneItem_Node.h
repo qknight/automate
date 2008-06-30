@@ -98,7 +98,7 @@ class SceneItem_Node : public QGraphicsItem {
     void contextMenuEvent( QGraphicsSceneContextMenuEvent * event );
   protected:
     void addConnection( SceneItem_Connection* ci );
-    void removeConnection( SceneItem_Connection* ci );
+    bool removeConnection( SceneItem_Connection* ci );
     QVariant itemChange( GraphicsItemChange change, const QVariant &value );
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
 };

@@ -49,10 +49,14 @@ class ItemView : public QAbstractItemView {
     void rowsInserted( const QModelIndex & parent, int start, int end );
     void rowsAboutToBeRemoved( const QModelIndex & parent, int start, int end );
     void dataChanged( const QModelIndex & , const QModelIndex & );
-    void reset();
     QModelIndex traverseTroughIndexes( QModelIndex index );
   public slots:
     void toggleRenderHints();
+  protected slots:
+    void reset();
+    void init();
+  signals:
+    void clearScene();
 };
 
 #endif

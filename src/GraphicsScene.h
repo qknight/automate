@@ -52,7 +52,6 @@ class GraphicsScene : public QGraphicsScene {
     void updateConnection( QPersistentModelIndex item );
     bool nodeRemoved( QPersistentModelIndex item );
     bool connectionRemoved( QPersistentModelIndex item );
-    void reset();
 
   public:
     QVariant data( const QModelIndex &index, int role ) const;
@@ -94,12 +93,14 @@ class GraphicsScene : public QGraphicsScene {
     void toggle_coloredConnectionHelper();
     void toggle_customConnectionLabels();
     void toggle_customNodeLabels();
+    void clearScene();
   signals:
     void hideView();
     void toggleRenderHints();
     void zoomOut();
     void zoomIn();
     void zoomFit();
+    void reset();
 };
 
 #endif

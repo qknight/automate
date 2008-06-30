@@ -1,10 +1,23 @@
-FIXME graphicsView: red line needs to be drawn above all items
-FIXME reset() in custom graphicsView
+FIXME labelEditor doesn't work well
+FIXME reversepath symbol_index isn't updated, maybe we should check if 'we' are the reverse path and if not return the
+      value from the inversePath item
+FIXME modeltest.cpp line 106 issue
+
+FIXME graphicsView: even node_connections should be centered, odd are ok
+FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
+      HINT: check the row/column in dataChanged() call, maybe this is the fix?!
+      HINT: maybe implement hasChildren as well
+      HINT: if layouChanged() is used, it works BUT this is not good since it should work without!
+      HINT: it's working for removeRows however AND once '+' was clicked (meaning the item should expand)
+            it will be working when the item is removed and after no child is there anymore again an item is added
+            it will stop working again when you hit the '-' and try delete all + add one item again
+            - the view will update correctly if the widget is clicked anywhere?! why?
+      HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
+
 FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
-FIXME
+FIXME graphicsitem: bezier issues
   - drawing of loops
-  - add arrow
-FIXME graphicsitem
+  - add arrow head
   - fix connectionItem bbox
   - bezier drawing:
     - current issue: when connectionLabel comes near to start or end node it's screwed
@@ -22,16 +35,7 @@ FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached
       CODE if ( myStartItem->collidesWithItem( myEndItem ) )
       CODE  return;
       when this two lines in SceneItem_Connection are commented we can trigger this issue
-FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
-      HINT: check the row/column in dataChanged() call, maybe this is the fix?!
-      HINT: maybe implement hasChildren as well
-      HINT: if layouChanged() is used, it works BUT this is not good since it should work without!
-      HINT: it's working for removeRows however AND once '+' was clicked (meaning the item should expand)
-            it will be working when the item is removed and after no child is there anymore again an item is added
-            it will stop working again when you hit the '-' and try delete all + add one item again
-            - the view will update correctly if the widget is clicked anywhere?! why?
-      HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
-FIXME modeltest.cpp line 106 issue
+
 FIXME doxygen comments on code and concepts
  - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
  - some documentation is needed, F1 should open a browser for that
@@ -52,7 +56,7 @@ FINAL
     ca. 45 seiten, gelocht und verhaftet!
 
 FIXME zoomFit
-  - andreas wanted to do that, nearly everything is there now, see
+  - andreas krebs wanted to do that, nearly everything is there now, see
     void mainGraphicsView::zoomFit() { in mainGraphicsView.cpp
 FIXME graphicsitem
   - remove trembling when moving an connectionLabel -> FIXED in qt 4.4

@@ -12,6 +12,8 @@
 #include "ItemView.h"
 
 ItemView::ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWidget * parent ) : QAbstractItemView( parent ) {
+  connect(scene, SIGNAL(reset()), this, SLOT(reset()));
+  connect(this, SIGNAL(clearScene()), scene, SLOT(clearScene()));
   this->view = view;
   this->model = model;
   this->scene = scene;
@@ -36,7 +38,6 @@ ItemView::ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWi
 //   scene->addItem(flex);
 
   // Special layout functionality should go here!
-  processNewNodes();
 }
 
 ItemView::~ItemView() { }
@@ -85,7 +86,13 @@ QRegion ItemView::visualRegionForSelection( const QItemSelection &/*selection*/ 
   return QRegion();
 }
 
-void ItemView::processNewNodes() {
+void ItemView::reset() {
+//   qDebug() << __FUNCTION__;
+  emit clearScene();
+  init();
+}
+
+void ItemView::init() {
   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
     QModelIndex item = model->index( i, 0, QModelIndex() );
     scene->nodeInserted( QPersistentModelIndex( item ) );
@@ -158,6 +165,7 @@ QModelIndex ItemView::traverseTroughIndexes( QModelIndex index ) {
 ** in between -> here comes recursion in handy.
 */
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
+  qDebug() << __FUNCTION__;
   QModelIndex tmpIndex  = topLeft;
   do {
 //     qDebug() << "dataChanged is now called()";
@@ -179,11 +187,5 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
       break;
     tmpIndex = traverseTroughIndexes( tmpIndex );
   } while ( tmpIndex.isValid());
-}
-
-void ItemView::reset() {
-  // FIXME this should really be implemented!!!
-//   scene->reset();
-//   processNewNodes();
 }
 

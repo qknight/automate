@@ -62,13 +62,17 @@ SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() 
 }
 
 SceneItem_Node::~SceneItem_Node() {
+//   qDebug() << __FUNCTION__;
   if ( ConnectionItems.size() != 0 ) {
-    qDebug() << "FATAL ERROR: not all nodes have been deleted!!!";
-    qDebug() << "inconsistency between the graphicsView and the data (model) might exist";
+    qDebug() << "WARNING: not all connections have been deleted!!!";
+    qDebug() << "WARNING: inconsistency between the graphicsView and the data (model) might exist";
+    qDebug() << "WARNING: ignore this warning if a model reset() call caused it";
+    qDebug() << "WARNING: it will cause segmentation faults anyway if a connection uses the node";
   }
 }
 
 void SceneItem_Node::updateData() {
+//   qDebug() << __FUNCTION__;
   if ( scene() == NULL ) {
     qDebug() << "item isn't in any scene, can't query for valid data";
     return;
@@ -159,7 +163,7 @@ void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */
 }
 
 QVariant SceneItem_Node::itemChange( GraphicsItemChange change, const QVariant &value ) {
-  if ( /*change == QGraphicsItem::ItemPositionChange ||*/ change == QGraphicsItem::ItemPositionHasChanged ) {
+  if ( change == QGraphicsItem::ItemPositionHasChanged ) {
     foreach( SceneItem_Connection  *ci, ConnectionItems ) {
       ci->updatePosition();
     }
@@ -167,12 +171,14 @@ QVariant SceneItem_Node::itemChange( GraphicsItemChange change, const QVariant &
   return value;
 }
 
-void SceneItem_Node::removeConnection( SceneItem_Connection *ci ) {
-//   qDebug() << __FUNCTION__ << (unsigned int)this << " " << (unsigned int)ci ;
+bool SceneItem_Node::removeConnection( SceneItem_Connection *ci ) {
   int index = ConnectionItems.indexOf( ci );
 
-  if ( index != -1 )
+  if ( index >= 0 )
     ConnectionItems.removeAt( index );
+  else
+    return false;
+  return true;
 }
 
 // only add new connections if they are not referenced yet
@@ -191,6 +197,11 @@ void SceneItem_Node::addConnection( SceneItem_Connection* ci ) {
 
 void SceneItem_Node::layoutChange() {
 //   qDebug() << "layoutChange(): " << ConnectionItems.size() << "items to layout";
+
+  // on model reset() we delete a connection and the autolayout call doesn't make sense then.
+  // on reset() all items get removed from the scene() and so this function won't be executed
+  if (scene() == NULL)
+    return;
 
   QList<SceneItem_Connection *> itemsToAutoLayout;
   foreach( SceneItem_Connection* c, ConnectionItems )

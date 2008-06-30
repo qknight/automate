@@ -32,8 +32,6 @@ class AutomateRoot : public AbstractTreeItem, protected SymbolTable {
     objectCounter* objCnt_automateroot;
     objectCounter* objCnt_nodeconnection;
     unsigned int generateUniqueID( unsigned int );
-/*  protected:
-    SymbolTable symbolTable;*/
 };
 
 #endif
