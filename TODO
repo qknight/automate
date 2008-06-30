@@ -1,6 +1,4 @@
 FIXME labelEditor doesn't work well
-FIXME reversepath symbol_index isn't updated, maybe we should check if 'we' are the reverse path and if not return the
-      value from the inversePath item
 FIXME modeltest.cpp line 106 issue
 
 FIXME graphicsView: even node_connections should be centered, odd are ok

@@ -23,8 +23,9 @@
 node_connection::node_connection( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
   ID = generateUniqueID( getObjectType() );
   m_next_node = parent;
-  symbol_index = 0;
   inverseConnection = NULL;
+
+  setSymbol_index( 0 );
   //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 }
 
@@ -37,7 +38,7 @@ node_connection::~node_connection() {
 void node_connection::dump() {
   qDebug() << "     |  \\---((node_connection " << ID /*<< "@" << (unsigned int) this*/ << "))" <<
 //       parent()->getId() << "@" << (unsigned int)parent() <<
-  " >> " << symbol_index << " >> DEST = " <<
+  " >> " << symbol_index() << " >> DEST = " <<
   m_next_node->getId() /*<< "@" << (unsigned int)next_node*/;
 
   // call dump for all children
@@ -88,13 +89,26 @@ void node_connection::setNext_node( AbstractTreeItem* newNextNode ) {
   (( node* )newNextNode )->appendChildReversePath( rItem );
 
   // 3. reset the parent entry
-  rItem->setParent(newNextNode);
+  rItem->setParent( newNextNode );
 
   // 4. overwrite current m_next_node with node
   m_next_node = newNextNode;
   return;
 }
 
+unsigned int node_connection::symbol_index() {
+  return m_symbol_index;
+}
+
+void node_connection::setSymbol_index( unsigned int symbol_index ) {
+  m_symbol_index = symbol_index;
+
+  // this code holds te reverseconnection's data in sync
+  if ( inverseConnection != NULL ) {
+    if ( inverseConnection->symbol_index() != symbol_index )
+      inverseConnection->setSymbol_index( symbol_index );
+  }
+}
 
 
 

@@ -26,16 +26,18 @@
 
 class node_connection : public AbstractTreeItem {
   public:
-    node_connection(AbstractTreeItem* parent );
+    node_connection( AbstractTreeItem* parent );
     ~node_connection();
     void dump();
     AbstractTreeItem* next_node();
-    void setNext_node(AbstractTreeItem* node);
+    void setNext_node( AbstractTreeItem* node );
     unsigned int getObjectType();
-    unsigned int symbol_index;
+    unsigned int symbol_index();
+    void setSymbol_index( unsigned int symbol_index );
     void removeChild( unsigned int index );
     node_connection* inverseConnection;
   private:
+    unsigned int m_symbol_index;
     AbstractTreeItem* m_next_node;
     unsigned int generateUniqueID( unsigned int );
 };

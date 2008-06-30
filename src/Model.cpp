@@ -125,7 +125,7 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     if ( n->getObjectType() == NODE_CONNECTION ) {
       node_connection* nc = static_cast<node_connection*>( index.internalPointer() );
 //       qDebug() << __FUNCTION__ << symbol( nc->symbol_index ) << nc->symbol_index;
-      return symbol( nc->symbol_index ) ;
+      return symbol( nc->symbol_index() ) ;
     }
   if ( role == customRole::IdRole )
     if ( n->getObjectType() == NODE || n->getObjectType() == NODE_CONNECTION )
@@ -217,9 +217,9 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     case Qt::DisplayRole:
       if ( n->getObjectType() == NODE_CONNECTION ) {
         if ( role == customRole::SortRole )
-          return ( static_cast<node_connection*>( n ) )->symbol_index;// "node_connection";
+          return ( static_cast<node_connection*>( n ) )->symbol_index();// "node_connection";
         if ( role == Qt::DisplayRole )
-          return symbol(( static_cast<node_connection*>( n ) )->symbol_index );// "node_connection";
+          return symbol(( static_cast<node_connection*>( n ) )->symbol_index() );// "node_connection";
       }
     }
 
@@ -324,8 +324,8 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
       ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && role == customRole::SymbolIndexRole ) ) {
     AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
     node_connection* nc = static_cast<node_connection*>( n );
-    nc->symbol_index = symbol( value.toString() );
-    qDebug() << __FUNCTION__ << value.toString() << " " << nc->symbol_index << " " << symbol( nc->symbol_index );
+    nc->setSymbol_index(symbol( value.toString()) );
+    qDebug() << __FUNCTION__ << value.toString() << " " << nc->symbol_index() << " " << symbol( nc->symbol_index() );
     emit dataChanged( index, index );
     return true;
   }

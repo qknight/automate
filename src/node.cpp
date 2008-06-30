@@ -70,12 +70,13 @@ void node::appendChild( AbstractTreeItem *item ) {
   node_connection* f_item = static_cast<node_connection*>( item );
   node_connection* r_item = new node_connection( f_item->next_node() );
   r_item->setNext_node(this);
-  r_item->symbol_index = f_item->symbol_index;
+  r_item->setSymbol_index(f_item->symbol_index());
 
   node* dst = static_cast<node*>( f_item->next_node() );
 
   f_item->inverseConnection = r_item;
   r_item->inverseConnection = f_item;
+
   dst->appendChildReversePath( r_item );
   appendChildForwardPath( f_item );
 }
