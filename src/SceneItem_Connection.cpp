@@ -55,7 +55,7 @@ const qreal Pi = 3.14;
 SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
 //   qDebug() << "Creating a new connection";
   m_customTransformation = false;
-  labelItem = new SceneItem_ConnectionHandle();
+  labelItem = new SceneItem_ConnectionHandle;
   labelItem->setParentItem( this );
   this->index = index;
   m_color = QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 );
@@ -450,12 +450,19 @@ void SceneItem_Connection::hoverLeaveEvent( QGraphicsSceneHoverEvent * /*event*/
   updatePosition();
 }
 
-
+/*
+** if m_customTransformation is true
+**    the autolayout functionality is disabled when adding another connection or deleting an existing one.
+** default is false since connections should be affected by autolayout functionality
+*/
 void SceneItem_Connection::setCustomTransformation( bool value ) {
   m_customTransformation = value;
   if ( !value ) {
+    ooffset = 0.0;
+    poffset = 0.0;
+    updateLabelPosition();
     if (myStartItem != NULL)
-    ((SceneItem_Node *)myStartItem)->layoutChange();
+      ((SceneItem_Node *)myStartItem)->layoutChange();
   }
 }
 

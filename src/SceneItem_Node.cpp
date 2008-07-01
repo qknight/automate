@@ -204,9 +204,10 @@ void SceneItem_Node::layoutChange() {
     return;
 
   QList<SceneItem_Connection *> itemsToAutoLayout;
-  foreach( SceneItem_Connection* c, ConnectionItems )
-  if ( !c->customTransformation() && !c->isLoop() ) {
-    itemsToAutoLayout.push_back( c );
+  foreach( SceneItem_Connection* c, ConnectionItems ) {
+    if ( !c->customTransformation() && !c->isLoop() ) {
+      itemsToAutoLayout.push_back( c );
+    }
   }
 
   unsigned int size = itemsToAutoLayout.size();

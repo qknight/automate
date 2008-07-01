@@ -97,7 +97,7 @@ void SceneItem_ConnectionHandle::mouseReleaseEvent( QGraphicsSceneMouseEvent * e
 
 void SceneItem_ConnectionHandle::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event ) {
   qDebug() << __FUNCTION__;
-  SceneItem_LabelEditor* f = new SceneItem_LabelEditor(this);
+  SceneItem_LabelEditor* f = new SceneItem_LabelEditor( this );
   f->setZValue( 1000.0 );
   f->setTextInteractionFlags( Qt::TextEditorInteraction );
   scene()->addItem( f );
@@ -107,7 +107,7 @@ QVariant SceneItem_ConnectionHandle::itemChange( GraphicsItemChange change, cons
   // only send this event when the labelItem is moved manually
   if ( move_object_on_mouseMove ) {
     if ( parentItem() != NULL )
-      (( SceneItem_Connection* )parentItem() )->setCustomTransformation(true);
+      (( SceneItem_Connection* )parentItem() )->setCustomTransformation( true );
     if ( scene() && change == ItemPositionChange ) {
       // pos() is the old position, value is the new position.
       if ( parentItem() != NULL ) {
@@ -119,10 +119,17 @@ QVariant SceneItem_ConnectionHandle::itemChange( GraphicsItemChange change, cons
 }
 
 void SceneItem_ConnectionHandle::contextMenuEvent( QGraphicsSceneContextMenuEvent * event ) {
-  //FIXME add functionality
+  // to reduce the overhead of QObject used in EVERY (this)-class one can move that code
+  // into the scene and popup the context menu from there which is much more efficient
+  // remember to check for item existence before applying any function on (this) since
+  // the item can be removed while the context menu is still valid then....
   QMenu menu;
   QAction *removeConnectionAction = menu.addAction( "FIXME Remove connection" );
   QAction *removeTransformationAction = menu.addAction( "FIXME Remove custom transformation" );
+  QAction *editLabelAction = menu.addAction( "FIXME Edit Label" );
+  connect(removeConnectionAction,SIGNAL(triggered()),this,SLOT(removeConnectionSlot()));
+  connect(removeTransformationAction,SIGNAL(triggered()),this,SLOT(removeTransformationSlot()));
+  connect(editLabelAction,SIGNAL(triggered()),this,SLOT(editLabelSlot()));
   menu.exec( event->screenPos() );
 }
 
@@ -130,3 +137,22 @@ void SceneItem_ConnectionHandle::contextMenuEvent( QGraphicsSceneContextMenuEven
 int SceneItem_ConnectionHandle::type() const {
   return SceneItem_ConnectionHandleType;
 }
+
+void SceneItem_ConnectionHandle::removeConnectionSlot() {
+  qDebug() << __FUNCTION__;
+}
+
+void SceneItem_ConnectionHandle::removeTransformationSlot() {
+  move_object_on_mouseMove=false;
+  if ( parentItem() != NULL ) {
+//     qDebug() << "disabling custom transformation";
+    (( SceneItem_Connection* )parentItem() )->setCustomTransformation( false );
+  }
+}
+
+void SceneItem_ConnectionHandle::editLabelSlot() {
+  qDebug() << __FUNCTION__;
+}
+
+
+

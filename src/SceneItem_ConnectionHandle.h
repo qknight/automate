@@ -31,7 +31,8 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
  */
-class SceneItem_ConnectionHandle : public QGraphicsItem {
+class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
+  Q_OBJECT
   friend class SceneItem_ConnectionLabel;
   public:
     SceneItem_ConnectionHandle();
@@ -51,6 +52,10 @@ class SceneItem_ConnectionHandle : public QGraphicsItem {
   private:
     bool move_object_on_mouseMove;
     QString m_label;
+  private slots:
+    void removeConnectionSlot();
+    void removeTransformationSlot();
+    void editLabelSlot();
 };
 
 #endif
