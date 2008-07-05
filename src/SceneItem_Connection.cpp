@@ -53,10 +53,11 @@
 const qreal Pi = 3.14;
 
 SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
 //   qDebug() << "Creating a new connection";
   m_customTransformation = false;
-  labelItem = new SceneItem_ConnectionHandle;
-  labelItem->setParentItem( this );
+//   labelItem = new SceneItem_ConnectionHandle;
+//   labelItem->setParentItem( this );
   this->index = index;
   m_color = QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 );
 
@@ -77,7 +78,7 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
 
 // - connection is removed -> remove the reference from the two associated nodes
 SceneItem_Connection::~SceneItem_Connection() {
-//   qDebug() << __FUNCTION__;
+  qDebug() << __FUNCTION__ << "BEGIN" << (unsigned int)this;
 
   if (myEndItem != NULL)
     if (!myEndItem->removeConnection(this))
@@ -90,6 +91,11 @@ SceneItem_Connection::~SceneItem_Connection() {
     ((SceneItem_Node *)myStartItem)->layoutChange();
   if (myEndItem != NULL)
     ((SceneItem_Node *)myEndItem)->layoutChange();
+
+//   delete labelItem;
+//   labelItem->deleteLater();
+  qDebug() << __FUNCTION__ << "END" << (unsigned int)this;
+  exit(0);
 }
 
 /*
@@ -98,7 +104,7 @@ SceneItem_Connection::~SceneItem_Connection() {
 ** tracks source and dest QModelIndex and QGraphicsItem
 */
 void SceneItem_Connection::updateData() {
-//   qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   if ( scene() == NULL ) {
     qDebug() << "item isn't in any scene, can't query for valid data";
     return;
@@ -112,7 +118,7 @@ void SceneItem_Connection::updateData() {
   prepareGeometryChange();
 
   QString symbol = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toString();
-  labelItem->setLabel( symbol );
+//   labelItem->setLabel( symbol );
 
   QGraphicsItem* a = (( GraphicsScene* )scene() )->modelToSceenIndex( QPersistentModelIndex( index.parent() ) );
   if ( a == NULL )
@@ -173,6 +179,7 @@ void SceneItem_Connection::updateData() {
 }
 
 void SceneItem_Connection::updateLabelPosition() {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   // FIXME this is a hack not to deform the whole scene but should be handled BETTER!
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return;
@@ -192,13 +199,14 @@ void SceneItem_Connection::updateLabelPosition() {
   QPointF orthogonal_diffVector = QPointF( ooffset * orthogonal_normalUnitVector.x(),
                                   ooffset * orthogonal_normalUnitVector.y() );
 
-  labelItem->setPos( vpos + orthogonal_diffVector + parallel_diffVector );
+//   labelItem->setPos( vpos + orthogonal_diffVector + parallel_diffVector );
 }
 
 // callback function from a ConnectionLabel item
 // basically this math inverts void SceneItem_Connection::updateLabel() functionality
 void SceneItem_Connection::labelItemPositionCallback( const QPointF& /*oldPos*/, const QPointF& newPos ) {
   // FIXME this is a hack not to deform the whole scene and should be handled BETTER!
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return;
 
@@ -236,6 +244,7 @@ void SceneItem_Connection::labelItemPositionCallback( const QPointF& /*oldPos*/,
 }
 
 void SceneItem_Connection::updatePosition() {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   prepareGeometryChange();
   line = createLine( mapFromItem( myStartItem, 0, 0 ), mapFromItem( myEndItem, 0, 0 ) );
   updateLabelPosition();
@@ -243,6 +252,7 @@ void SceneItem_Connection::updatePosition() {
 }
 
 QLineF SceneItem_Connection::createLine( QPointF a, QPointF b ) {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return QLineF();
 
@@ -265,6 +275,7 @@ QRectF SceneItem_Connection::boundingRect() const {
 }
 
 QPainterPath SceneItem_Connection::shape() const {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
 #define CLICKABLERANGE 12
   QPainterPathStroker s;
   s.setWidth( CLICKABLERANGE );
@@ -274,6 +285,7 @@ QPainterPath SceneItem_Connection::shape() const {
 }
 
 QPainterPath SceneItem_Connection::connectionPath() const {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   // FIXME this is a hack not to deform the whole scene and should be handled BETTER!
   if ( myStartItem == NULL || myEndItem == NULL )
     return QPainterPath();
@@ -304,9 +316,9 @@ QPainterPath SceneItem_Connection::connectionPath() const {
 
   QPointF a1 = /*offset +*/ mapFromItem( myStartItem, 0, 0 );
   QPointF a2 = parallel_unitVector * f + orthogonal_diffVector + mapFromItem( myStartItem, 0, 0 );
-  path.cubicTo( a1, a2, labelItem->pos() );
+//   path.cubicTo( a1, a2, labelItem->pos() );
 
-  path.lineTo( labelItem->pos() );
+//   path.lineTo( labelItem->pos() );
   QPointF d1 = -parallel_unitVector * v + orthogonal_diffVector + mapFromItem( myEndItem, 0, 0 );
   QPointF d2 = /*offset +*/ mapFromItem( myEndItem, 0, 0 );
   path.cubicTo( d1, d2, mapFromItem( myEndItem, 0, 0 ) );
@@ -314,11 +326,14 @@ QPainterPath SceneItem_Connection::connectionPath() const {
 }
 
 void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
+  if (scene() == NULL) {
+    qDebug() << "Can't paint item, not in any scene() anymore";
+    return;
+  }
+
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return;
-//   if ( myStartItem == myEndItem ) {
-//     return;
-//   }
 
   if ( myStartItem == NULL || myEndItem == NULL ) {
     qDebug() << "Can't draw anything since myStartItem||myEndItem isn't set yet";
@@ -425,6 +440,7 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
 }
 
 int SceneItem_Connection::type() const {
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   return SceneItem_ConnectionType;
 }
 
@@ -485,6 +501,7 @@ void SceneItem_Connection::setAutoLayoutFactor(qreal factor) {
 }
 
 unsigned int SceneItem_Connection::id(){
+  qDebug() << __FUNCTION__ << (unsigned int)this;
 //   unsigned int id=999;
 //   if (index.isValid())
 //     id = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toInt();

@@ -26,8 +26,7 @@ automatehandler::automatehandler( QWidget* parent ) : QDialog( parent ) {
   connect( treeWidget, SIGNAL( customContextMenuRequested( const QPoint & ) ),
            this, SLOT( popQMenu( const QPoint & ) ) );
   connect( updateBtn, SIGNAL( clicked() ), this, SLOT( updateTreeWidget() ) );
-  qsrand( 5 );
-
+  qsrand(0);
   addRandomAutomate();
   addRandomAutomate();
   addRandomAutomate();
@@ -69,7 +68,7 @@ void automatehandler::addAutomate() {
 }
 
 void automatehandler::addRandomAutomate() {
-  automate* myautomate1 = new automate;
+automate* myautomate1 = new automate;
   automates.push_back( myautomate1 );
 
   //TODO fix this warning, fix everything!
@@ -87,8 +86,8 @@ void automatehandler::addRandomAutomate() {
 //   qDebug() << "rootnode=" << (unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
-  int todonodes = qrand() % 11;
-  int todoconnections_ = 3;
+  int todonodes = qrand() % 10;
+  int todoconnections_ = 22;
 
   for ( int i = 0; i < todonodes; ++i ) {
     int s = qrand() % 2;
@@ -197,8 +196,8 @@ void automatehandler::popQMenu( const QPoint  & point ) {
 
   if ( item != NULL ) {
     int z = item->data( 0, customRole::IdRole ).toInt();
-    for ( int i = 0; i < automates[z]->vh.getListOfViews().size(); ++i ) {
-      AbstractView* av = automates[z]->vh.getListOfViews()[i];
+    for ( int i = 0; i < automates[z]->vh->getListOfViews().size(); ++i ) {
+      AbstractView* av = automates[z]->vh->getListOfViews()[i];
       QString objectname = av->windowTitle().split( " " ).first();
       QString viewName = QString( "%1 %2" ).arg( objectname ).arg( i );
       qm.addAction( viewName, av, SLOT( showWithFocus() ) );
@@ -273,6 +272,7 @@ void automatehandler::quit() {
     delete automates[i];
   }
   automates.clear();
+  qDebug() << "program is now exited with exit(0);";
   exit(0);
 }
 

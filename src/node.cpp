@@ -29,7 +29,7 @@ node::node( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
 // since this will create inconsistencies between the model and this data structure.
 // A better way is to fail with exit(0) since this problem must be handled with great care!
 node::~node() {
-//   qDebug() << "~node()";
+  qDebug() << __FUNCTION__;
   if ( m_childItems.size() > 0 ) {
     qDebug() << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
     exit(0);
@@ -89,9 +89,9 @@ void node::removeChild( unsigned int index ) {
 //   qDebug() << (unsigned int)r_item->inverseConnection;
 //   ((node*)r_item->parent())->removeChildReversePath(r_item);
 
-  AbstractTreeItem* rItem = r_item;//inverseConnection;
-  AbstractTreeItem* rItemParent = rItem->parent();
-  (( node* )rItemParent )->removeChildReversePath( rItem );
+//   AbstractTreeItem* rItem = r_item;//inverseConnection;
+  AbstractTreeItem* rItemParent = r_item->parent();
+  (( node* )rItemParent )->removeChildReversePath( r_item );
 
 //   node_connection* f_item = ((node_connection*)m_childItems[index]);
 //   node_connection* r_item = f_item->inverseConnection;
@@ -99,6 +99,10 @@ void node::removeChild( unsigned int index ) {
 
   // 2. now finally delete the forward connection
   m_childItems.removeAt( index );
+
+  // free the objects
+  delete r_item;
+  delete f_item;
 }
 
 void node::appendChildForwardPath( AbstractTreeItem *item ) {

@@ -313,8 +313,7 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
 Qt::ItemFlags Model::flags( const QModelIndex & index ) const {
   //FIXME only make setData able fields editable
   if ( !index.isValid() )
-    return Qt::ItemIsEnabled;
-
+    return 0;
   return QAbstractItemModel::flags( index ) | Qt::ItemIsEditable;
 }
 
@@ -324,8 +323,8 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
       ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && role == customRole::SymbolIndexRole ) ) {
     AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
     node_connection* nc = static_cast<node_connection*>( n );
-    nc->setSymbol_index(symbol( value.toString()) );
-    qDebug() << __FUNCTION__ << value.toString() << " " << nc->symbol_index() << " " << symbol( nc->symbol_index() );
+    nc->setSymbol_index( symbol( value.toString() ) );
+//     qDebug() << __FUNCTION__ << value.toString() << " " << nc->symbol_index() << " " << symbol( nc->symbol_index() );
     emit dataChanged( index, index );
     return true;
   }
@@ -549,7 +548,7 @@ bool Model::insertConnection( QModelIndex startItem, QModelIndex endItem ) {
 
 bool Model::removeConnection( QPersistentModelIndex connection ) {
   if ( !connection.isValid() ) {
-//     qDebug() << "connection is not a valid QModelIndex (anymore?), not deleting anything";
+    qDebug() << "connection is not a valid QModelIndex (anymore?), not deleting anything";
     return true;
   }
 
@@ -558,46 +557,80 @@ bool Model::removeConnection( QPersistentModelIndex connection ) {
 }
 
 bool Model::removeConnections( QList<QPersistentModelIndex> nodeList ) {
+//FIXME i think this is the bug
 //   qDebug() << __FUNCTION__;
   bool s = true;
-  foreach( QModelIndex item, nodeList )
-    if ( !removeConnection( item ) && s )
-      s = false;
+  foreach( QModelIndex item, nodeList ) {
+    if ( !item.isValid() ) {
+      // this can happen when you delete a node since all connections to and from it are deleted implicitly
+      // but the selection still has some connections in the list of items to be deleted
+      qDebug() << __FUNCTION__ << "WARNING: QModelIndex is not valid anymore, skipping a deletion";
+      continue;
+    } else {
+      if ( !removeConnection( item ) && s )
+        s = false;
+    }
+  }
   return s;
 }
 
+/*
+** This function can be called with [node and node_connection model indexes in arbitrary order]
+**  - first all nodes get deleted BUT this list isn't altered so there might be connections in
+**    the list which are already deleted because when a NODE is deleted all incomming/outgoing
+**    connections are deleted implicitly. however having a list of connections with valid and invalid
+**    QModelIndex is no problem as only those get deleted which are still deletable.
+**  - if a NODE is deleted all incomming/outgoing connections are deleted implicitly,
+**     see: bool removeNode( QPersistentModelIndex node );
+*/
 bool Model::removeItems( QList<QPersistentModelIndex> itemList ) {
   QList<QPersistentModelIndex> nodeItems;
   QList<QPersistentModelIndex> connectionItems;
   foreach( QModelIndex m, itemList ) {
+    if ( !m.isValid() ) {
+      qDebug() << __FUNCTION__ << "FATAL ERROR: QModelIndex is not valid anymore, may|must NOT happen here!, exiting";
+      exit(0);
+    }
     if ( getTreeItemType( m ) == NODE )
-      nodeItems.append( QPersistentModelIndex(m) );
+      nodeItems.append( QPersistentModelIndex( m ) );
+
     if ( getTreeItemType( m ) == NODE_CONNECTION )
-      connectionItems.append( QPersistentModelIndex(m) );
+      connectionItems.append( QPersistentModelIndex( m ) );
   }
-  return removeNodes( nodeItems ) && removeConnections( connectionItems );
+//FIXME clean up this two lines
+  bool s = removeNodes( nodeItems ) && removeConnections( connectionItems );
+  return s;
 }
 
 /// this function is provided for convenience
 bool Model::removeNodes( QList<QPersistentModelIndex> nodeList ) {
   bool s = true;
-  foreach( QModelIndex item, nodeList )
-  if ( !removeNode( item ) && s )
-    s = false;
+  foreach( QModelIndex item, nodeList ) {
+    if ( !item.isValid() ) {
+      // this should never happen
+      qDebug() << __FUNCTION__ << "FATAL ERROR: QModelIndex for a node is not valid anymore";
+      exit(0);
+    } else {
+      if ( !removeNode( item ) && s )
+        s = false;
+    }
+  }
   return s;
 }
 
 /*
-** removeNodes removes nodes only
+** removeNodes removes NODEs only
 ** removing a node implies:
 **  - delete all outgoing connections
 **  - delete all incomming connections (references)
 **  - delete the node itself
 */
 bool Model::removeNode( QPersistentModelIndex abstractQModelIndex ) {
+  qDebug() << __FUNCTION__;
+  // FIXME code below should be removable
   if ( !abstractQModelIndex.isValid() ) {
-//     qDebug() << "abstractQModelIndex is not a valid QModelIndex (anymore?), can't delete anything, already deleted...";
-    return true;
+    qDebug() << "FATAL ERROR: abstractQModelIndex is not a valid QModelIndex (anymore?), exiting";
+    exit(0);
   }
 
   if ( getSelectedItemType( abstractQModelIndex ) == NODE ) {

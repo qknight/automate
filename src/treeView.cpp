@@ -83,12 +83,10 @@ void treeView::currentChanged( const QModelIndex & current, const QModelIndex & 
     delNodeBtn->setEnabled( false );
     delConnectionBtn->setEnabled( true );
     addConnectionBtn->setEnabled( true );
-    a.append( "0 - not defined yet\n" )    ;
-    a.append( "1 - epsilon connection\n" );
-    a.append( "2 - 'a'\n" );
-    a.append( "3 - 'b'\n" );
-    a.append( "4 - 'c'\n" );
-    //TODO read the symbol2int object to find out about defined connection symbols
+    a.append("\nInternal symbolTable:\n");
+    for (int i=0; i < model->size(); ++i) {
+      a.append(QString("%1   -   %2\n").arg(i).arg(model->symbol(i)));
+    }
     break;
   default:
     delNodeBtn->setEnabled( false );

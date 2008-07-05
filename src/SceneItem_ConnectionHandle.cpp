@@ -23,6 +23,7 @@ void SceneItem_ConnectionHandle::setLabel( QString label ) {
 }
 
 SceneItem_ConnectionHandle::~SceneItem_ConnectionHandle() {
+  qDebug() << __FUNCTION__;
 }
 
 QPainterPath SceneItem_ConnectionHandle::shape() const {
@@ -96,15 +97,41 @@ void SceneItem_ConnectionHandle::mouseReleaseEvent( QGraphicsSceneMouseEvent * e
 }
 
 void SceneItem_ConnectionHandle::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event ) {
-  qDebug() << __FUNCTION__;
   SceneItem_LabelEditor* f = new SceneItem_LabelEditor( this );
   f->setZValue( 1000.0 );
   f->setTextInteractionFlags( Qt::TextEditorInteraction );
   scene()->addItem( f );
+  f->setPos(event->pos());
+  f->setTextInteractionFlags(Qt::TextEditorInteraction);
+  qDebug() << " labelItem pos = " << f->pos().x() << f->pos().y();
+
+  QGraphicsSceneMouseEvent *mouseEvent =
+      new QGraphicsSceneMouseEvent(QEvent::GraphicsSceneMousePress);
+  mouseEvent->setAccepted(true);
+  mouseEvent->setPos(event->pos());
+  mouseEvent->setScenePos(event->scenePos());
+  mouseEvent->setScreenPos(event->screenPos());
+  mouseEvent->setButtonDownPos(Qt::LeftButton,
+                               event->buttonDownPos(Qt::LeftButton));
+  mouseEvent->setButtonDownScreenPos(Qt::LeftButton,
+                                     event->buttonDownScreenPos(Qt::LeftButton));
+  mouseEvent->setButtonDownScenePos(Qt::LeftButton,
+                                    event->buttonDownScenePos(Qt::LeftButton));
+  mouseEvent->setWidget(event->widget());
+
+  qDebug() << " ... pos = " << event->pos().x() << event->pos().y();
+
+  f->mousePressEvent(mouseEvent);
+
+  delete mouseEvent;
+
+}
+
+void SceneItem_ConnectionHandle::addEditor() {
 }
 
 QVariant SceneItem_ConnectionHandle::itemChange( GraphicsItemChange change, const QVariant & value ) {
-  // only send this event when the labelItem is moved manually
+  // only end this event when the labelItem is moved manually
   if ( move_object_on_mouseMove ) {
     if ( parentItem() != NULL )
       (( SceneItem_Connection* )parentItem() )->setCustomTransformation( true );
@@ -124,35 +151,35 @@ void SceneItem_ConnectionHandle::contextMenuEvent( QGraphicsSceneContextMenuEven
   // remember to check for item existence before applying any function on (this) since
   // the item can be removed while the context menu is still valid then....
   QMenu menu;
-  QAction *removeConnectionAction = menu.addAction( "FIXME Remove connection" );
-  QAction *removeTransformationAction = menu.addAction( "FIXME Remove custom transformation" );
-  QAction *editLabelAction = menu.addAction( "FIXME Edit Label" );
-  connect(removeConnectionAction,SIGNAL(triggered()),this,SLOT(removeConnectionSlot()));
-  connect(removeTransformationAction,SIGNAL(triggered()),this,SLOT(removeTransformationSlot()));
-  connect(editLabelAction,SIGNAL(triggered()),this,SLOT(editLabelSlot()));
+//   QAction *removeConnectionAction = menu.addAction( "Remove connection" );
+  QAction *editLabelAction = menu.addAction( "Edit Label" );
+  QAction *removeTransformationAction = menu.addAction( "Remove custom transformation" );
+
+  //   connect(removeConnectionAction,SIGNAL(triggered()),this,SLOT(removeConnectionSlot()));
+//   connect(editLabelAction,SIGNAL(triggered()),this,SLOT(editLabelSlot()));
+//   connect(removeTransformationAction,SIGNAL(triggered()),this,SLOT(removeTransformationSlot()));
   menu.exec( event->screenPos() );
 }
-
 
 int SceneItem_ConnectionHandle::type() const {
   return SceneItem_ConnectionHandleType;
 }
 
-void SceneItem_ConnectionHandle::removeConnectionSlot() {
-  qDebug() << __FUNCTION__;
-}
-
-void SceneItem_ConnectionHandle::removeTransformationSlot() {
-  move_object_on_mouseMove=false;
-  if ( parentItem() != NULL ) {
-//     qDebug() << "disabling custom transformation";
-    (( SceneItem_Connection* )parentItem() )->setCustomTransformation( false );
-  }
-}
-
-void SceneItem_ConnectionHandle::editLabelSlot() {
-  qDebug() << __FUNCTION__;
-}
-
+// void SceneItem_ConnectionHandle::removeConnectionSlot() {
+//   qDebug() << __FUNCTION__;
+// }
+//
+// void SceneItem_ConnectionHandle::removeTransformationSlot() {
+//   move_object_on_mouseMove=false;
+//   if ( parentItem() != NULL ) {
+// //     qDebug() << "disabling custom transformation";
+//     (( SceneItem_Connection* )parentItem() )->setCustomTransformation( false );
+//   }
+// }
+//
+// void SceneItem_ConnectionHandle::editLabelSlot() {
+//   addEditor();
+// }
+//
 
 

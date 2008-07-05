@@ -21,9 +21,10 @@
 #include "automate.h"
 
 automate::automate() {
+  vh = new viewHandler;
   root = new AutomateRoot;
   modelPtr = new Model(automateRootPtr());
-  new ModelTest(modelPtr);
+  modeltest = new ModelTest(modelPtr);
 
   // this will create a nice label for the automate
   QString date = QDate().currentDate().toString("yyyy MMMd");
@@ -32,7 +33,9 @@ automate::automate() {
 }
 
 automate::~automate() {
-//   qDebug() << "automate::~automate()";
+  qDebug() << "automate::~automate()";
+  delete vh;
+  delete modeltest;
   delete modelPtr;
   delete root;
 
@@ -70,18 +73,8 @@ void automate::openNewView(ViewType vt) {
       qDebug() << "openNewView: error, case not handles";
       return;
   }
-  vh.addHandle(view);
+  vh->addHandle(view);
 }
-
-// void automate::openNewGraphicsView() {
-//   graphicsView* tv = new graphicsView(model());
-//   qDebug() << "FIXME add handler for views in general";
-//   //FIXME add a handler for this
-//   //   vh.addHandle(tv);
-//   tv->show();
-//   QString a = QString("GraphicsView - %1").arg(name);
-//   tv->setWindowTitle(a);
-// }
 
 unsigned int automate::childCount(){
   return root->childCount();

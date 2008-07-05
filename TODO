@@ -1,7 +1,6 @@
-FIXME bug when having two GraphicsViews open and a segfault pops up - if node by node is deleted - after a while.
 FIXME labelEditor doesn't work well
-FIXME modeltest.cpp line 106 issue
-FIXME graphicsView: 'even' amount node_connections should be centered, 'odd' amounts are already rendered as intended
+FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
+
 FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
       HINT: check the row/column in dataChanged() call, maybe this is the fix?!
       HINT: maybe implement hasChildren as well
@@ -11,7 +10,7 @@ FIXME treeView, adding a new connection isn't marked with a '+' sign in the tree
             it will stop working again when you hit the '-' and try delete all + add one item again
             - the view will update correctly if the widget is clicked anywhere?! why?
       HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
-FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
+
 FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached connections VERY fast in the view sometimes
       the program hangs with this error:
   QPainterPath::cubicTo: Adding point where x or y is NaN, results are undefined
@@ -23,6 +22,8 @@ FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached
       CODE if ( myStartItem->collidesWithItem( myEndItem ) )
       CODE  return;
       when this two lines in SceneItem_Connection are commented we can trigger this issue
+FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
+       moving the mouse in the bbox results in the errors from FIXME1
 
 
 
@@ -35,10 +36,9 @@ FIXME graphicsitem: bezier issues
   - bezier drawing:
     - current issue: when connectionLabel comes near to start or end node it's screwed
     - bezier is drawn right from the beginning of a node not outside of it's shape
-FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
-       moving the mouse in the bbox results in the errors from FIXME1
 
 FINAL
+ - remove modeltest
  - clean all TODOs and FIXMEs in the code
  - usability testing
  - remove debug output
@@ -55,6 +55,7 @@ FINAL doxygen comments on code and concepts
   - ausarbeitung 2s+doxygen gedruckt, gelocht, geheftet
     ca. 45 seiten, gelocht und verhaftet!
 
+FIXME graphicsView: 'even' amount node_connections should be centered, 'odd' amounts are already rendered as intended
 FIXME zoomFit
   - andreas krebs wanted to do that, nearly everything is there now, see
     void mainGraphicsView::zoomFit() { in mainGraphicsView.cpp

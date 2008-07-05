@@ -33,6 +33,7 @@ node_connection::node_connection( AbstractTreeItem* parent ) : AbstractTreeItem(
 // since this will create inconsistencies between the model and this data structure.
 // A better way is to fail with exit(0) since this problem must be handled with great care!
 node_connection::~node_connection() {
+  qDebug() << __FUNCTION__;
 }
 
 void node_connection::dump() {

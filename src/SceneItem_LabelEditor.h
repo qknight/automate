@@ -34,6 +34,7 @@ class SceneItem_ConnectionHandle;
   @author Joachim Schiele <js@lastlog.de>
  */
 class SceneItem_LabelEditor : public QGraphicsTextItem {
+  friend class SceneItem_ConnectionHandle;
   public:
     SceneItem_LabelEditor(QGraphicsItem* parent);
     ~SceneItem_LabelEditor();

@@ -50,10 +50,10 @@
 #include "SceneItem_Node.h"
 
 SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() {
-  setFlags( QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable /*| QGraphicsItem::ItemIsFocusable*/ );
+  setFlag( QGraphicsItem::ItemIsMovable );
+  setFlag( QGraphicsItem::ItemIsSelectable );
+//   setFlag( QGraphicsItem::ItemIsFocusable );
   setAcceptsHoverEvents( true );
-//   setData( 0, &index );
-//   hovering = false;
   penWidth = 3;
 
   setZValue( 10 );
@@ -62,12 +62,13 @@ SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() 
 }
 
 SceneItem_Node::~SceneItem_Node() {
-//   qDebug() << __FUNCTION__;
+  qDebug() << __FUNCTION__;
   if ( ConnectionItems.size() != 0 ) {
     qDebug() << "WARNING: not all connections have been deleted!!!";
     qDebug() << "WARNING: inconsistency between the graphicsView and the data (model) might exist";
     qDebug() << "WARNING: ignore this warning if a model reset() call caused it";
     qDebug() << "WARNING: it will cause segmentation faults anyway if a connection uses the node";
+    exit(0);
   }
 }
 
@@ -200,7 +201,7 @@ void SceneItem_Node::layoutChange() {
 
   // on model reset() we delete a connection and the autolayout call doesn't make sense then.
   // on reset() all items get removed from the scene() and so this function won't be executed
-  if (scene() == NULL)
+  if ( scene() == NULL )
     return;
 
   QList<SceneItem_Connection *> itemsToAutoLayout;

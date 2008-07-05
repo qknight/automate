@@ -40,6 +40,7 @@ AutomateRoot::AutomateRoot( AbstractTreeItem* parent ) : AbstractTreeItem( paren
 // since this will create inconsistencies between the model and this data structure.
 // A better way is to fail with exit(0) since this problem must be handled with great care!
 AutomateRoot::~AutomateRoot() {
+  qDebug() << __FUNCTION__;
   delete objCnt_node;
   delete objCnt_automateroot;
   delete objCnt_nodeconnection;
@@ -63,7 +64,9 @@ void AutomateRoot::removeChild( unsigned int index ) {
     qDebug() << "having " << m_childItems.size() << " childs";
     exit( 0 );
   }
+  AbstractTreeItem* child = m_childItems[index];
   m_childItems.removeAt( index );
+  delete child;
 }
 
 unsigned int AutomateRoot::generateUniqueID( unsigned int a ) {

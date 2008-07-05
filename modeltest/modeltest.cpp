@@ -103,7 +103,7 @@ void ModelTest::nonDestructiveBasicTest()
     model->fetchMore(QModelIndex());
     fetchingMore = false;
     Qt::ItemFlags flags = model->flags(QModelIndex());
-//     Q_ASSERT(flags == Qt::ItemIsDropEnabled || flags == 0);
+    Q_ASSERT(flags == Qt::ItemIsDropEnabled | flags == 0);
     model->hasChildren(QModelIndex());
     model->hasIndex(0, 0);
     model->headerData(0, Qt::Horizontal);

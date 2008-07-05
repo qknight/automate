@@ -23,7 +23,10 @@ GraphicsScene::GraphicsScene( Model *model ) : QGraphicsScene() {
   connect( this, SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
 }
 
-GraphicsScene::~GraphicsScene() {}
+GraphicsScene::~GraphicsScene() {
+  qDebug() << __FUNCTION__;
+  clearScene();
+}
 
 void GraphicsScene::selectionChanged() {
 //   qDebug( "Selection changed, %i selected items", selectedItems().size() );
@@ -76,6 +79,14 @@ void GraphicsScene::updateConnection( QGraphicsItem* item ) {
   (( SceneItem_Connection * )item )->updateData();
 }
 
+/*
+** in qt 4.4 we have clear() as well but we won't use it since we have to
+** remove all connections first and then all nodes. removing a node while it still
+** has references (in/out connections) will result in a error since we need to
+** have that error for debugging of other data-structure errors.
+**
+** behaviour can be changed later if appreciated
+*/
 void GraphicsScene::clearScene() {
 //   foreach( QGraphicsItem* i, items() ) {
 //     QString o;
@@ -110,9 +121,9 @@ void GraphicsScene::clearScene() {
     }
   }
   foreach( QGraphicsItem* i, connections )
-  delete i;
+    delete i;
   foreach( QGraphicsItem* i, nodes )
-  delete i;
+    delete i;
   if ( items().size() )
     qDebug() << "Warning: we still got items on this scene while there should not be any!";
 }
@@ -168,7 +179,7 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     QGraphicsScene::keyPressEvent( keyEvent );
     return;
   }
-
+  qDebug() << "here1";
   if ( keyEvent->key() == Qt::Key_X ) {
     removeEvent();
   }
@@ -178,6 +189,7 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
   if ( keyEvent->key() == Qt::Key_Escape ) {
     emit hideView();
   }
+  qDebug() << "here2";
   if ( keyEvent->key() == Qt::Key_N ) {
     insertNode();
   }
@@ -283,8 +295,11 @@ void GraphicsScene::print() {
   }
 }
 
+/*
+** we can be sure that item exists
+*/
 bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
-//   qDebug() << __FUNCTION__;
+  qDebug() << __FUNCTION__;
   QGraphicsItem* nItem = modelToSceenIndex( item );
   if ( nItem == NULL ) {
     qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
@@ -293,13 +308,17 @@ bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
 //     return false;
   }
   removeItem( nItem );
-  delete nItem;
+//   delete nItem;
   return true;
 }
 
+/*
+** we can be sure that item exists
+*/
 bool GraphicsScene::connectionRemoved( QPersistentModelIndex item ) {
-//   qDebug() << __FUNCTION__;
+  qDebug() << __FUNCTION__;
   QGraphicsItem* cItem = modelToSceenIndex( item );
+
   if ( cItem == NULL ) {
     qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
     // FIXME after testing this can be changed to return instaead of exit
@@ -307,7 +326,7 @@ bool GraphicsScene::connectionRemoved( QPersistentModelIndex item ) {
 //     return false;
   }
   removeItem( cItem );
-  delete cItem;
+//   delete cItem;
   return true;
 }
 
@@ -456,15 +475,4 @@ void GraphicsScene::toggle_customConnectionLabels() {
   m_want_customConnectionLabels = !m_want_customConnectionLabels;
   update();
 }
-
-// void GraphicsScene::editorLostFocus(DiagramTextItem *item) {
-//   QTextCursor cursor = item->textCursor();
-//   cursor.clearSelection();
-//   item->setTextCursor(cursor);
-//
-//   if (item->toPlainText().isEmpty()) {
-//     removeItem(item);
-//     item->deleteLater();
-//   }
-// }
 

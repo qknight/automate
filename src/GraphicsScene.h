@@ -30,10 +30,11 @@
  @author Joachim Schiele <js@lastlog.de>
 */
 class GraphicsScene : public QGraphicsScene {
-    friend class SceneItem_Node;
+  Q_OBJECT
+  friend class SceneItem_Node;
     friend class SceneItem_Connection;
     friend class ItemView;
-    Q_OBJECT
+
   public:
     GraphicsScene( Model *model );
     ~GraphicsScene();
@@ -43,8 +44,8 @@ class GraphicsScene : public QGraphicsScene {
     bool want_coloredConnectionHelper();
     bool want_customNodeLabels();
     bool want_customConnectionLabels();
-//     void lockKeyBoard();
-//     void ulockKeyBoard();
+    QVariant data( const QModelIndex &index, int role ) const;
+    bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
   protected:
     QGraphicsItem* nodeInserted( QPersistentModelIndex item );
     QGraphicsItem* connectionInserted( QPersistentModelIndex item );
@@ -52,10 +53,6 @@ class GraphicsScene : public QGraphicsScene {
     void updateConnection( QPersistentModelIndex item );
     bool nodeRemoved( QPersistentModelIndex item );
     bool connectionRemoved( QPersistentModelIndex item );
-
-  public:
-    QVariant data( const QModelIndex &index, int role ) const;
-    bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
   private:
     bool m_want_highlight;
     bool m_want_boundingBox;
@@ -70,18 +67,11 @@ class GraphicsScene : public QGraphicsScene {
     void mousePressEvent( QGraphicsSceneMouseEvent * event );
     void mouseMoveEvent( QGraphicsSceneMouseEvent * event );
     void mouseReleaseEvent( QGraphicsSceneMouseEvent * event );
-
     void updateNode( QGraphicsItem* item );
     void updateConnection( QGraphicsItem* item );
     bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
-
   public slots:
     void insertNode();
-
-  private slots:
-    void selectionChanged();
-    void toggleHighlight();
-
   protected slots:
     void toggleEvent( int role );
     void toggleFinalEvent();
@@ -94,6 +84,9 @@ class GraphicsScene : public QGraphicsScene {
     void toggle_customConnectionLabels();
     void toggle_customNodeLabels();
     void clearScene();
+  private slots:
+    void selectionChanged();
+    void toggleHighlight();
   signals:
     void hideView();
     void toggleRenderHints();

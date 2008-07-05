@@ -41,7 +41,7 @@ class automate {
   public:
     automate();
     ~automate();
-    viewHandler vh;
+    viewHandler* vh;
     Model* model();
     void openNewView(ViewType);
     void dump();
@@ -51,6 +51,8 @@ class automate {
   //TODO make private later and or remove it
     AbstractTreeItem* automateRootPtr();
     QString name;
+  private:
+    ModelTest* modeltest;
 };
 
 #endif
