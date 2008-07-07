@@ -72,7 +72,7 @@ mainGraphicsView::mainGraphicsView( Model *model, QMainWindow* parent ) : Abstra
 }
 
 mainGraphicsView::~mainGraphicsView() {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   delete scene;
   delete view;
   delete sb;

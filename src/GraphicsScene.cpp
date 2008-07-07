@@ -21,10 +21,15 @@ GraphicsScene::GraphicsScene( Model *model ) : QGraphicsScene() {
   m_want_customConnectionLabels = false;
   line = 0;
   connect( this, SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
+
+  //FIXME qt 4.4.x and 4.3.x have a bug in the BspTreeIndex methods -> removeItem(QGraphicsItem)
+  //      since in some cases an already deleted item is queried which segfaults the program
+
+  setItemIndexMethod(NoIndex);
 }
 
 GraphicsScene::~GraphicsScene() {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   clearScene();
 }
 
@@ -88,6 +93,7 @@ void GraphicsScene::updateConnection( QGraphicsItem* item ) {
 ** behaviour can be changed later if appreciated
 */
 void GraphicsScene::clearScene() {
+//   qDebug() << __FUNCTION__;
 //   foreach( QGraphicsItem* i, items() ) {
 //     QString o;
 //     switch(i->type()) {
@@ -113,19 +119,19 @@ void GraphicsScene::clearScene() {
   foreach( QGraphicsItem* i, items() ) {
     if ( i->type() == SceneItem_ConnectionType ) {
       connections.push_back( i );
-      removeItem( i );
     }
     if ( i->type() == SceneItem_NodeType ) {
       nodes.push_back( i );
-      removeItem( i );
     }
   }
   foreach( QGraphicsItem* i, connections )
     delete i;
   foreach( QGraphicsItem* i, nodes )
     delete i;
-  if ( items().size() )
+  if ( items().size() ) {
     qDebug() << "Warning: we still got items on this scene while there should not be any!";
+    sleep (10);
+  }
 }
 
 /*
@@ -136,7 +142,7 @@ void GraphicsScene::clearScene() {
 
 // a general compare function had to be implemented: compareIndexes
 // since this implementation doesn't use
-// column BUT columns somehow where reported to be different, meaning: a stored index could have column 3
+// column BUT columns somehow whxere reported to be different, meaning: a stored index could have column 3
 // while the treeView would make a difference because the treeView uses the columns to distinguish between
 // different entries in the hierarchical view (the treeView) where for instance column 3 shows the node name
 // and column 4 shows the symbol_index of a connection
@@ -161,6 +167,8 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex( QPersistentModelIndex index ) {
     }
   }
   qDebug() << "failed to modify the item, since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found";
+  qDebug() << "sleeping 10 seconds now";
+  sleep(10);
   return NULL;
 }
 
@@ -179,9 +187,11 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     QGraphicsScene::keyPressEvent( keyEvent );
     return;
   }
-  qDebug() << "here1";
   if ( keyEvent->key() == Qt::Key_X ) {
-    removeEvent();
+    removeEvent(0);
+  }
+  if ( keyEvent->key() == Qt::Key_X && keyEvent->modifiers() == Qt::ControlModifier ) {
+    removeEvent(1);
   }
   if ( keyEvent->key() == Qt::Key_P ) {
     print();
@@ -189,7 +199,6 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
   if ( keyEvent->key() == Qt::Key_Escape ) {
     emit hideView();
   }
-  qDebug() << "here2";
   if ( keyEvent->key() == Qt::Key_N ) {
     insertNode();
   }
@@ -299,16 +308,16 @@ void GraphicsScene::print() {
 ** we can be sure that item exists
 */
 bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   QGraphicsItem* nItem = modelToSceenIndex( item );
   if ( nItem == NULL ) {
-    qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+    qDebug() << "FATAL ERROR: nItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
     // FIXME after testing this can be changed to return instaead of exit
     exit( 0 );
 //     return false;
   }
-  removeItem( nItem );
-//   delete nItem;
+//   qDebug() << "nItem is: " << QString("%1").arg((unsigned int) nItem,0,16);
+  delete nItem;
   return true;
 }
 
@@ -316,27 +325,39 @@ bool GraphicsScene::nodeRemoved( QPersistentModelIndex item ) {
 ** we can be sure that item exists
 */
 bool GraphicsScene::connectionRemoved( QPersistentModelIndex item ) {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__ << (unsigned int)this;
   QGraphicsItem* cItem = modelToSceenIndex( item );
 
   if ( cItem == NULL ) {
-    qDebug() << "FATAL ERROR: gItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
+    qDebug() << "FATAL ERROR: cItem was NULL" << __FILE__ << ", " << __LINE__ << ", " << __FUNCTION__;
     // FIXME after testing this can be changed to return instaead of exit
     exit( 0 );
 //     return false;
   }
-  removeItem( cItem );
-//   delete cItem;
+//   qDebug() << (unsigned int)cItem->scene() << " vs " << (unsigned int) this;
+//   qDebug() << QString("%1").arg((unsigned int) cItem->scene(),0,16) << " vs " << QString("%1").arg((unsigned int) this,0,16);
+//   qDebug() << "cItem is: " << QString("%1").arg((unsigned int) cItem,0,16);
+
+  delete cItem;
   return true;
 }
 
 void GraphicsScene::removeEvent() {
+  removeEvent(0);
+}
+
+void GraphicsScene::removeEvent(unsigned int removalMode) {
+  //FIXME, doesn't work yet
+  // removalMode == 0 -> remove all nodes+connections in selectionChanged
+  // removalMode == 1 -> remove all connections, leave nodes
+
 //   qDebug() << "removeEvent, removing at least" << selectedItems().size() << " items";
   QList<QPersistentModelIndex> list;
   foreach( QGraphicsItem* z, selectedItems() ) {
     QModelIndex index;
-    if ( z->type() == SceneItem_NodeType )
+    if ( z->type() == SceneItem_NodeType ) {
       index = (( SceneItem_Node* )z )->index;
+    }
     else
       if ( z->type() == SceneItem_ConnectionType )
         index = (( SceneItem_Connection * )z )->index;
@@ -475,4 +496,3 @@ void GraphicsScene::toggle_customConnectionLabels() {
   m_want_customConnectionLabels = !m_want_customConnectionLabels;
   update();
 }
-

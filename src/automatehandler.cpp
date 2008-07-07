@@ -86,8 +86,8 @@ automate* myautomate1 = new automate;
 //   qDebug() << "rootnode=" << (unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
-  int todonodes = qrand() % 10;
-  int todoconnections_ = 22;
+  int todonodes = qrand() % 20; //20
+  int todoconnections_ = 44;    //44 (first graph, connection c3 remove -> ctrl+u -> segfault
 
   for ( int i = 0; i < todonodes; ++i ) {
     int s = qrand() % 2;

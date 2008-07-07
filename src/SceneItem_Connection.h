@@ -90,7 +90,6 @@ class SceneItem_Connection : public QGraphicsItem {
     bool isLoop();
     void setAutoLayoutFactor(qreal factor);
     QPersistentModelIndex index;
-    unsigned int id();
   protected:
     void setCustomTransformation(bool value);
     QString label;

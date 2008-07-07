@@ -78,7 +78,7 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
 
 // - connection is removed -> remove the reference from the two associated nodes
 SceneItem_Connection::~SceneItem_Connection() {
-  qDebug() << __FUNCTION__ << "BEGIN" << (unsigned int)this;
+//   qDebug() << __FUNCTION__ << "BEGIN" << (unsigned int)this;
 
   if (myEndItem != NULL)
     if (!myEndItem->removeConnection(this))
@@ -94,8 +94,6 @@ SceneItem_Connection::~SceneItem_Connection() {
 
 //   delete labelItem;
 //   labelItem->deleteLater();
-  qDebug() << __FUNCTION__ << "END" << (unsigned int)this;
-  exit(0);
 }
 
 /*
@@ -209,7 +207,7 @@ void SceneItem_Connection::labelItemPositionCallback( const QPointF& /*oldPos*/,
 //   qDebug() << __FUNCTION__ << (unsigned int)this;
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return;
-
+  prepareGeometryChange();
   QPointF vpos = myStartItem->pos() / 2.0 + myEndItem->pos() / 2.0;
 
   QLineF parallel_unitLine = line.unitVector();
@@ -500,13 +498,6 @@ void SceneItem_Connection::setAutoLayoutFactor(qreal factor) {
   updateLabelPosition();
 }
 
-unsigned int SceneItem_Connection::id(){
-  qDebug() << __FUNCTION__ << (unsigned int)this;
-//   unsigned int id=999;
-//   if (index.isValid())
-//     id = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toInt();
-//   qDebug() << id;
-//   return id;
-}
+
 
 

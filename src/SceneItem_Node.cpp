@@ -62,13 +62,13 @@ SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() 
 }
 
 SceneItem_Node::~SceneItem_Node() {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   if ( ConnectionItems.size() != 0 ) {
     qDebug() << "WARNING: not all connections have been deleted!!!";
     qDebug() << "WARNING: inconsistency between the graphicsView and the data (model) might exist";
     qDebug() << "WARNING: ignore this warning if a model reset() call caused it";
     qDebug() << "WARNING: it will cause segmentation faults anyway if a connection uses the node";
-    exit(0);
+//     exit(0);
   }
 }
 
@@ -211,7 +211,7 @@ void SceneItem_Node::layoutChange() {
     }
   }
 
-  unsigned int size = itemsToAutoLayout.size();
+//   unsigned int size = itemsToAutoLayout.size();
   int groupCount = 0;
   QVector<SceneItem_Connection *> itemsToAutoLayoutGroup;
   while ( itemsToAutoLayout.size() > 0 ) {

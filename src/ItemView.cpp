@@ -93,17 +93,22 @@ void ItemView::reset() {
 }
 
 void ItemView::init() {
+//   qDebug() << __FUNCTION__;
   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
+//     qDebug() << "adding node i =" << i;
     QModelIndex item = model->index( i, 0, QModelIndex() );
     scene->nodeInserted( QPersistentModelIndex( item ) );
   }
   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
+//     qDebug() << "adding connection to node i =" << i;
     QModelIndex item = model->index( i, 0, QModelIndex() );
     for ( int x = 0; x < model->rowCount( item ); ++x ) {
+//       qDebug() << "adding connection x =" << x;
       QModelIndex citem = model->index( x, 0, item );
       scene->connectionInserted( QPersistentModelIndex( citem ) );
     }
   }
+//   qDebug() << __FUNCTION__ << "END";
 }
 
 void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {

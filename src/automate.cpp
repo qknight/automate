@@ -33,7 +33,7 @@ automate::automate() {
 }
 
 automate::~automate() {
-  qDebug() << "automate::~automate()";
+//   qDebug() << "automate::~automate()";
   delete vh;
   delete modeltest;
   delete modelPtr;

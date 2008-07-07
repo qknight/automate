@@ -36,8 +36,7 @@ class GraphicsScene : public QGraphicsScene {
     friend class ItemView;
 
   public:
-    GraphicsScene( Model *model );
-    ~GraphicsScene();
+    GraphicsScene( Model *model );    ~GraphicsScene();
     bool want_highlight();
     bool want_boundingBox();
     bool want_drawItemShape();
@@ -76,6 +75,7 @@ class GraphicsScene : public QGraphicsScene {
     void toggleEvent( int role );
     void toggleFinalEvent();
     void toggleStartEvent();
+    void removeEvent(unsigned int removalMode);
     void removeEvent();
     void print();
     void toggleBoundingBox();

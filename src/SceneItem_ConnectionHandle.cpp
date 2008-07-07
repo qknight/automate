@@ -79,7 +79,7 @@ void SceneItem_ConnectionHandle::paint( QPainter *painter, const QStyleOptionGra
 }
 
 
-void SceneItem_ConnectionHandle::mousePressEvent( QGraphicsSceneMouseEvent * event ) {
+void SceneItem_ConnectionHandle::mousePressEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   move_object_on_mouseMove = true;
 //   QGraphicsTextItem::mousePressEvent(event);
 }
@@ -92,7 +92,7 @@ void SceneItem_ConnectionHandle::mouseMoveEvent( QGraphicsSceneMouseEvent * even
   }
 }
 
-void SceneItem_ConnectionHandle::mouseReleaseEvent( QGraphicsSceneMouseEvent * event ) {
+void SceneItem_ConnectionHandle::mouseReleaseEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   move_object_on_mouseMove = false;
 }
 
