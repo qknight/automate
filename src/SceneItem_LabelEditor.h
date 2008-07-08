@@ -24,6 +24,7 @@
 #include <QDebug>
 #include <QTextDocument>
 #include <QTextCursor>
+#include <QRegExp>
 
 #include "SceneItem_Connection.h"
 #include "SceneItem_ConnectionHandle.h"
@@ -34,6 +35,7 @@ class SceneItem_ConnectionHandle;
   @author Joachim Schiele <js@lastlog.de>
  */
 class SceneItem_LabelEditor : public QGraphicsTextItem {
+  Q_OBJECT
   friend class SceneItem_ConnectionHandle;
   public:
     SceneItem_LabelEditor(QGraphicsItem* parent);
@@ -43,6 +45,9 @@ class SceneItem_LabelEditor : public QGraphicsTextItem {
     QTextDocument* d;
     void focusInEvent( QFocusEvent *event );
     void focusOutEvent( QFocusEvent *event );
+    void editingFinised();
+  private slots:
+    void textEdited ( int position, int charsRemoved, int charsAdded );
 };
 
 #endif

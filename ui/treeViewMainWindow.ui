@@ -35,10 +35,16 @@
        <enum>QAbstractItemView::ExtendedSelection</enum>
       </property>
       <property name="autoExpandDelay" >
-       <number>2</number>
+       <number>20</number>
+      </property>
+      <property name="uniformRowHeights" >
+       <bool>false</bool>
       </property>
       <property name="sortingEnabled" >
        <bool>true</bool>
+      </property>
+      <property name="animated" >
+       <bool>false</bool>
       </property>
      </widget>
     </item>

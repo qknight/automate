@@ -280,12 +280,11 @@ void SceneItem_Node::contextMenuEvent( QGraphicsSceneContextMenuEvent * /*event*
 //   a.exec( QCursor::pos() );
 }
 
-void SceneItem_Node::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
-  qDebug() << __FUNCTION__;
-  labelEditor = new SceneItem_LabelEditor( this );
-  labelEditor->setZValue( 1000.0 );
-  labelEditor->setTextInteractionFlags( Qt::TextEditorInteraction );
-  scene()->addItem( labelEditor );
-
-  qDebug() << ConnectionItems.size();
+void SceneItem_Node::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event ) {
+  SceneItem_LabelEditor* f = new SceneItem_LabelEditor( this );
+  f->setZValue( 1000.0 );
+  f->setTextInteractionFlags( Qt::TextEditorInteraction );
+  f->setPos(event->pos());
+  f->setTextInteractionFlags(Qt::TextEditorInteraction);
+  f->setFocus();
 }

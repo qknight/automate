@@ -78,7 +78,7 @@ class Model : public QAbstractItemModel {
     QModelIndex getQModelIndexFromAbstractNodeItem( AbstractTreeItem* item );
     AbstractTreeItem* rootItem;
     Qt::ItemFlags flags( const QModelIndex & index ) const;
-//     bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
+    bool hasChildren ( const QModelIndex & parent = QModelIndex() ) const;
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex() );
     bool removeRows( int row, int count, const QModelIndex & parent );

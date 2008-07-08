@@ -82,7 +82,7 @@ DISTFILES += TODO README \
 
 RESOURCES += automatehandler.qrc
 
-include(modeltest/modeltest.pri)
+#include(modeltest/modeltest.pri)
 
 
 CONFIG += opengl

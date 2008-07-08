@@ -24,7 +24,9 @@ automate::automate() {
   vh = new viewHandler;
   root = new AutomateRoot;
   modelPtr = new Model(automateRootPtr());
+#ifdef MODELTEST
   modeltest = new ModelTest(modelPtr);
+#endif
 
   // this will create a nice label for the automate
   QString date = QDate().currentDate().toString("yyyy MMMd");
@@ -35,7 +37,9 @@ automate::automate() {
 automate::~automate() {
 //   qDebug() << "automate::~automate()";
   delete vh;
+#ifdef MODELTEST
   delete modeltest;
+#endif
   delete modelPtr;
   delete root;
 

@@ -271,6 +271,9 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
 }
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
+  if (count > 1)
+    qDebug() << "WARNING: this might need some testing";
+
   if ( !parent.isValid() ) { // no valid parent -> it's a node to add
     AbstractTreeItem* abstractitem = rootItem;
 //     qDebug() << "case node";
@@ -286,7 +289,6 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
   }
   if ( getTreeItemType( parent ) == NODE ) {
     AbstractTreeItem* abstractitem = static_cast<AbstractTreeItem*>( parent.internalPointer() );
-//     qDebug() << "case node_connection";
 //     int id = abstractitem->getId();
 //     qDebug() << "beginInsertRows( n"  << id << " , " << row << ", " << row + count - 1 << ");";
     beginInsertRows( parent, row, row + count - 1 );
@@ -298,12 +300,6 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
       }
     }
     endInsertRows();
-//     QModelIndex in = index(row, 0, parent.parent());
-//     dataChanged(parent,parent);
-    // FIXME i'm not sure but i think this layoutChanged shouldn't be there since the model should know that already
-    // when using beginInsertRows/endInsertRows with a parent QModelIndex
-//     emit layoutChanged();
-//     When using layoutChanged() you need to update persistant model index's changePersistentIndex
     return true;
   }
   qDebug() << "can't add object to the automate class since i don't know what to do";
@@ -506,10 +502,15 @@ unsigned int Model::getTreeItemType( const QModelIndex& item ) {
   return ( t->getObjectType() );
 }
 
-// bool Model::hasChildren ( const QModelIndex & parent ) const {
-// //   qDebug() << "hasd";
-//   return false;
-// }
+bool Model::hasChildren ( const QModelIndex & parent ) const {
+//   qDebug() << "one is calling me" << __FUNCTION__;
+  if (!parent.isValid())
+    return true;
+  AbstractTreeItem* item = static_cast<AbstractTreeItem*>( parent.internalPointer() );
+  if (item->childCount() > 0)
+    return true;
+  return false;
+}
 
 // returns the QModelIndex of the next_node from cItem
 QModelIndex Model::next_nodeModelIndex( QModelIndex cItem ) {
@@ -557,14 +558,13 @@ bool Model::removeConnection( QPersistentModelIndex connection ) {
 }
 
 bool Model::removeConnections( QList<QPersistentModelIndex> nodeList ) {
-//FIXME i think this is the bug
 //   qDebug() << __FUNCTION__;
   bool s = true;
   foreach( QModelIndex item, nodeList ) {
     if ( !item.isValid() ) {
       // this can happen when you delete a node since all connections to and from it are deleted implicitly
       // but the selection still has some connections in the list of items to be deleted
-      qDebug() << __FUNCTION__ << "WARNING: QModelIndex is not valid anymore, skipping a deletion";
+//       qDebug() << __FUNCTION__ << "WARNING: QModelIndex is not valid anymore, skipping a deletion";
       continue;
     } else {
       if ( !removeConnection( item ) && s )
@@ -597,9 +597,7 @@ bool Model::removeItems( QList<QPersistentModelIndex> itemList ) {
     if ( getTreeItemType( m ) == NODE_CONNECTION )
       connectionItems.append( QPersistentModelIndex( m ) );
   }
-//FIXME clean up this two lines
-  bool s = removeNodes( nodeItems ) && removeConnections( connectionItems );
-  return s;
+  return removeNodes( nodeItems ) && removeConnections( connectionItems );
 }
 
 /// this function is provided for convenience
@@ -626,7 +624,7 @@ bool Model::removeNodes( QList<QPersistentModelIndex> nodeList ) {
 **  - delete the node itself
 */
 bool Model::removeNode( QPersistentModelIndex abstractQModelIndex ) {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   // FIXME code below should be removable
   if ( !abstractQModelIndex.isValid() ) {
     qDebug() << "FATAL ERROR: abstractQModelIndex is not a valid QModelIndex (anymore?), exiting";

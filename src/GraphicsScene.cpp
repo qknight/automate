@@ -13,7 +13,7 @@
 
 GraphicsScene::GraphicsScene( Model *model ) : QGraphicsScene() {
   this->model = model;
-  m_want_highlight = true;
+  m_want_highlight = false;
   m_want_boundingBox = false;
   m_want_drawItemShape = false;
   m_want_coloredConnectionHelper = false;
@@ -24,6 +24,13 @@ GraphicsScene::GraphicsScene( Model *model ) : QGraphicsScene() {
 
   //FIXME qt 4.4.x and 4.3.x have a bug in the BspTreeIndex methods -> removeItem(QGraphicsItem)
   //      since in some cases an already deleted item is queried which segfaults the program
+  //      POSSIBLE CAUSE: maybe this isn't a bug in qt BUT in my QGraphicsItem implementation's
+  //      boundingBox on item resize, have to track that done yet.
+  //      FINAL SOLUTION: found it, it was my own SceneItem_Connection item's wrong dimension
+  // //   QRectF SceneItem_Connection::boundingRect() const {
+  // //   QRectF z = QRectF(-2000,-2000,4000,4000);
+  // //   return z;
+  //      finally showed that with that dimension it would never crash -> now i have to fix that...
 
   setItemIndexMethod(NoIndex);
 }
@@ -187,11 +194,12 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     QGraphicsScene::keyPressEvent( keyEvent );
     return;
   }
-  if ( keyEvent->key() == Qt::Key_X ) {
-    removeEvent(0);
-  }
   if ( keyEvent->key() == Qt::Key_X && keyEvent->modifiers() == Qt::ControlModifier ) {
     removeEvent(1);
+  }
+
+  if ( keyEvent->key() == Qt::Key_X && keyEvent->modifiers() != Qt::ControlModifier) {
+    removeEvent(0);
   }
   if ( keyEvent->key() == Qt::Key_P ) {
     print();
@@ -348,15 +356,17 @@ void GraphicsScene::removeEvent() {
 
 void GraphicsScene::removeEvent(unsigned int removalMode) {
   //FIXME, doesn't work yet
-  // removalMode == 0 -> remove all nodes+connections in selectionChanged
-  // removalMode == 1 -> remove all connections, leave nodes
+  // removalMode == 0 -> remove all connections, leave nodes
+  // removalMode == 1 -> remove all nodes+connections in selectionChanged
 
 //   qDebug() << "removeEvent, removing at least" << selectedItems().size() << " items";
   QList<QPersistentModelIndex> list;
   foreach( QGraphicsItem* z, selectedItems() ) {
     QModelIndex index;
     if ( z->type() == SceneItem_NodeType ) {
-      index = (( SceneItem_Node* )z )->index;
+      if (removalMode == 0) {
+        index = (( SceneItem_Node* )z )->index;
+      }
     }
     else
       if ( z->type() == SceneItem_ConnectionType )
@@ -365,7 +375,8 @@ void GraphicsScene::removeEvent(unsigned int removalMode) {
         qDebug() << "FATAL ERROR: no node nor a connection, what item type is it?";
         exit( 0 );
       }
-    list.append( QPersistentModelIndex( index ) );
+    if (index.isValid())
+      list.append( QPersistentModelIndex( index ) );
   }
   model->removeItems( list );
 }

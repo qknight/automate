@@ -14,16 +14,18 @@
 // http://lists.trolltech.com/qt-interest/2007-03/thread00929-0.html
 
 SceneItem_ConnectionHandle::SceneItem_ConnectionHandle() : QGraphicsItem() {
+//   qDebug() << __FUNCTION__;
   setFlag( QGraphicsItem::ItemIsMovable );
   move_object_on_mouseMove = false;
 }
 
 void SceneItem_ConnectionHandle::setLabel( QString label ) {
   m_label = label;
+  update();
 }
 
 SceneItem_ConnectionHandle::~SceneItem_ConnectionHandle() {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
 }
 
 QPainterPath SceneItem_ConnectionHandle::shape() const {
@@ -100,31 +102,10 @@ void SceneItem_ConnectionHandle::mouseDoubleClickEvent( QGraphicsSceneMouseEvent
   SceneItem_LabelEditor* f = new SceneItem_LabelEditor( this );
   f->setZValue( 1000.0 );
   f->setTextInteractionFlags( Qt::TextEditorInteraction );
-  scene()->addItem( f );
   f->setPos(event->pos());
   f->setTextInteractionFlags(Qt::TextEditorInteraction);
-  qDebug() << " labelItem pos = " << f->pos().x() << f->pos().y();
-
-  QGraphicsSceneMouseEvent *mouseEvent =
-      new QGraphicsSceneMouseEvent(QEvent::GraphicsSceneMousePress);
-  mouseEvent->setAccepted(true);
-  mouseEvent->setPos(event->pos());
-  mouseEvent->setScenePos(event->scenePos());
-  mouseEvent->setScreenPos(event->screenPos());
-  mouseEvent->setButtonDownPos(Qt::LeftButton,
-                               event->buttonDownPos(Qt::LeftButton));
-  mouseEvent->setButtonDownScreenPos(Qt::LeftButton,
-                                     event->buttonDownScreenPos(Qt::LeftButton));
-  mouseEvent->setButtonDownScenePos(Qt::LeftButton,
-                                    event->buttonDownScenePos(Qt::LeftButton));
-  mouseEvent->setWidget(event->widget());
-
-  qDebug() << " ... pos = " << event->pos().x() << event->pos().y();
-
-  f->mousePressEvent(mouseEvent);
-
-  delete mouseEvent;
-
+//   f->setPlainText(m_label);
+  f->setFocus();
 }
 
 void SceneItem_ConnectionHandle::addEditor() {

@@ -56,8 +56,8 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
 //   qDebug() << __FUNCTION__ << (unsigned int)this;
 //   qDebug() << "Creating a new connection";
   m_customTransformation = false;
-//   labelItem = new SceneItem_ConnectionHandle;
-//   labelItem->setParentItem( this );
+  labelItem = new SceneItem_ConnectionHandle;
+  labelItem->setParentItem( this );
   this->index = index;
   m_color = QColor( qrand() % 255, qrand() % 255, qrand() % 255, 255 );
 
@@ -92,7 +92,7 @@ SceneItem_Connection::~SceneItem_Connection() {
   if (myEndItem != NULL)
     ((SceneItem_Node *)myEndItem)->layoutChange();
 
-//   delete labelItem;
+  delete labelItem;
 //   labelItem->deleteLater();
 }
 
@@ -116,7 +116,7 @@ void SceneItem_Connection::updateData() {
   prepareGeometryChange();
 
   QString symbol = (( GraphicsScene* )scene() )->data( index, customRole::SymbolIndexRole ).toString();
-//   labelItem->setLabel( symbol );
+  labelItem->setLabel( symbol );
 
   QGraphicsItem* a = (( GraphicsScene* )scene() )->modelToSceenIndex( QPersistentModelIndex( index.parent() ) );
   if ( a == NULL )
@@ -197,7 +197,7 @@ void SceneItem_Connection::updateLabelPosition() {
   QPointF orthogonal_diffVector = QPointF( ooffset * orthogonal_normalUnitVector.x(),
                                   ooffset * orthogonal_normalUnitVector.y() );
 
-//   labelItem->setPos( vpos + orthogonal_diffVector + parallel_diffVector );
+  labelItem->setPos( vpos + orthogonal_diffVector + parallel_diffVector );
 }
 
 // callback function from a ConnectionLabel item
@@ -268,6 +268,8 @@ QLineF SceneItem_Connection::createLine( QPointF a, QPointF b ) {
 }
 
 QRectF SceneItem_Connection::boundingRect() const {
+//   QRectF z = QRectF(-2000,-2000,4000,4000);
+//   return z;
   QRectF bbox = connectionPath().boundingRect();
   return bbox.adjusted( -MAX_BRUSH_SIZE, -MAX_BRUSH_SIZE, MAX_BRUSH_SIZE, MAX_BRUSH_SIZE );
 }
@@ -314,9 +316,9 @@ QPainterPath SceneItem_Connection::connectionPath() const {
 
   QPointF a1 = /*offset +*/ mapFromItem( myStartItem, 0, 0 );
   QPointF a2 = parallel_unitVector * f + orthogonal_diffVector + mapFromItem( myStartItem, 0, 0 );
-//   path.cubicTo( a1, a2, labelItem->pos() );
+  path.cubicTo( a1, a2, labelItem->pos() );
 
-//   path.lineTo( labelItem->pos() );
+  path.lineTo( labelItem->pos() );
   QPointF d1 = -parallel_unitVector * v + orthogonal_diffVector + mapFromItem( myEndItem, 0, 0 );
   QPointF d2 = /*offset +*/ mapFromItem( myEndItem, 0, 0 );
   path.cubicTo( d1, d2, mapFromItem( myEndItem, 0, 0 ) );
@@ -349,7 +351,7 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
     QPen p = pen;
     pen.setColor( m_color );
     painter->setPen( pen );
-    QRectF bbox = connectionPath().boundingRect();
+    QRectF bbox = boundingRect();
     painter->drawRect( bbox.adjusted( MAX_BRUSH_SIZE, MAX_BRUSH_SIZE, -MAX_BRUSH_SIZE, -MAX_BRUSH_SIZE ) );
   }
   if ((( GraphicsScene* )scene() )->want_drawItemShape() ) {

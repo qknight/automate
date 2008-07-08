@@ -30,8 +30,11 @@
 #include "mainGraphicsView.h"
 #include "treeView.h"
 #include "Model.h"
-#include "modeltest/modeltest.h"
 
+// #define MODELTEST
+#ifdef MODELTEST
+#include "modeltest/modeltest.h"
+#endif
 
 class automate {
   private:
@@ -52,7 +55,9 @@ class automate {
     AbstractTreeItem* automateRootPtr();
     QString name;
   private:
+#ifdef MODELTEST
     ModelTest* modeltest;
+#endif
 };
 
 #endif

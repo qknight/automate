@@ -1,16 +1,4 @@
-FIXME labelEditor doesn't work well
-FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
-
-FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
-      HINT: check the row/column in dataChanged() call, maybe this is the fix?!
-      HINT: maybe implement hasChildren as well
-      HINT: if layouChanged() is used, it works BUT this is not good since it should work without!
-      HINT: it's working for removeRows however AND once '+' was clicked (meaning the item should expand)
-            it will be working when the item is removed and after no child is there anymore again an item is added
-            it will stop working again when you hit the '-' and try delete all + add one item again
-            - the view will update correctly if the widget is clicked anywhere?! why?
-      HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
-
+FIXME readd contextMenu in connectionHandles
 FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached connections VERY fast in the view sometimes
       the program hangs with this error:
   QPainterPath::cubicTo: Adding point where x or y is NaN, results are undefined
@@ -25,10 +13,6 @@ FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached
 FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
        moving the mouse in the bbox results in the errors from FIXME1
 
-
-
-
-
 FIXME graphicsitem: bezier issues
   - drawing of loops
   - add arrow head
@@ -36,9 +20,10 @@ FIXME graphicsitem: bezier issues
   - bezier drawing:
     - current issue: when connectionLabel comes near to start or end node it's screwed
     - bezier is drawn right from the beginning of a node not outside of it's shape
+  - bbox issue: after layoutConnections in SceneItem_Node.cpp the bbox is not removed when object
+    is drawn somewhere else
 
 FINAL
- - remove modeltest
  - clean all TODOs and FIXMEs in the code
  - usability testing
  - remove debug output
@@ -55,13 +40,61 @@ FINAL doxygen comments on code and concepts
   - ausarbeitung 2s+doxygen gedruckt, gelocht, geheftet
     ca. 45 seiten, gelocht und verhaftet!
 
+FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
+      HINT: check the row/column in dataChanged() call, maybe this is the fix?!
+      HINT: maybe implement hasChildren as well
+      HINT: if layouChanged() is used, it works BUT this is not good since it should work without!
+      HINT: it's working for removeRows however AND once '+' was clicked (meaning the item should expand)
+            it will be working when the item is removed and after no child is there anymore again an item is added
+            it will stop working again when you hit the '-' and try delete all + add one item again
+            - the view will update correctly if the widget is clicked anywhere?! why?
+      HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
+      SOLUTION:
+      this is definitly a Qt bug which is either here again by regression or by intention
+      http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
+      i can reproduce it with qt 4.3.3 and qt 4.4.0 -> [2] was taken with qt 4.4.0
+      with some help of irc.kde.org#qt from kibab i've made a hack* to make it
+      working as intended:
+
+      ================ modified qtreeview.cpp ==================
+          if (parent != d->root /*&& !d->isIndexExpanded(parent)*/) {
+              QAbstractItemView::rowsInserted(parent, start, end);
+      //         return;
+      }
+      ================ modified qtreeview.cpp ==================
+
+      ================ UNmodified qtreeview.cpp ==================
+          if (parent != d->root && !d->isIndexExpanded(parent)) {
+              QAbstractItemView::rowsInserted(parent, start, end);
+              return;
+      }
+      ================ UNmodified qtreeview.cpp ==================
+      now recompile qt and install it...
+      (this fix is not complete and triggers other bugs....)
+
+      the funny thing is that the problem is for insertRows and using qt 4.2.3
+      (x==one of the releases) the problem was inverted since insertRows would work
+      there but removeRows didn't remove the + sign there.
+
+      [3] seems to cover the same issue
+
+      have fun!
+
+      * i expect some performance penalty and maybe other things as well. please
+      check
+
+      [1]
+      http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
+      [2] http://www.lastlog.de/misc/drawing_problem.ogg
+      [3] http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
+FIXME labelEditor could be impoved by selecting all text on edit
+FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
 FIXME graphicsView: 'even' amount node_connections should be centered, 'odd' amounts are already rendered as intended
 FIXME zoomFit
   - andreas krebs wanted to do that, nearly everything is there now, see
     void mainGraphicsView::zoomFit() { in mainGraphicsView.cpp
 FIXME graphicsitem
   - remove trembling when moving an connectionLabel -> FIXED in qt 4.4
-FIXME program won't terminate on close
 FIXME treeView flags should only be editable if editable!
   right now it's just ignoring edits which don't affect anything
 FIXME add symbol editor featuring a QStringList model
