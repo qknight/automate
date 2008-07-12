@@ -23,11 +23,13 @@ No more duplicated code for handling all kind of views on program close.
   @author Joachim Schiele <js@lastlog.de>
 */
 class AbstractView : public QMainWindow {
+  friend class viewHandler;
+  friend class automate;
     Q_OBJECT
-  public:
+  protected:
     AbstractView( QMainWindow *parent = 0 );
     ~AbstractView();
-  public slots:
+  protected slots:
     void showWithFocus();
 };
 

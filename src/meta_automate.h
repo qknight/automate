@@ -34,8 +34,7 @@
 /*!
   TODO description long
 */
-class meta_automate
-{
+class meta_automate {
   public: // Ctors
     meta_automate ( QList<node*> initNodes );
     ~meta_automate();

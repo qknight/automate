@@ -19,13 +19,14 @@
 */
 
 #include "automate.h"
+// #define MODELTEST
 
 automate::automate() {
   vh = new viewHandler;
   root = new AutomateRoot;
-  modelPtr = new Model(automateRootPtr());
+  m_model = new Model(automateRootPtr());
 #ifdef MODELTEST
-  modeltest = new ModelTest(modelPtr);
+  modeltest = new ModelTest(m_model);
 #endif
 
   // this will create a nice label for the automate
@@ -40,7 +41,7 @@ automate::~automate() {
 #ifdef MODELTEST
   delete modeltest;
 #endif
-  delete modelPtr;
+  delete m_model;
   delete root;
 
 }
@@ -53,7 +54,7 @@ void automate::dump() {
 }
 
 Model* automate::model() {
-  return modelPtr;
+  return m_model;
 }
 
 void automate::openNewView(ViewType vt) {
@@ -68,7 +69,7 @@ void automate::openNewView(ViewType vt) {
       view->show();
       break;
     case GraphicsViewType:
-      view = new mainGraphicsView(model());
+      view = new graphicsView(model());
       a = QString("GraphicsView - %2").arg(name);
       view->setWindowTitle(a);
       view->show();
@@ -91,3 +92,14 @@ unsigned int automate::connectionCount(){
   }
   return a;
 }
+
+void automate::reset() {
+  m_model->reset();
+}
+
+void automate::layoutChanged() {
+  m_model->layoutChanged();
+}
+
+
+

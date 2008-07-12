@@ -33,6 +33,8 @@
 #include "node_connection.h"
 #include "node.h"
 
+class automate;
+
 namespace customRole {
 enum CustomRole {
   IdRole = Qt::UserRole,
@@ -45,6 +47,9 @@ enum CustomRole {
 }
 
 class Model : public QAbstractItemModel {
+  // FIXME only make the special function reset() and layoutChanged() a
+  //       friend not whe whole class
+  friend class automate;//::reset();
   public:
     Model( AbstractTreeItem* root, QObject* parent = 0 );
     QModelIndex index( int row, int column, const QModelIndex & parent ) const;

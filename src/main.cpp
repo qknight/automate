@@ -18,6 +18,18 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
+/*! \mainpage My Personal Index Page
+ *
+ * \section intro_sec Introduction
+ *
+ * This is the introduction.
+ *
+ * \section install_sec Installation
+ *
+ * \subsection step1 Step 1: download the tar file / git clone / svn co
+ * \subsection step2 Step 2: make; qmake
+ */
+
 #include <QApplication>
 #include "automatehandler.h"
 

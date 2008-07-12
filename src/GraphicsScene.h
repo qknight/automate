@@ -32,11 +32,13 @@
 class GraphicsScene : public QGraphicsScene {
   Q_OBJECT
   friend class SceneItem_Node;
-    friend class SceneItem_Connection;
-    friend class ItemView;
+  friend class SceneItem_Connection;
+  friend class SceneItem_ConnectionHandle;
+  friend class ItemView;
 
   public:
-    GraphicsScene( Model *model );    ~GraphicsScene();
+    GraphicsScene( Model *model );
+    ~GraphicsScene();
     bool want_highlight();
     bool want_boundingBox();
     bool want_drawItemShape();

@@ -1,0 +1,15 @@
+2008-07-12
+FIXME add caching in SceneItem_Node,SceneItem_Connection,SceneItem_ConnectionHandle,... for model lookups
+FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached connections VERY fast in the view sometimes
+      the program hangs with this error:
+  QPainterPath::cubicTo: Adding point where x or y is NaN, results are undefined
+  QPainterPath::lineTo: Adding point where x or y is NaN, results are undefined
+  QPainterPath::arcTo: Adding arc where a parameter is NaN, results are undefined
+  ...
+  HINT: this might be the drawing of an connection in the GraphicsScene
+  HINT: it is the presumption form above: when two nodes nearly overlap this can happen
+      CODE if ( myStartItem->collidesWithItem( myEndItem ) )
+      CODE  return;
+      when this two lines in SceneItem_Connection are commented we can trigger this issue
+FIXME readd contextMenu in connectionHandles
+  *sigh* now it's a QObject again, didn't want to do that but that was the only good solution

@@ -166,8 +166,8 @@ QModelIndex ItemView::traverseTroughIndexes( QModelIndex index ) {
 }
 
 /*
-** we have to check all items between topLeft and bottomRight, so let's update all QModelIndex'es
-** in between -> here comes recursion in handy.
+** we have to check all items between topLeft and bottomRight
+** let's update all QModelIndex'es in between
 */
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
   qDebug() << __FUNCTION__;
@@ -194,3 +194,7 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
   } while ( tmpIndex.isValid());
 }
 
+void ItemView::layoutChanged(){
+  qDebug() << "NOT implemented yet, please implement me!, exiting";
+  exit(0);
+}

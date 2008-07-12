@@ -291,6 +291,9 @@ QPainterPath SceneItem_Connection::connectionPath() const {
     return QPainterPath();
   if ( myStartItem->collidesWithItem( myEndItem ) )
     return QPainterPath();
+  // this fixed another issue...
+  if (line.length() == 0)
+    return QPainterPath();
 
   // REDUNDANT CODE BELOW
   QPointF vpos = myStartItem->pos() / 2.0 + myEndItem->pos() / 2.0;

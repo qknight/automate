@@ -13,6 +13,9 @@
 #include "meta_automate.h"
 #include "orderedpair.h"
 
+/*!
+**
+*/
 void automate::completeDFA() {
     bool need_completion = false;
     unsigned int sinkNode;

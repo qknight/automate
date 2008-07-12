@@ -109,6 +109,7 @@ QModelIndex Model::parent( const QModelIndex & child ) const {
 }
 
 QVariant Model::data( const QModelIndex &index, int role ) const {
+//   qDebug() << __FUNCTION__;
   if ( !index.isValid() )
     return QVariant();
 

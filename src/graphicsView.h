@@ -61,15 +61,20 @@
 #include "AbstractView.h"
 #include "ItemView.h"
 
-/*
-** This class is responsible for displaying the graph as graphical representation
-**  it makes use of a QAbstractItemView and a QGraphicsScene
-*/
-class mainGraphicsView : public AbstractView {
+/*!
+ ** The graphicsView implements a graphical representation of the automate.
+ ** The concept is to wrap QGraphicsView capabilities into a QAbstractItemView.
+ **
+ ** ItemView is what talks to the model and what is called by the model.
+ ** The QGraphicsScene inherited by GraphicsScene is what is used to display the
+ ** data trough ItemView. The GraphicsScene has another layer of items, namely:
+ ** QGraphicsItems.
+ */
+class graphicsView : public AbstractView {
     Q_OBJECT
   public:
-    mainGraphicsView( Model *, QMainWindow* parent = 0 );
-    ~mainGraphicsView();
+    graphicsView( Model *, QMainWindow* parent = 0 );
+    ~graphicsView();
     QStatusBar* sb;
   private:
     GraphicsScene* scene;

@@ -25,7 +25,7 @@
 AbstractTreeItem::AbstractTreeItem( AbstractTreeItem *parent ) {
 //   qDebug() << "AbstractTreeItem Constructor called";
   parentItem = parent;
-  ID = 0; //initialize the id, 0 is rootNode or
+  ID = 0;
 }
 
 // WARNING: never delete objects as for instance childItems in the structure here
@@ -51,13 +51,6 @@ int AbstractTreeItem::childCount() const {
   return m_childItems.count();
 }
 
-int AbstractTreeItem::columnCount() const {
-  return itemData.count();
-}
-
-QVariant AbstractTreeItem::data( int column ) const {
-  return itemData.value( column );
-}
 
 AbstractTreeItem *AbstractTreeItem::parent() {
   return parentItem;

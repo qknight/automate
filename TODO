@@ -1,18 +1,3 @@
-FIXME readd contextMenu in connectionHandles
-FIXME1 BUG: when adding new nodes/connections or when moving nodes with attached connections VERY fast in the view sometimes
-      the program hangs with this error:
-  QPainterPath::cubicTo: Adding point where x or y is NaN, results are undefined
-  QPainterPath::lineTo: Adding point where x or y is NaN, results are undefined
-  QPainterPath::arcTo: Adding arc where a parameter is NaN, results are undefined
-  ...
-  HINT: this might be the drawing of an connection in the GraphicsScene
-  HINT: it is the presumption form above: when two nodes nearly overlap this can happen
-      CODE if ( myStartItem->collidesWithItem( myEndItem ) )
-      CODE  return;
-      when this two lines in SceneItem_Connection are commented we can trigger this issue
-FIXME2 bbox issue. when two node items collide, the bbox is out of scope?!
-       moving the mouse in the bbox results in the errors from FIXME1
-
 FIXME graphicsitem: bezier issues
   - drawing of loops
   - add arrow head
@@ -27,6 +12,7 @@ FINAL
  - clean all TODOs and FIXMEs in the code
  - usability testing
  - remove debug output
+ - add old algorithms which reduce an automate and alike...
 FINAL doxygen comments on code and concepts
  - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
  - some documentation is needed, F1 should open a browser for that
@@ -40,6 +26,8 @@ FINAL doxygen comments on code and concepts
   - ausarbeitung 2s+doxygen gedruckt, gelocht, geheftet
     ca. 45 seiten, gelocht und verhaftet!
 
+FIXME graphicsView: implement layoutChanged()
+      traverse all QPersistentModelIndex: if valid leave if not remove them, add new ones as well
 FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
       HINT: check the row/column in dataChanged() call, maybe this is the fix?!
       HINT: maybe implement hasChildren as well

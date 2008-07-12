@@ -54,6 +54,7 @@ class ItemView : public QAbstractItemView {
     void toggleRenderHints();
   protected slots:
     void reset();
+    void layoutChanged();
     void init();
   signals:
     void clearScene();

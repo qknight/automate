@@ -90,7 +90,8 @@ class SceneItem_Node : public QGraphicsItem {
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
     QRectF boundingRect() const;
     QList<SceneItem_Connection *> ConnectionItems;
-    QString label;
+    QString m_label;
+    QString m_label_custom;
     bool start;
     bool final;
     bool hovering;

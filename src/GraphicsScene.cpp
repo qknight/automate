@@ -507,3 +507,4 @@ void GraphicsScene::toggle_customConnectionLabels() {
   m_want_customConnectionLabels = !m_want_customConnectionLabels;
   update();
 }
+

@@ -68,7 +68,7 @@ SceneItem_Node::~SceneItem_Node() {
     qDebug() << "WARNING: inconsistency between the graphicsView and the data (model) might exist";
     qDebug() << "WARNING: ignore this warning if a model reset() call caused it";
     qDebug() << "WARNING: it will cause segmentation faults anyway if a connection uses the node";
-//     exit(0);
+    exit(0);
   }
 }
 
@@ -83,7 +83,10 @@ void SceneItem_Node::updateData() {
   setToolTip( toolTip );
   bool start = (( GraphicsScene* )scene() )->data( index, customRole::StartRole ).toBool();
   bool final = (( GraphicsScene* )scene() )->data( index, customRole::FinalRole ).toBool();
-  this->label = QString( "%1" ).arg( id );
+  m_label = QString( "%1" ).arg( id );
+  m_label_custom = (( GraphicsScene * )scene() )->data( index, customRole::CustomLabelRole ).toString();
+  if (m_label_custom == "")
+    m_label_custom = m_label;
   this->start = start;
   this->final = final;
   update();
@@ -146,11 +149,9 @@ void SceneItem_Node::paint( QPainter *painter, const QStyleOptionGraphicsItem */
 // name text
   QString label;
   if ((( GraphicsScene* )scene() )->want_customNodeLabels() ) {
-    label = (( GraphicsScene * )scene() )->data( index, customRole::CustomLabelRole ).toString();
-    if ( label.size() == 0 )
-      label = this->label;
+    label = this->m_label_custom;
   } else {
-    label = this->label;
+    label = this->m_label;
   }
 
   QFont f;
@@ -270,6 +271,8 @@ void SceneItem_Node::hoverLeaveEvent( QGraphicsSceneHoverEvent * /*event*/ ) {
 
 void SceneItem_Node::contextMenuEvent( QGraphicsSceneContextMenuEvent * /*event*/ ) {
   //FIXME unfinished code!
+  // should be implemented in the scene() since we don't have to inherit from
+  // QObject in a QGraphicsItem
 //   QMenu a;
 // //   a.addAction ( "todo del Node", this, SLOT(removeConnections() ) );
 // //   a.addSeparator();

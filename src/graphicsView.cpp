@@ -36,9 +36,9 @@
 **
 ****************************************************************************/
 
-#include "mainGraphicsView.h"
+#include "graphicsView.h"
 
-mainGraphicsView::mainGraphicsView( Model *model, QMainWindow* parent ) : AbstractView( parent ) {
+graphicsView::graphicsView( Model *model, QMainWindow* parent ) : AbstractView( parent ) {
   this->model = model;
   sb = new QStatusBar;
   view = new QGraphicsView;
@@ -71,14 +71,14 @@ mainGraphicsView::mainGraphicsView( Model *model, QMainWindow* parent ) : Abstra
   connect(scene, SIGNAL(toggleRenderHints()), itemView, SLOT(toggleRenderHints()));
 }
 
-mainGraphicsView::~mainGraphicsView() {
+graphicsView::~graphicsView() {
 //   qDebug() << __FUNCTION__;
   delete scene;
   delete view;
   delete sb;
 }
 
-void mainGraphicsView::populateMenu() {
+void graphicsView::populateMenu() {
   QAction* toggleStartAction = new QAction(QIcon(":/icons/startNode.png"),"'s' - start toggle", this);
   tb->addAction(toggleStartAction );
   connect(toggleStartAction , SIGNAL(triggered()), scene, SLOT(toggleStartEvent()));
@@ -154,19 +154,19 @@ void mainGraphicsView::populateMenu() {
   connect(toggle_customConnectionLabelsAction, SIGNAL(triggered()), scene, SLOT(toggle_customConnectionLabels()));
 }
 
-void mainGraphicsView::zoomIn() {
+void graphicsView::zoomIn() {
   view->scale( 1.2, 1.2 );
 }
 
-void mainGraphicsView::zoomOut() {
+void graphicsView::zoomOut() {
   view->scale( 0.8, 0.8 );
 }
 
-void mainGraphicsView::zoomNormal() {
+void graphicsView::zoomNormal() {
   view->resetMatrix();
 }
 
-void mainGraphicsView::zoomFit() {
+void graphicsView::zoomFit() {
   qDebug() << "FIXME zoomFit() not implemented yet";
   //FIXME put your code here
 //   view->resetMatrix();
