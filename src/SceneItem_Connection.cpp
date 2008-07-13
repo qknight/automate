@@ -54,7 +54,6 @@ const qreal Pi = 3.14;
 
 SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGraphicsItem() {
 //   qDebug() << __FUNCTION__ << (unsigned int)this;
-//   qDebug() << "Creating a new connection";
   m_customTransformation = false;
   labelItem = new SceneItem_ConnectionHandle;
   labelItem->setParentItem( this );
@@ -125,7 +124,7 @@ void SceneItem_Connection::updateData() {
   if ( !next_node_index.isValid() ) {
     qDebug() << "Critical error because next_node isn't a valid index";
     qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-    exit( 0 );
+    return;
   }
   QGraphicsItem* b = (( GraphicsScene* )scene() )->modelToSceenIndex( next_node_index );
   if ( b == NULL )
@@ -335,11 +334,26 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
     return;
   }
 
-  if ( myStartItem->collidesWithItem( myEndItem ) )
-    return;
-
   if ( myStartItem == NULL || myEndItem == NULL ) {
     qDebug() << "Can't draw anything since myStartItem||myEndItem isn't set yet";
+    return;
+  }
+
+  if ( myStartItem->collidesWithItem( myEndItem ) ) {
+    qDebug() << "Drawing a loop item";
+    // draw the loop item
+    if ((( GraphicsScene* )scene() )->want_boundingBox() ) {
+    }
+    if ((( GraphicsScene* )scene() )->want_drawItemShape() ) {
+      painter->drawPath( shape() );
+    }
+    if ( m_highlight ) {
+
+    } else {
+
+    }
+    if ( isSelected() ) {
+    }
     return;
   }
 
@@ -361,22 +375,20 @@ void SceneItem_Connection::paint( QPainter *painter, const QStyleOptionGraphicsI
     painter->drawPath( shape() );
   }
 
-  if ( myStartItem->collidesWithItem( myEndItem ) )
-    return;
-
   if ( m_highlight ) {
     QColor c = QColor( "blue" );
 
     c.setAlphaF( 0.2 );
     painter->setPen( QPen( c, 6, Qt::SolidLine ) );
     painter->drawPath( shape() );
-  } else
+  } else {
     if ((( GraphicsScene* )scene() )->want_coloredConnectionHelper() ) {
       QColor c = m_color;
       c.setAlphaF( 0.2 );
       painter->setPen( QPen( c, 12, Qt::SolidLine ) );
       painter->drawPath( shape() );
     }
+  }
 
   if ( isSelected() ) {
     painter->setPen( QPen( QColor( "red" ), 4, Qt::DashLine ) );

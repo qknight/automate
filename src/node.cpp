@@ -32,11 +32,11 @@ node::~node() {
 //   qDebug() << __FUNCTION__;
   if ( m_childItems.size() > 0 ) {
     qDebug() << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
-    exit(0);
+    exit( 0 );
   }
   if ( m_reverseChildItems.size() > 0 ) {
     qDebug() << "FATAL ERROR: Still have " << m_reverseChildItems.size() << " reverseChildItems";
-    exit(0);
+    exit( 0 );
   }
 }
 
@@ -68,22 +68,34 @@ void node::appendChild( AbstractTreeItem *item ) {
 
   // this is the inverted connection item: r_item
   node_connection* f_item = static_cast<node_connection*>( item );
-  node_connection* r_item = new node_connection( f_item->next_node() );
-  r_item->setNext_node(this);
-  r_item->setSymbol_index(f_item->symbol_index());
+  node_connection* r_item;
+
+  // in any case we want to add a r_item and link it to f_item with the
+  // inverseConnection pointer! we can overwrite the next_node later anyway...
+  if ( f_item->next_node() == NULL )
+    r_item = new node_connection( this );
+  else
+    r_item = new node_connection( f_item->next_node() );
+  r_item->setNext_node( this );
+  r_item->setSymbol_index( f_item->symbol_index() );
 
   node* dst = static_cast<node*>( f_item->next_node() );
 
   f_item->inverseConnection = r_item;
   r_item->inverseConnection = f_item;
 
-  dst->appendChildReversePath( r_item );
+  if ( f_item->next_node() != NULL )
+    // when creating a connection manually we ignore to execute the next statement
+    // when using the randomAutomate script in automatehandler.cpp the setNext_node
+    // call is already used and we can add the reversePath to dst!
+    dst->appendChildReversePath( r_item );
+
   appendChildForwardPath( f_item );
 }
 
 void node::removeChild( unsigned int index ) {
   // 1. first delete the reverse connection
-  node_connection* f_item = ((node_connection*)m_childItems[index]);
+  node_connection* f_item = (( node_connection* )m_childItems[index] );
   node_connection* r_item = f_item->inverseConnection;
 //   qDebug() << (unsigned int)f_item->inverseConnection;
 //   qDebug() << (unsigned int)r_item->inverseConnection;
@@ -123,11 +135,11 @@ void node::appendChildReversePath( AbstractTreeItem *r_item ) {
   m_reverseChildItems.append( r_item );
 }
 
-void node::removeChildReversePath( AbstractTreeItem *item ){
-  for(int i=0; i < m_reverseChildItems.size(); ++i)
-    if (item == m_reverseChildItems[i]) {
+void node::removeChildReversePath( AbstractTreeItem *item ) {
+  for ( int i = 0; i < m_reverseChildItems.size(); ++i )
+    if ( item == m_reverseChildItems[i] ) {
 //       qDebug() << (unsigned int) this << "Item to delete found";
-      m_reverseChildItems.removeAt(i);
+      m_reverseChildItems.removeAt( i );
       return;
     }
 //     qDebug() << (unsigned int) this <<  "Item to delete NOT found";

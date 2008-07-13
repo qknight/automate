@@ -3,10 +3,9 @@ FIXME graphicsitem: bezier issues
   - add arrow head
   - fix connectionItem bbox
   - bezier drawing:
-    - current issue: when connectionLabel comes near to start or end node it's screwed
     - bezier is drawn right from the beginning of a node not outside of it's shape
-  - bbox issue: after layoutConnections in SceneItem_Node.cpp the bbox is not removed when object
-    is drawn somewhere else
+  - bbox issue: after layoutConnections in SceneItem_Node.cpp the bbox's old content is
+    not removed when object is drawn somewhere else
 
 FINAL
  - clean all TODOs and FIXMEs in the code
@@ -26,6 +25,16 @@ FINAL doxygen comments on code and concepts
   - ausarbeitung 2s+doxygen gedruckt, gelocht, geheftet
     ca. 45 seiten, gelocht und verhaftet!
 
+FIXME Model.cpp/GraphicsScene.cpp right now adds a new connection as a loop, afterwards the loop
+      can be changed to a outgoing connection. the idea was that the automate is always well formed:
+        no links to dead objects
+      but this adds some overhead. this situation can be handled better:
+      just add a dead object which every new connection is linked to. now we can distinguish
+      between new object and loop again and we don't have any overhead.
+FIXME SceneItem_Node, SceneItem_ConnectionHandle
+      on very long labels we could adjust the boundingRect() with the rendered text width/height
+      right now text is croped until the scene is completely redrawn most of the time the label
+      will be cut and this looks buggy
 FIXME graphicsView: implement layoutChanged()
       traverse all QPersistentModelIndex: if valid leave if not remove them, add new ones as well
 FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!

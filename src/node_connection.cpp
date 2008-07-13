@@ -22,7 +22,7 @@
 
 node_connection::node_connection( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
   ID = generateUniqueID( getObjectType() );
-  m_next_node = parent;
+  m_next_node = NULL;
   inverseConnection = NULL;
 
   setSymbol_index( 0 );
@@ -37,11 +37,17 @@ node_connection::~node_connection() {
 }
 
 void node_connection::dump() {
+  QString m_next_node_Id;
+  if(m_next_node != NULL)
+    m_next_node_Id = QString("n%1").arg(m_next_node->getId());
+  else
+    m_next_node_Id = "next_node is not set";
+  //FIXME check m_next_node for NULL
   qDebug() << "     |  \\---((node_connection " << ID /*<< "@" << (unsigned int) this*/ << "))" <<
 //       parent()->getId() << "@" << (unsigned int)parent() <<
   " >> " << symbol_index() << " >> DEST = " <<
-  m_next_node->getId() /*<< "@" << (unsigned int)next_node*/ <<
-  "inverseconnection=" << inverseConnection->getId();
+  m_next_node_Id <<
+  "inverseConnection =" << QString("c%1").arg(inverseConnection->getId());
 
   // call dump for all children
   if ( childCount() > 0 )

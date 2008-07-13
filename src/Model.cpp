@@ -230,6 +230,8 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     case customRole::SortRole:
     case Qt::DisplayRole:
       if ( n->getObjectType() == NODE_CONNECTION ) {
+        if ((static_cast<node_connection*>( n ) )->next_node() == NULL)
+              return QVariant();
         AbstractTreeItem* next_node = ( static_cast<node_connection*>( n ) )->next_node();
         if ( role == customRole::SortRole )
           return next_node->getId();// "node_connection";
@@ -303,7 +305,8 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
     endInsertRows();
     return true;
   }
-  qDebug() << "can't add object to the automate class since i don't know what to do";
+  qDebug() << "can't add object to the automate class since i don't know what to do, exiting";
+  exit(0);
   return false;
 }
 

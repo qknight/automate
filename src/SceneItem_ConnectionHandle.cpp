@@ -39,6 +39,9 @@ QPainterPath SceneItem_ConnectionHandle::shape() const {
 
 
 QRectF SceneItem_ConnectionHandle::boundingRect() const {
+  //FIXME on very long labels we could adjust the boundingRect() with the rendered text width/height
+  //      right now text is croped until the scene is completely redrawn most of the time the label
+  //      will be cut and this looks bugggy
   QRectF r( -CIRCLE_FOR_SYNBOL_RADIUS, -CIRCLE_FOR_SYNBOL_RADIUS, 2*CIRCLE_FOR_SYNBOL_RADIUS, 2*CIRCLE_FOR_SYNBOL_RADIUS );
   r.adjusted( -3, -3, 3, 3 );
   return r;

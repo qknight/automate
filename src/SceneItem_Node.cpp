@@ -93,6 +93,9 @@ void SceneItem_Node::updateData() {
 }
 
 QRectF SceneItem_Node::boundingRect() const {
+  //FIXME on very long labels we could adjust the boundingRect() with the rendered text width/height
+  //      right now text is croped until the scene is completely redrawn most of the time the label
+  //      will be cut and this looks bugggy
   return QRectF( -NODERADIUS  - penWidth, -NODERADIUS  - penWidth,
                  2*( NODERADIUS  + penWidth ), 2*( NODERADIUS  + penWidth ) );
 }
