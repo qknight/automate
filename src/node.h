@@ -28,6 +28,10 @@ class node : public AbstractTreeItem {
   friend class node_connection;
   public:
     node( AbstractTreeItem* parent );
+    /*! WARNING: never delete objects as for instance childItems in the structure here
+     ** since this will create inconsistencies between the model and this data structure.<br>
+     ** A better way is to fail with exit(0) and a meaningful error message meant for
+     ** developrs: since this problem must be handled with great care! */
     ~node();
     void dump();
     unsigned int getObjectType();

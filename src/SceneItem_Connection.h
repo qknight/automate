@@ -35,18 +35,10 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
+/**
+  @author Joachim Schiele <js@lastlog.de>
+ */
 
-//
-// C++ Interface: SceneItem_Connection
-//
-// Description:
-//
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
 #ifndef SCENEITEM_CONNECTION_H
 #define SCENEITEM_CONNECTION_H
 
@@ -64,17 +56,39 @@
 #include "SceneItem_ConnectionHandle.h"
 
 #define CIRCLE_FOR_SYNBOL_RADIUS 14
-#define MAX_BRUSH_SIZE 8
+#define MAX_BRUSH_SIZE 32
 
 class SceneItem_Node;
 class SceneItem_ConnectionHandle;
 
+/*! */
 class SceneItem_Connection : public QGraphicsItem {
-  friend class SceneItem_ConnectionHandle;
+    friend class SceneItem_ConnectionHandle;
   public:
     SceneItem_Connection( QPersistentModelIndex index );
     ~SceneItem_Connection();
+    /*! this code does:
+     **  - track destination changes of a connection
+     **  - updates the toolTipLabel for on mouse over
+     **  - decides if a item is:
+     **    - shown (connection/loop)
+     **    - hidden (uninitalized connection)
+     **
+     ** Variable a and b are used as well as myStartItem/myEndItem to find out
+     ** if the connection changed since one can alter the destination of it.
+     */
     void updateData();
+    /*! srcNode or dstNode pos changed, we need to relayout & update the connection */
+    void updatePosition();
+    /*! */
+    void updateLabelPosition();
+    // FIXME we need some better words what is going on here
+    /*! callback function called when the ConnectionHandle labelItem is moved:
+    ** normal connection (no loop):
+    **  - basically this math inverts void SceneItem_Connection::updateLabel() functionality
+    ** loop connection:
+    **  - position of the labelItem is updated*/
+    void labelItemPositionChangeCallback( const QPointF& oldPos, const QPointF& newPos );
     QRectF boundingRect() const;
     SceneItem_Node *startItem() const {
       return myStartItem;
@@ -82,40 +96,41 @@ class SceneItem_Connection : public QGraphicsItem {
     SceneItem_Node *endItem() const {
       return myEndItem;
     }
-    void updatePosition();
     int type() const;
     void highlight( bool status );
-    void labelItemPositionCallback( const QPointF& oldPos, const QPointF& newPos );
     bool customTransformation();
     bool isLoop();
-    void setAutoLayoutFactor(qreal factor);
+    void setAutoLayoutFactor( qreal factor );
+    /*! enabled the autoLayout algorithm of a node to layout this loop item */
+    void setLoopPosition(QPointF newPos);
     QPersistentModelIndex index;
   protected:
-    void setCustomTransformation(bool value);
-    QString label;
-    bool m_highlight;
+    void setCustomTransformation( bool value );
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
     QPainterPath shape() const;
+    QString label;
+    bool m_highlight;
   private:
-    bool m_customTransformation;
-    qreal ooffset;
-    qreal poffset;
     QPainterPath connectionPath() const;
-    void updateLabelPosition();
-    SceneItem_ConnectionHandle* labelItem;
+    /*! when at least one node is moved we need to update the labelItem position */
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
     QLineF createLine( QPointF a, QPointF b );
-    QPolygonF arrowHead;
-    QPen pen;
     void setColor( const QColor &color ) {
       myColor = color;
     }
+    bool m_customTransformation;
+    qreal ooffset;
+    qreal poffset;
+    QPointF loopPosition;
+    QPolygonF arrowHead;
+    QPen pen;
     QColor m_color;
     SceneItem_Node *myStartItem;
     SceneItem_Node *myEndItem;
     QColor myColor;
     QLineF line;
+    SceneItem_ConnectionHandle* labelItem;
 };
 
 #endif

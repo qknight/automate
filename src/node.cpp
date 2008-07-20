@@ -25,9 +25,6 @@ node::node( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
 //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 }
 
-// WARNING: never delete objects as for instance childItems in the structure here
-// since this will create inconsistencies between the model and this data structure.
-// A better way is to fail with exit(0) since this problem must be handled with great care!
 node::~node() {
 //   qDebug() << __FUNCTION__;
   if ( m_childItems.size() > 0 ) {

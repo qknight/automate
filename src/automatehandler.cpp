@@ -68,7 +68,7 @@ void automatehandler::addAutomate() {
 }
 
 void automatehandler::addRandomAutomate() {
-automate* myautomate1 = new automate;
+  automate* myautomate1 = new automate;
   automates.push_back( myautomate1 );
 
   //TODO fix this warning, fix everything!
@@ -86,8 +86,8 @@ automate* myautomate1 = new automate;
 //   qDebug() << "rootnode=" << (unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
-  int todonodes = qrand() % 20; //20
-  int todoconnections_ = 11;    //44 (first graph, connection c3 remove -> ctrl+u -> segfault
+  int todonodes = qrand() % 4; //20
+  int todoconnections_ = 4;    //44 (first graph, connection c3 remove -> ctrl+u -> segfault
 
   for ( int i = 0; i < todonodes; ++i ) {
     int s = qrand() % 2;

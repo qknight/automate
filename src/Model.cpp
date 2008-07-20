@@ -108,6 +108,11 @@ QModelIndex Model::parent( const QModelIndex & child ) const {
   return createIndex( parentItem->row(), 0, parentItem );
 }
 
+/*!
+** this code should be read as table of generic cases (where row/column doesn't matter)
+** which is important for the graphicsView. for the treeView there is a part of code where
+** row/column matters, see the very long switch statement.
+*/
 QVariant Model::data( const QModelIndex &index, int role ) const {
 //   qDebug() << __FUNCTION__;
   if ( !index.isValid() )
@@ -131,12 +136,6 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
   if ( role == customRole::IdRole )
     if ( n->getObjectType() == NODE || n->getObjectType() == NODE_CONNECTION )
       return n->getId();
-  if ( role == Qt::BackgroundRole ) {
-    if ( n->getObjectType() == NODE )
-      return QBrush( QColor( 50, 160, 170, 150 ) );
-    if ( n->getObjectType() == NODE_CONNECTION )
-      return QBrush( QColor( 180, 200, 200, 50 ) );
-  }
   switch ( index.column() ) {
   case 0:
     switch ( role ) {
@@ -227,11 +226,16 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     break;
   case 5:
     switch ( role ) {
+    case Qt::BackgroundRole:
+      if ( n->getObjectType() == NODE_CONNECTION )
+        if ((static_cast<node_connection*>( n ) )->next_node() == NULL)
+          return QBrush( QColor( 255, 0, 0, 250 ) );
+      break;
     case customRole::SortRole:
     case Qt::DisplayRole:
       if ( n->getObjectType() == NODE_CONNECTION ) {
         if ((static_cast<node_connection*>( n ) )->next_node() == NULL)
-              return QVariant();
+          return "undefined";
         AbstractTreeItem* next_node = ( static_cast<node_connection*>( n ) )->next_node();
         if ( role == customRole::SortRole )
           return next_node->getId();// "node_connection";
@@ -248,6 +252,13 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
     /*  case 7:
         break;*/
   }
+  if ( role == Qt::BackgroundRole ) {
+    if ( n->getObjectType() == NODE )
+      return QBrush( QColor( 50, 160, 170, 150 ) );
+    if ( n->getObjectType() == NODE_CONNECTION )
+      return QBrush( QColor( 180, 200, 200, 50 ) );
+  }
+
   return QVariant();
 }
 

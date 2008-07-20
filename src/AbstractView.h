@@ -17,10 +17,11 @@
 #include <QDebug>
 
 /**
-Handle views in a unique fashion.
-No more duplicated code for handling all kind of views on program close.
-
   @author Joachim Schiele <js@lastlog.de>
+*/
+
+/*! Handles views in a unique fashion.
+No more duplicated code for handling all kind of views on program close.
 */
 class AbstractView : public QMainWindow {
   friend class viewHandler;

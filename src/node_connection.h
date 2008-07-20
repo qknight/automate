@@ -24,12 +24,27 @@
 #include "AbstractTreeItem.h"
 #include "node.h"
 
+/*! A new connection is created with a invalid destination (NULL) and:
+** - the destination can be changed as often as needed but
+** - it can't be resetted to NULL
+** - if a node is deleted all the connection references (in/out/loop) are removed
+**   (see node.cpp for more detail)
+** You can use the internal int representation of the literals Sigma used to express
+** transitions (values on the edges) from one node to another (or loop). This is handy
+** in case you want to compare values fast (instead of QString compare)
+**
+ ** inserting childs and removing childs is heavily modified in this class!
+*/
 class node_connection : public AbstractTreeItem {
   public:
     node_connection( AbstractTreeItem* parent );
+    /*! WARNING: never delete objects as for instance childItems in the structure here
+     ** since this will create inconsistencies between the model and this data structure.<br>
+     ** A better way is to fail with exit(0) and a meaningful error message meant for
+     ** developrs: since this problem must be handled with great care! */
     ~node_connection();
-    void dump();
     AbstractTreeItem* next_node();
+    void dump();
     void setNext_node( AbstractTreeItem* node );
     unsigned int getObjectType();
     unsigned int symbol_index();
@@ -37,9 +52,9 @@ class node_connection : public AbstractTreeItem {
     void removeChild( unsigned int index );
     node_connection* inverseConnection;
   private:
+    unsigned int generateUniqueID( unsigned int );
     unsigned int m_symbol_index;
     AbstractTreeItem* m_next_node;
-    unsigned int generateUniqueID( unsigned int );
 };
 
 #endif

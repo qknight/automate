@@ -25,6 +25,7 @@
 /**
  @author Joachim Schiele <js@lastlog.de>
 */
+/*! */
 class ItemView : public QAbstractItemView {
   Q_OBJECT
   public:

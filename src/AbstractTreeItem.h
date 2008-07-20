@@ -36,10 +36,9 @@ enum TreeItemType {
   UNKNOWN
 };
 
-/*!
-** AbstractTreeItem class is based on Qt4::SimpleTreeModel Example
-** It is prtially extended and used as base class only.
-** - Deriving classes overwrite some functionality.
+/*! AbstractTreeItem class is based on Qt4::SimpleTreeModel Example<br>
+** The extended example is used as base class only.
+** - Deriving classes overwrite specific functionality.
 ** - This class is extended by a custom object property system.
 ** - Every 'item' in the tree must have a uniq id
 **  - There is only one AutomateRoot object with id=0 in each automate

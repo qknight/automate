@@ -46,9 +46,10 @@ enum CustomRole {
 };
 }
 
+/*! */
 class Model : public QAbstractItemModel {
   // FIXME only make the special function reset() and layoutChanged() a
-  //       friend not whe whole class
+  //       friend but not the whole class
   friend class automate;//::reset();
   public:
     Model( AbstractTreeItem* root, QObject* parent = 0 );

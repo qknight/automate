@@ -29,6 +29,7 @@
 /**
  @author Joachim Schiele <js@lastlog.de>
 */
+/*! */
 class GraphicsScene : public QGraphicsScene {
   Q_OBJECT
   friend class SceneItem_Node;

@@ -17,6 +17,7 @@ SceneItem_ConnectionHandle::SceneItem_ConnectionHandle() : QGraphicsItem() {
 //   qDebug() << __FUNCTION__;
   setFlag( QGraphicsItem::ItemIsMovable );
   move_object_on_mouseMove = false;
+  move_object_on_mouseMove_used = false;
 }
 
 void SceneItem_ConnectionHandle::setLabel( QString label ) {
@@ -86,11 +87,13 @@ void SceneItem_ConnectionHandle::paint( QPainter *painter, const QStyleOptionGra
 
 void SceneItem_ConnectionHandle::mousePressEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   move_object_on_mouseMove = true;
+  move_object_on_mouseMove_used = false;
 //   QGraphicsTextItem::mousePressEvent(event);
 }
 
 void SceneItem_ConnectionHandle::mouseMoveEvent( QGraphicsSceneMouseEvent * event ) {
-  if ( move_object_on_mouseMove ) {
+  if ( move_object_on_mouseMove && !(( SceneItem_Connection* )parentItem() )->isLoop() ) {
+    move_object_on_mouseMove_used = true;
     moveBy( event->lastPos().x(), event->lastPos().y() );
 //     if (parentItem() != NULL)
 //       parentItem()->update();
@@ -99,6 +102,10 @@ void SceneItem_ConnectionHandle::mouseMoveEvent( QGraphicsSceneMouseEvent * even
 
 void SceneItem_ConnectionHandle::mouseReleaseEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   move_object_on_mouseMove = false;
+  if (!move_object_on_mouseMove_used) {
+    if (((SceneItem_Connection*)parentItem())->isLoop())
+      parentItem()->setSelected(!parentItem()->isSelected());
+  }
 }
 
 void SceneItem_ConnectionHandle::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event ) {
@@ -123,7 +130,7 @@ QVariant SceneItem_ConnectionHandle::itemChange( GraphicsItemChange change, cons
     if ( scene() && change == ItemPositionChange ) {
       // pos() is the old position, value is the new position.
       if ( parentItem() != NULL ) {
-        (( SceneItem_Connection* )parentItem() )->labelItemPositionCallback( pos(), value.toPointF() );
+        (( SceneItem_Connection* )parentItem() )->labelItemPositionChangeCallback( pos(), value.toPointF() );
       }
     }
   }
@@ -131,6 +138,9 @@ QVariant SceneItem_ConnectionHandle::itemChange( GraphicsItemChange change, cons
 }
 
 void SceneItem_ConnectionHandle::contextMenuEvent( QGraphicsSceneContextMenuEvent * event ) {
+  if ((( SceneItem_Connection* )parentItem() )->isLoop())
+    return;
+
   // to reduce the overhead of QObject used in EVERY (this)-class one can move that code
   // into the scene and popup the context menu from there which is much more efficient
   // remember to check for item existence before applying any function on (this) since

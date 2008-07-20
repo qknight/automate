@@ -1,11 +1,6 @@
-FIXME graphicsitem: bezier issues
-  - drawing of loops
-  - add arrow head
-  - fix connectionItem bbox
-  - bezier drawing:
-    - bezier is drawn right from the beginning of a node not outside of it's shape
-  - bbox issue: after layoutConnections in SceneItem_Node.cpp the bbox's old content is
-    not removed when object is drawn somewhere else
+FIXME qt bug report schreiben
+  Re: [Issue N218633] http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
+
 
 FINAL
  - clean all TODOs and FIXMEs in the code

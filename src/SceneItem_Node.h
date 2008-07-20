@@ -35,18 +35,10 @@
 ** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 **
 ****************************************************************************/
+/**
+ @author Joachim Schiele <js@lastlog.de>
+ */
 
-//
-// C++ Interface: SceneItem_Node
-//
-// Description:
-//
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
 #ifndef SCENEITEM_NODE_H
 #define SCENEITEM_NODE_H
 
@@ -70,37 +62,71 @@
 class SceneItem_Connection;
 class SceneItem_LabelEditor;
 
-/**
- @author Joachim Schiele <js@lastlog.de>
-*/
+/*! */
 class SceneItem_Node : public QGraphicsItem {
   friend class SceneItem_Connection;
   public:
+    /*! the QPersistentModelIndex must be valid troughout the lifetime of the SceneItem_Node */
     SceneItem_Node( QPersistentModelIndex index );
+    /*! either called by reset() in the ItemView or when an object is really deleted in data */
     ~SceneItem_Node();
+    /*! used to identify a object by a class of objects, see it's implementation */
     int type() const;
+    /*! this member function tracks the following changes:
+     **  - itemlabel changes
+     **  and is indirectly called by dataChanged() from the Model and
+     **  directly called by our GraphicsScene dataChanged handler*/
     void updateData();
-    QPersistentModelIndex index;
+    /*! called when a new connection is added or deleted
+    ** - the algorithm creates groups of connections with the same destination
+    **  - NULL desination is not handled
+    **  - loop desitnation is in one group
+    **  - connections to the same destinations are grouped */
     void layoutChange();
+    /*! This index is needed to map QModelIndexes to QGraphicsItems. Since we need to
+    ** store the QModelIndexe we are enforced to use a QPersistentModelIndex which
+    ** implicitly updates if the date in the model changes. That means when you remove
+    ** the connection 3 (out of 7 connections) all QPersistentModelIndex (4,5,6,7) are
+    ** automatically updated to the new pos: 3,4,5,6 which is very important! */
+    QPersistentModelIndex index;
   private:
-    SceneItem_LabelEditor* labelEditor;
+    /*! */
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
+    /*! */
     QPainterPath shape() const;
+    /*! */
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
+    /*! */
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
-    QRectF boundingRect() const;
-    QList<SceneItem_Connection *> ConnectionItems;
-    QString m_label;
-    QString m_label_custom;
-    bool start;
-    bool final;
-    bool hovering;
-    qreal penWidth;
+    /*! */
     void contextMenuEvent( QGraphicsSceneContextMenuEvent * event );
+    /*! */
+    QRectF boundingRect() const;
+    /*! */
+    QList<SceneItem_Connection *> ConnectionItems;
+    /*! represents the id of a node, it is initialized and updated through updateData() */
+    QString m_label;
+    /*! a copy of the node label property, it is initialized and updated through updateData() */
+    QString m_label_custom;
+    /*! a copy of the node start property, it is initialized and updated through updateData() */
+    bool start;
+    /*! a copy of the node final property, it is initialized and updated through updateData() */
+    bool final;
+    /*! this state enabled an object hoovering indication which improves use and feel */
+    bool hovering;
+    /*! */
+    qreal penWidth;
+    /*! */
+    SceneItem_LabelEditor* labelEditor;
+    /*! */
   protected:
+    /*! */
     void addConnection( SceneItem_Connection* ci );
+    /*! */
     bool removeConnection( SceneItem_Connection* ci );
+    /*! update connections when a node is moved so that it is drawing to the right 'changed' position */
     QVariant itemChange( GraphicsItemChange change, const QVariant &value );
+    /*! */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
 };
 

@@ -32,6 +32,7 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
  */
+/*! */
 class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
   Q_OBJECT
   friend class SceneItem_ConnectionLabel;
@@ -52,6 +53,7 @@ class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
     void contextMenuEvent ( QGraphicsSceneContextMenuEvent * event );
   private:
     bool move_object_on_mouseMove;
+    bool move_object_on_mouseMove_used;
     QString m_label;
     void addEditor(QGraphicsSceneMouseEvent * event);
   private slots:

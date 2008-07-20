@@ -1,3 +1,14 @@
+2008-07-21
+  fixed: graphicsitem: bezier issues
+  - drawing of loops is now possible
+  - "remove custom transformation" for loops does work now as it is disabled now for loops
+  - add arrow head for normal connections
+  - semi-fixed connectionItem bbox (still not perfect use 'u' to manually update)
+  - bezier drawing:
+    - bezier drawing is now disabled
+  - bbox issue: after layoutConnections in SceneItem_Node.cpp the bbox's old content is
+    not removed when object is drawn somewhere else. this is now fixed.
+
 2008-07-13
   added a new feature:
     - new connections are now pointing to NULL with next_node. Now one knows if a node is a loop

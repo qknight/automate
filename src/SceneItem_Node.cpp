@@ -36,17 +36,6 @@
 **
 ****************************************************************************/
 
-//
-// C++ Implementation: SceneItem_Node
-//
-// Description:
-//
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
 #include "SceneItem_Node.h"
 
 SceneItem_Node::SceneItem_Node( QPersistentModelIndex index ) : QGraphicsItem() {
@@ -68,7 +57,7 @@ SceneItem_Node::~SceneItem_Node() {
     qDebug() << "WARNING: inconsistency between the graphicsView and the data (model) might exist";
     qDebug() << "WARNING: ignore this warning if a model reset() call caused it";
     qDebug() << "WARNING: it will cause segmentation faults anyway if a connection uses the node";
-    exit(0);
+    exit( 0 );
   }
 }
 
@@ -85,7 +74,7 @@ void SceneItem_Node::updateData() {
   bool final = (( GraphicsScene* )scene() )->data( index, customRole::FinalRole ).toBool();
   m_label = QString( "%1" ).arg( id );
   m_label_custom = (( GraphicsScene * )scene() )->data( index, customRole::CustomLabelRole ).toString();
-  if (m_label_custom == "")
+  if ( m_label_custom == "" )
     m_label_custom = m_label;
   this->start = start;
   this->final = final;
@@ -210,7 +199,7 @@ void SceneItem_Node::layoutChange() {
 
   QList<SceneItem_Connection *> itemsToAutoLayout;
   foreach( SceneItem_Connection* c, ConnectionItems ) {
-    if ( !c->customTransformation() && !c->isLoop() ) {
+    if ( !c->customTransformation() /*&& !c->isLoop()*/ ) {
       itemsToAutoLayout.push_back( c );
     }
   }
@@ -225,7 +214,9 @@ void SceneItem_Node::layoutChange() {
     unsigned int w = ( unsigned int )(( unsigned int )a->endItem() ^( unsigned int )a->startItem() );
     itemsToAutoLayoutGroup.push_back( a );
     for ( int i = 0; i < itemsToAutoLayout.size(); ) {
-      if (( unsigned int )(( unsigned int )itemsToAutoLayout[i]->endItem() ^( unsigned int )itemsToAutoLayout[i]->startItem() ) == w )
+      if (( unsigned int )(( unsigned int )itemsToAutoLayout[i]->endItem() ^( unsigned int )itemsToAutoLayout[i]->startItem() ) == w
+//         ||    itemsToAutoLayout[i]->endItem() == itemsToAutoLayout[i]->startItem()
+         )
         itemsToAutoLayoutGroup.push_back( itemsToAutoLayout.takeAt( i ) );
       else
         ++i;
@@ -233,9 +224,16 @@ void SceneItem_Node::layoutChange() {
     for ( int i = 0; i < itemsToAutoLayoutGroup.size(); ++i ) {
 //       bool oddOrEven = itemsToAutoLayoutGroup.size() % 2;
       SceneItem_Connection* c = itemsToAutoLayoutGroup[i];
+
       // either the owner is (this node) or (connection item's next_node)
       qreal owner = c->startItem() == this ? 1 : -1;
-      qreal factor = ( i - ( int )( itemsToAutoLayoutGroup.size() / 2 ) ) * owner;
+      qreal factor;
+      if ( c->isLoop() ) {
+//         qDebug() << "loop item: " << i;
+        factor = i;
+      } else {
+        factor = ( i - ( int )( itemsToAutoLayoutGroup.size() / 2 ) ) * owner;
+      }
 //       qDebug() << factor;
       c->setAutoLayoutFactor( factor );
     }
@@ -290,7 +288,7 @@ void SceneItem_Node::mouseDoubleClickEvent( QGraphicsSceneMouseEvent * event ) {
   SceneItem_LabelEditor* f = new SceneItem_LabelEditor( this );
   f->setZValue( 1000.0 );
   f->setTextInteractionFlags( Qt::TextEditorInteraction );
-  f->setPos(event->pos());
-  f->setTextInteractionFlags(Qt::TextEditorInteraction);
+  f->setPos( event->pos() );
+  f->setTextInteractionFlags( Qt::TextEditorInteraction );
   f->setFocus();
 }

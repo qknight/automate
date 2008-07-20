@@ -29,9 +29,6 @@ node_connection::node_connection( AbstractTreeItem* parent ) : AbstractTreeItem(
   //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 }
 
-// WARNING: never delete objects as for instance childItems in the structure here
-// since this will create inconsistencies between the model and this data structure.
-// A better way is to fail with exit(0) since this problem must be handled with great care!
 node_connection::~node_connection() {
 //   qDebug() << __FUNCTION__;
 }
@@ -43,11 +40,11 @@ void node_connection::dump() {
   else
     m_next_node_Id = "next_node is not set";
   //FIXME check m_next_node for NULL
-  qDebug() << "     |  \\---((node_connection " << ID /*<< "@" << (unsigned int) this*/ << "))" <<
+  qDebug() << "     |  \\---((node_connection " << QString("c%1").arg(ID) << "))" <<
 //       parent()->getId() << "@" << (unsigned int)parent() <<
   " >> " << symbol_index() << " >> DEST = " <<
   m_next_node_Id <<
-  "inverseConnection =" << QString("c%1").arg(inverseConnection->getId());
+  "; inverseConnection =" << QString("c%1").arg(inverseConnection->getId());
 
   // call dump for all children
   if ( childCount() > 0 )
