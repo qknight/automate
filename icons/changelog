@@ -1,0 +1,94 @@
+The noia icons for KDE.
+Made by Carlitus (Carles Carbonell Bernado)
+mail@carlitus.net
+http://www.carlitus.net
+
+Please, read this document for release information
+Read the 'readme' text file for general information
+Read the 'license' and 'gpl' text files for license information
+
+Almost all of the changes are made thanks to the repports, suggestions and collaborations of the KDE community.
+So, if you feel good with some of these changes, you need to thanks these people.
+Thanks for your collaboration.
+Carlitus
+
+
+CHANGELOG
+
+Sept-14-2003
+Update Noia 1.00
+The final update. Well, maybe not, but it means this is complete. There's not icons for all K applications, and it's not KDE 3.2 fully compatible; maybe it will be new updates for further KDE versions.
+-Added icons for these daily use apps: Kget, Kmail, Ark, K3b
+-An important change: now it's under LGPL; previously was under GPL, and changed because the LPGL it's more permissive (requested by some KDE dev, and suggested by some Gnome users too).
+
+Jan-01-2003
+Update Noia 0.95
+This update is the definitive. I only will fix important bugs. Note: more icons will be released in separate downloads.
+-Added the 128x128 size. Not all icons are in this size.
+-Added KDE 3.1 icons, such tab icons, kget, messagebox, ...
+-Added the throbber.
+-Fixed important icons, previously released but missing on last update (such filesave, www)
+-Small fixes.
+-The Readme text file is more complete. Now have howto's, links to other Noia icons/skins and the complete iconlist.
+
+Nov-23-2002
+Update Noia 0.90
+This will be the first appointment to a definitive version. Changes:
+-The most important: now the Noia icons for KDE are under the GPL license :)
+Added 5 icons for these applications:
+-kdevelop
+-openoffice
+-phoenix
+-quanta
+-xkill
+Refined, polished and redesigned 123 icons, the most important are:
+-kmail
+-konqueror
+-xmms
+-all icons with internet globe
+-all icons with 'shell' (added the 'shell' to console)
+-all icons that means application/make/gear now have the 'gear' design. The gear design is new, more according to classical KDE gear.
+-some actions now have different color
+Added the 48x48 pixels size for 'action' (by request)
+Planning about future releases: 
+I will not make new icons for this iconset (only the missing KDE 3.1 icons).
+The next version will be (i hope) the release candidate and will have the KDE 3.1 missing icons.
+Search for other Noia icon sets for more Noia-related icons.
+Carlitus
+
+Nov-16-2002
+Update Noia 0.50
+This is a release with lots of new icons. New additions in:
+-Actions=27 new icons
+-Mimetypes=9 new icons
+-Filesystems=1 new icon
+-Apps=105 new icons
+Totally 142 new icons added
+No new icons will be added (except if there's a important KDE icon missing)
+Now it's time to change some bad designed icons and fix small sizes.
+The next release will be the Release Candidate, and the lastest before the final release.
+Extra icons will be released apart.
+Carlitus
+
+Nov-13-2002
+Update Noia 0.11
+There's no updates on graphics and on aditions or substractions to icons, only two small but important fixes:
+-A issue with 48x48 icon sizes
+-Deleted some unnecessary files 'thumbs.db' created by 'other' filemanagers apart of KDE Konqueror.
+Now the download file is really low than the first versions ;) This will allow me to add the necessary icons without being worred about the download size.
+Carlitus
+
+Nov-12-2002
+Update Noia 0.10
+First important bug fixes:
+-Added the missing 22x22 and 48x48 sizes (initially unreleased to no increase the download size)
+-Eliminated the 128x128 size. Don't panic, this size will be released as a enhancement. I decided this to decrease the download size (very high).
+-Added the 'inherit' command in the configuration. Now the Noia icon set will be showed with your default icon set.
+There's no changes on the designs. The purpose of this update is just to structure correctly the icon set, and to create the correct text files for your information :)
+Carlitus
+
+Nov-10-2002
+First release (0.01)
+If you want more changes here, don't hesitate to e-mail me your bug reports, suggestions, contributions, etc to make the first major release complete.
+Many thanks!
+Carlitus

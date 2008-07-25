@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,12 +35,18 @@ class automate;
 class viewHandler {
 friend class automate;
   private:
+    /*! a list of views */
     QList<AbstractView*> ViewList;
+    /*! add a view */
     void addHandle(AbstractView*);
+    /*! delete a view */
     void delHandle(AbstractView*);
   public:
+    /*! used to found out what views operate on an automate */
     const QList<AbstractView*> getListOfViews();
+    /*! ... */
     viewHandler();
+    /*! ... */
     ~viewHandler();
 };
 

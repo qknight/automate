@@ -1,40 +1,22 @@
-/****************************************************************************
-**
-** Copyright (C) 2007-2007 Trolltech ASA. All rights reserved.
-**
-** This file is part of the example classes of the Qt Toolkit.
-**
-** This file may be used under the terms of the GNU General Public
-** License version 2.0 as published by the Free Software Foundation
-** and appearing in the file LICENSE.GPL included in the packaging of
-** this file.  Please review the following information to ensure GNU
-** General Public Licensing requirements will be met:
-** http://trolltech.com/products/qt/licenses/licensing/opensource/
-**
-** If you are unsure which license is appropriate for your use, please
-** review the following information:
-** http://trolltech.com/products/qt/licenses/licensing/licensingoverview
-** or contact the sales department at sales@trolltech.com.
-**
-** In addition, as a special exception, Trolltech gives you certain
-** additional rights. These rights are described in the Trolltech GPL
-** Exception version 1.0, which can be found at
-** http://www.trolltech.com/products/qt/gplexception/ and in the file
-** GPL_EXCEPTION.txt in this package.
-**
-** In addition, as a special exception, Trolltech, as the sole copyright
-** holder for Qt Designer, grants users of the Qt/Eclipse Integration
-** plug-in the right for the Qt/Eclipse Integration to link to
-** functionality provided by Qt Designer and its related libraries.
-**
-** Trolltech reserves all rights not expressly granted herein.
-**
-** Trolltech ASA (c) 2007
-**
-** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-**
-****************************************************************************/
+// automate implements an automate class in c++ using qt4
+// Copyright (C) 2007 Joachim Schiele
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// version 3 as published by the Free Software Foundation
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+/**
+  @author Joachim Schiele <js@lastlog.de>
+*/
 
 #ifndef GRAPHICSVIEW_H
 #define GRAPHICSVIEW_H
@@ -73,22 +55,35 @@
 class graphicsView : public AbstractView {
     Q_OBJECT
   public:
+    /*! constructor, needs a model for operation */
     graphicsView( Model *, QMainWindow* parent = 0 );
+    /*! destructor */
     ~graphicsView();
+    /*! not used, but can be done later ... */
     QStatusBar* sb;
   private:
+    /*! this is the scene we work with, there is only one (in opposite to views on a scene where you
+    ** can have multiple views!) */
     GraphicsScene* scene;
+    /*! the toolbar is used and filled with funky icons */
     QToolBar* tb;
+    /*! the itemView is one of the core elements of our QGraphicsScene as QAbstractItemView backend */
     ItemView* itemView;
+    /*! the model we work with, there is only one*/
     Model *model;
+    /*! the view we use to visualize the scene */
     QGraphicsView* view;
+    /*! a helper function to improve readability of the code */
     void populateMenu();
-    QGraphicsItemGroup* generateNode( bool start, bool final, QString label, QString name );
 
   private slots:
+    /*! zoomIn ...*/
     void zoomIn();
+    /*! zoomOut ...*/
     void zoomOut();
+    /*! zoomNormal zooms to 1:1 view */
     void zoomNormal();
+    /*! not implemented yet but stubs are complete */
     void zoomFit();
 };
 

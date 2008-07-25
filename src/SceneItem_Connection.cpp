@@ -60,7 +60,7 @@ SceneItem_Connection::SceneItem_Connection( QPersistentModelIndex index ) : QGra
   pen = QPen( myColor, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin );
   line = QLine();
 
-  loopPosition = QPointF( 0, 65 );
+  loopPosition = QPointF( LOOP_INIT_POSITION_X, LOOP_INIT_POSITION_Y );
   ooffset = 0.0;
   poffset = 0.0;// this parameter means: -1 source node, 0.5 between mid and destnode, 1 destnode
 }
@@ -192,6 +192,9 @@ void SceneItem_Connection::labelItemPositionChangeCallback( const QPointF& /*old
 //   qDebug() << __FUNCTION__ << (unsigned int)this;
   prepareGeometryChange();
   if ( isLoop() ) {
+    // update the loop item geometry
+    ooffset=0.0;
+    poffset=0.0;
     loopPosition = newPos - myStartItem->pos();
   } else {
     QPointF vpos = myStartItem->pos() / 2.0 + myEndItem->pos() / 2.0;
@@ -293,13 +296,21 @@ QPainterPath SceneItem_Connection::connectionPath() const {
   if ( myStartItem == NULL || myEndItem == NULL )
     return QPainterPath();
 
-  if ( myStartItem->collidesWithItem( myEndItem ) ) {
+  if ( myStartItem == myEndItem ) {
     // loop item handling
+    // this will create the bezier path for the loop connection drawing
+
+    // we have to compute some geometry values as the loop should be drawn no matter
+    // where the labelItem is in regard to a 2d system.
     QPointF virtualmidpoint = myStartItem->pos() / 2.0 + labelItem->pos() / 2.0;
+    QLineF loopLine(myStartItem->pos(),labelItem->pos());
+    QLineF llvv = loopLine.normalVector().unitVector();
+    QPointF loopLineOrthogonalVector = llvv.p2()-llvv.p1();
     QPainterPath z( myStartItem->pos() );
 #define RR 30
-    z.cubicTo( virtualmidpoint + QPointF( RR, 0 ), labelItem->pos() + QPointF( RR / 2, 0 ), labelItem->pos() );
-    z.cubicTo( labelItem->pos() - QPointF( RR / 2, 0 ), virtualmidpoint - QPointF( RR, 0 ), myStartItem->pos() );
+    QPointF ctrlPoint = QPointF( loopLineOrthogonalVector.x() * RR, loopLineOrthogonalVector.y() * RR );
+    z.cubicTo( myStartItem->pos()+ctrlPoint, labelItem->pos() + ctrlPoint, labelItem->pos());
+    z.cubicTo( labelItem->pos() - ctrlPoint, myStartItem->pos() - ctrlPoint, myStartItem->pos() );
     return z;
   }
   // this fixed another issue...
@@ -464,8 +475,8 @@ void SceneItem_Connection::hoverLeaveEvent( QGraphicsSceneHoverEvent * /*event*/
 ** default is false since connections should be affected by autolayout functionality
 */
 void SceneItem_Connection::setCustomTransformation( bool value ) {
-  if (isLoop())
-    return;
+//   if (isLoop())
+//     return;
   m_customTransformation = value;
   if ( !value ) {
     prepareGeometryChange();
@@ -501,6 +512,10 @@ void SceneItem_Connection::setLoopPosition( QPointF newPos ) {
   loopPosition = newPos;
   updatePosition();
   update();
+}
+
+void SceneItem_Connection::resetLoopPosition() {
+  loopPosition = QPointF(LOOP_INIT_POSITION_X ,LOOP_INIT_POSITION_Y);
 }
 
 

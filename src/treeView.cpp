@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +17,7 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
 */
+
 
 #include "treeView.h"
 
@@ -65,7 +66,7 @@ void treeView::currentChanged( const QModelIndex & current, const QModelIndex & 
     textBrowser->setText( "no element selected" );
     return;
   }
-  switch ( model->getSelectedItemType( currentItem ) ) {
+  switch ( model->getTreeItemType( currentItem ) ) {
   case AUTOMATE_ROOT:
     a = "AUTOMATE_ROOT";
     delConnectionBtn->setEnabled( false );
@@ -190,7 +191,7 @@ void treeView::startToggleEvent( int role ) {
 
   if ( selectedcount == 1 ) {
     QModelIndex index = selectedItems.first();
-    if ( model->getSelectedItemType( index ) == NODE ) {
+    if ( model->getTreeItemType( index ) == NODE ) {
       bool state = model->data( index, role ).toBool();
       model->setData( index, !state, role );
     } else {

@@ -1,15 +1,11 @@
 FIXME qt bug report schreiben
   Re: [Issue N218633] http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
 
-
 FINAL
  - clean all TODOs and FIXMEs in the code
- - usability testing
- - remove debug output
  - add old algorithms which reduce an automate and alike...
 FINAL doxygen comments on code and concepts
  - allg. doku mit doxygen wo die wichtigsten konzepte erklaert
- - some documentation is needed, F1 should open a browser for that
 
 =================================================================================================
         -- not in the scope of this work --

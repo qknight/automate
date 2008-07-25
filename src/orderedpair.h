@@ -1,9 +1,9 @@
 // automate implements an automate class in c++ using qt4
-// Copyright (C) 2007 Christoph Behle
+// Copyright (C) 2007 Joachim Schiele
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,8 +15,9 @@
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 /**
-  @author Christoph Behle
+  @author Christoph Behle <christoph.behle@student.uni-tuebingen.de>
 */
+
 
 #ifndef ORDEREDPAIR_H
 #define ORDEREDPAIR_H

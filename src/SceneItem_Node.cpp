@@ -230,6 +230,7 @@ void SceneItem_Node::layoutChange() {
       qreal factor;
       if ( c->isLoop() ) {
 //         qDebug() << "loop item: " << i;
+        c->resetLoopPosition();
         factor = i;
       } else {
         factor = ( i - ( int )( itemsToAutoLayoutGroup.size() / 2 ) ) * owner;

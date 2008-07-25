@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +17,7 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
 */
+
 
 #include "automatehandler.h"
 
@@ -241,10 +242,6 @@ void automatehandler::todo() {
   QMessageBox::information( this, "not implemented yet", "not done yet", QMessageBox::Ok );
 }
 
-void automatehandler::closeEvent( QCloseEvent * /*event*/ ) {
-  qDebug() << "closeEvent";
-}
-
 void automatehandler::keyPressEvent( QKeyEvent * keyEvent ) {
   int z = -1;
   if (treeWidget->selectedItems().size() == 1) {
@@ -267,12 +264,13 @@ void automatehandler::keyPressEvent( QKeyEvent * keyEvent ) {
 }
 
 void automatehandler::quit() {
-  qDebug( "automatehandler::~automatehandler" );
+//   qDebug() << __FUNCTION__;
   for ( int i = 0; i < automates.size(); ++i ) {
     delete automates[i];
   }
   automates.clear();
-  qDebug() << "program is now exited with exit(0);";
+  qDebug() << __FILE__ << " in function " << __FUNCTION__ <<
+      "program shutdown was successful: doing exit(0) now!";
   exit(0);
 }
 

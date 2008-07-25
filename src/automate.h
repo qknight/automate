@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +17,7 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
 */
+
 
 #ifndef AUTOMATECORE__HH__
 #define AUTOMATECORE__HH__
@@ -66,7 +67,6 @@ class automate {
     It returns the number of used edges (not nodes)*/
     unsigned int connectionCount();
 
-  //TODO make private later and or remove it
     /*! You need this for direct data access, use with care! Can be modified if no view is open. If
         any active view is open, close it first OR enforce a reset() call on all active views after
         your direct data access is finished.
@@ -88,6 +88,7 @@ class automate {
     /*! This is the pointer to the model. */
     Model* m_model;
 #ifdef MODELTEST
+    /*! modeltest is a very nice program to check if our model is implemented correctly */
     ModelTest* modeltest;
 #endif
 };

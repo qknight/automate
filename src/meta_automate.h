@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -17,6 +17,7 @@
 /**
   @author Joachim Schiele <js@lastlog.de>
 */
+
 
 #ifndef META__AUTOMATE__HH__
 #define META__AUTOMATE__HH__
@@ -36,18 +37,25 @@
 */
 class meta_automate {
   public: // Ctors
+    /*! */
     meta_automate ( QList<node*> initNodes );
+    /*! */
     ~meta_automate();
 
   public: // Functions
+    /*! */
     bool convert();
 
   private: // Functions
+    /*! */
     node* getNodePtr ( QList<node *> nodePtrList );
 
   private: // Members
+    /*! */
     automate* am;
+    /*! */
     QVector<meta_node*> meta_node_container;
+    /*! */
     unsigned int stack_ptr;
 };
 

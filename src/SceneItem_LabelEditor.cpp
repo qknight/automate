@@ -1,14 +1,22 @@
+// automate implements an automate class in c++ using qt4
+// Copyright (C) 2007 Joachim Schiele
 //
-// C++ Implementation: SceneItem_LabelEditor
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// version 3 as published by the Free Software Foundation
 //
-// Description:
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+/**
+  @author Joachim Schiele <js@lastlog.de>
+*/
 
 #include "SceneItem_LabelEditor.h"
 
@@ -24,17 +32,13 @@ SceneItem_LabelEditor::~SceneItem_LabelEditor() {
 //   qDebug() << __FUNCTION__;
 }
 
-void SceneItem_LabelEditor::focusInEvent( QFocusEvent *event ) {
-  QGraphicsTextItem::focusInEvent( event );
-}
-
 void SceneItem_LabelEditor::focusOutEvent( QFocusEvent *event ) {
   QGraphicsTextItem::focusOutEvent( event );
   editingFinised();
   this->deleteLater();
 }
 
-void SceneItem_LabelEditor::textEdited( int position, int charsRemoved, int charsAdded ) {
+void SceneItem_LabelEditor::textEdited( int /*position*/, int /*charsRemoved*/, int /*charsAdded*/ ) {
   if ( toPlainText().contains( "\n" ) )
     editingFinised();
 }

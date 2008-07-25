@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -13,6 +13,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+/**
+  @author Joachim Schiele <js@lastlog.de>
+*/
+
 
 
 // i hope i don't have the same issue as this post mentiones:
@@ -433,13 +438,14 @@ QVariant Model::headerData( int section, Qt::Orientation orientation, int role )
   return QVariant();
 }
 
-unsigned int Model::getSelectedItemType( const QModelIndex& a ) {
-  AbstractTreeItem* n = static_cast<AbstractTreeItem*>( a.internalPointer() );
-  if ( n )
-    return n->getObjectType();
-  else
+unsigned int Model::getTreeItemType( const QModelIndex& item ) {
+  if ( !item.isValid() )
     return UNKNOWN;
-};
+
+  AbstractTreeItem* t = static_cast<AbstractTreeItem*>( item.internalPointer() );
+
+  return ( t->getObjectType() );
+}
 
 bool Model::removeRows( int row, int count, const QModelIndex & parent ) {
 //   qDebug() << "want to remove " << count << " item(s) beginning at row " << row;
@@ -508,15 +514,6 @@ QString Model::objectTypeQString( unsigned int input ) {
   return "?";
 }
 
-unsigned int Model::getTreeItemType( const QModelIndex& item ) {
-  if ( !item.isValid() )
-    return UNKNOWN;
-
-  AbstractTreeItem* t = static_cast<AbstractTreeItem*>( item.internalPointer() );
-
-  return ( t->getObjectType() );
-}
-
 bool Model::hasChildren ( const QModelIndex & parent ) const {
 //   qDebug() << "one is calling me" << __FUNCTION__;
   if (!parent.isValid())
@@ -527,7 +524,6 @@ bool Model::hasChildren ( const QModelIndex & parent ) const {
   return false;
 }
 
-// returns the QModelIndex of the next_node from cItem
 QModelIndex Model::next_nodeModelIndex( QModelIndex cItem ) {
   if ( getTreeItemType( cItem ) == NODE_CONNECTION ) {
     node_connection* t = static_cast<node_connection*>( cItem.internalPointer() );
@@ -589,15 +585,6 @@ bool Model::removeConnections( QList<QPersistentModelIndex> nodeList ) {
   return s;
 }
 
-/*
-** This function can be called with [node and node_connection model indexes in arbitrary order]
-**  - first all nodes get deleted BUT this list isn't altered so there might be connections in
-**    the list which are already deleted because when a NODE is deleted all incomming/outgoing
-**    connections are deleted implicitly. however having a list of connections with valid and invalid
-**    QModelIndex is no problem as only those get deleted which are still deletable.
-**  - if a NODE is deleted all incomming/outgoing connections are deleted implicitly,
-**     see: bool removeNode( QPersistentModelIndex node );
-*/
 bool Model::removeItems( QList<QPersistentModelIndex> itemList ) {
   QList<QPersistentModelIndex> nodeItems;
   QList<QPersistentModelIndex> connectionItems;
@@ -646,7 +633,7 @@ bool Model::removeNode( QPersistentModelIndex abstractQModelIndex ) {
     exit(0);
   }
 
-  if ( getSelectedItemType( abstractQModelIndex ) == NODE ) {
+  if ( getTreeItemType( abstractQModelIndex ) == NODE ) {
 //     qDebug() << "   ###### object to delete is a node ######";
     // for all childs which are connections
     //     delete connection

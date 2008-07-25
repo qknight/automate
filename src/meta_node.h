@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -38,15 +38,21 @@
 class meta_node
 {
   public: // Ctors
-  meta_node(QList<node*> a);
+    /*! */
+    meta_node(QList<node*> a);
 
   public: // Operators
+    /*! */
     bool operator== ( const meta_node& a );
   public: // Functions
+    /*! */
     QSet<node*> node_container; // contains node* from the old automate (NFA)
+    /*! */
     void addNode ( node* n );
+    /*! */
     int size();
   public: // Member
+    /*! */
     node* node_ptr; // node* to a node in the new automate (DFA)
 };
 

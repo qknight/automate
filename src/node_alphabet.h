@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -21,20 +21,19 @@
 #ifndef NODE_ALPHABET_H
 #define NODE_ALPHABET_H
 
-//!  TODO description short
-/*!
-  TODO description long
-*/
 class node_alphabet {
-    node_alphabet() {
-        addSymbol(63);  // symbol refering to a not defined connection
-        addSymbol(949); // symbol for epsilon
+  /*! */
+  node_alphabet() {
+      addSymbol( 63 );  // symbol refering to a not defined connection
+      addSymbol( 949 ); // symbol for epsilon
     }
-public:
-    void addSymbol(QChar c) {
-        symbolcontainer.push_back(c);
+  public:
+    /*! */
+    void addSymbol( QChar c ) {
+      symbolcontainer.push_back( c );
     }
-private:
+  private:
+    /*! */
     QVector<QChar> symbolcontainer;
 };
 

@@ -62,7 +62,8 @@
 class SceneItem_Connection;
 class SceneItem_LabelEditor;
 
-/*! */
+/*! represents a node in the QGraphicsScene which can have childs. Childs are incomming and outgoing
+** connections as both need to be repainted when either the startNode or endNode is moved.*/
 class SceneItem_Node : public QGraphicsItem {
   friend class SceneItem_Connection;
   public:
@@ -90,19 +91,22 @@ class SceneItem_Node : public QGraphicsItem {
     ** automatically updated to the new pos: 3,4,5,6 which is very important! */
     QPersistentModelIndex index;
   private:
-    /*! */
+    /*! used for labelItem editing */
     void mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event );
-    /*! */
+    /*! see the Qt docs about QGraphicsItem */
     QPainterPath shape() const;
-    /*! */
+    /*! used to track item highlighting */
     void hoverEnterEvent( QGraphicsSceneHoverEvent * event );
-    /*! */
+    /*! used to track item highlighting */
     void hoverLeaveEvent( QGraphicsSceneHoverEvent * event );
-    /*! */
+    /*! currently not used but function stub might be helpful */
     void contextMenuEvent( QGraphicsSceneContextMenuEvent * event );
-    /*! */
+    /*! this is a quite static rect 'in' which the item is drawn. one might extend it's functionality
+    ** to reflect long label names. right now long labels only get redrawn when the text is in the
+    ** boudingbox or when 'u' is used to update the whole scene drawing */
     QRectF boundingRect() const;
-    /*! */
+    /*! container which holds all incomming and outgoing connections. This childs are incomming and
+    ** outgoing connections as both need to be repainted when either the startNode or endNode is moved.*/
     QList<SceneItem_Connection *> ConnectionItems;
     /*! represents the id of a node, it is initialized and updated through updateData() */
     QString m_label;
@@ -114,19 +118,18 @@ class SceneItem_Node : public QGraphicsItem {
     bool final;
     /*! this state enabled an object hoovering indication which improves use and feel */
     bool hovering;
-    /*! */
+    /*! ... */
     qreal penWidth;
-    /*! */
+    /*! labelEditor is used for inline label editing on doubleClick on this node */
     SceneItem_LabelEditor* labelEditor;
-    /*! */
   protected:
-    /*! */
+    /*! adds a SceneItem_Connection* to the child items list*/
     void addConnection( SceneItem_Connection* ci );
-    /*! */
+    /*! removes a SceneItem_Connection* to the child items list*/
     bool removeConnection( SceneItem_Connection* ci );
     /*! update connections when a node is moved so that it is drawing to the right 'changed' position */
     QVariant itemChange( GraphicsItemChange change, const QVariant &value );
-    /*! */
+    /*! see the Qt docs about QGraphicsItem */
     void paint( QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget );
 };
 

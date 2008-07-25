@@ -1,20 +1,25 @@
+// automate implements an automate class in c++ using qt4
+// Copyright (C) 2007 Joachim Schiele
 //
-// C++ Interface: SceneItem_LabelEditor
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// version 3 as published by the Free Software Foundation
 //
-// Description:
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
-#ifndef SCENEITEM_CONNECTIONLABEL_H
-#define SCENEITEM_CONNECTIONLABEL_H
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 /**
   @author Joachim Schiele <js@lastlog.de>
- */
+*/
+
+#ifndef SCENEITEM_CONNECTIONLABEL_H
+#define SCENEITEM_CONNECTIONLABEL_H
 
 #include <QGraphicsTextItem>
 #include <QPointF>
@@ -31,22 +36,27 @@
 
 class SceneItem_ConnectionHandle;
 
-/**
-  @author Joachim Schiele <js@lastlog.de>
- */
+/*! this is an inline editor for editing of a label on a connection as '0' or '1' are used for instance.
+** since QString is used to represent the label there are quite a few possible labels...*/
 class SceneItem_LabelEditor : public QGraphicsTextItem {
   Q_OBJECT
   friend class SceneItem_ConnectionHandle;
   public:
+    /*! construcotr which is only called from either a node or a connection, parent must be set for the callback */
     SceneItem_LabelEditor(QGraphicsItem* parent);
+    /*! this object is destructed after labelEditor use or when the view is deleted*/
     ~SceneItem_LabelEditor();
+    /*! used to identify the type for internal use */
     int type() const;
   private:
+    /*! temporary*/
     QTextDocument* d;
-    void focusInEvent( QFocusEvent *event );
+    /*! used to track when the item editing is finished */
     void focusOutEvent( QFocusEvent *event );
+    /*! tracks when editing is finished from either focusOutEvent or pressing return */
     void editingFinised();
   private slots:
+    /*! when the text editing is finished we get the modification details here */
     void textEdited ( int position, int charsRemoved, int charsAdded );
 };
 

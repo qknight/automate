@@ -1,14 +1,23 @@
+// automate implements an automate class in c++ using qt4
+// Copyright (C) 2007 Joachim Schiele
 //
-// C++ Implementation: ItemView
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// version 3 as published by the Free Software Foundation
 //
-// Description:
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+/**
+  @author Joachim Schiele <js@lastlog.de>
+*/
+
 #include "ItemView.h"
 
 ItemView::ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWidget * parent ) : QAbstractItemView( parent ) {
@@ -165,16 +174,13 @@ QModelIndex ItemView::traverseTroughIndexes( QModelIndex index ) {
   return QModelIndex();
 }
 
-/*
-** we have to check all items between topLeft and bottomRight
-** let's update all QModelIndex'es in between
-*/
+
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
-  qDebug() << __FUNCTION__;
+//   qDebug() << __FUNCTION__;
   QModelIndex tmpIndex  = topLeft;
   do {
 //     qDebug() << "dataChanged is now called()";
-    switch (model->getSelectedItemType( tmpIndex )) {
+    switch (model->getTreeItemType( tmpIndex )) {
       case NODE:
 //       qDebug() << __FUNCTION__ << "Node modification";
       scene->updateNode( QPersistentModelIndex( tmpIndex ) );

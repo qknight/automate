@@ -1,14 +1,23 @@
+// automate implements an automate class in c++ using qt4
+// Copyright (C) 2007 Joachim Schiele
 //
-// C++ Implementation: SceneItem_ConnectionHandle
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// version 3 as published by the Free Software Foundation
 //
-// Description:
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-//
-// Author: Joachim Schiele <js@lastlog.de>, (C) 2008
-//
-// Copyright: See COPYING file that comes with this distribution
-//
-//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+/**
+  @author Joachim Schiele <js@lastlog.de>
+*/
+
 
 #include "SceneItem_ConnectionHandle.h"
 // http://lists.trolltech.com/qt-interest/2007-03/thread00929-0.html
@@ -92,7 +101,7 @@ void SceneItem_ConnectionHandle::mousePressEvent( QGraphicsSceneMouseEvent * /*e
 }
 
 void SceneItem_ConnectionHandle::mouseMoveEvent( QGraphicsSceneMouseEvent * event ) {
-  if ( move_object_on_mouseMove && !(( SceneItem_Connection* )parentItem() )->isLoop() ) {
+  if ( move_object_on_mouseMove ) {
     move_object_on_mouseMove_used = true;
     moveBy( event->lastPos().x(), event->lastPos().y() );
 //     if (parentItem() != NULL)
@@ -138,8 +147,6 @@ QVariant SceneItem_ConnectionHandle::itemChange( GraphicsItemChange change, cons
 }
 
 void SceneItem_ConnectionHandle::contextMenuEvent( QGraphicsSceneContextMenuEvent * event ) {
-  if ((( SceneItem_Connection* )parentItem() )->isLoop())
-    return;
 
   // to reduce the overhead of QObject used in EVERY (this)-class one can move that code
   // into the scene and popup the context menu from there which is much more efficient

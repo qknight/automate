@@ -1,3 +1,11 @@
+2008-07-25
+  - added custom loop handling so that loops can be moved to any location. 
+    this 'fixed' loop labelItem position was now changed to be moved to any
+    other position which helps to get better layouts.
+  - added GPL notice to any source file
+  - added GPL_V3 file
+  - registered project at savannah (this last CHANGELOG wasn't added there)
+    but the fixes are of course uploaded there)
 2008-07-21
   fixed: graphicsitem: bezier issues
   - drawing of loops is now possible
@@ -8,7 +16,6 @@
     - bezier drawing is now disabled
   - bbox issue: after layoutConnections in SceneItem_Node.cpp the bbox's old content is
     not removed when object is drawn somewhere else. this is now fixed.
-
 2008-07-13
   added a new feature:
     - new connections are now pointing to NULL with next_node. Now one knows if a node is a loop

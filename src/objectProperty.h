@@ -3,7 +3,7 @@
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
-// version 2 as published by the Free Software Foundation
+// version 3 as published by the Free Software Foundation
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -18,10 +18,6 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
-// this code does basically the same as QT4 qobject code already does
-// it's always nice to reinvent the wheel and reduce readability in code
-// -> will be changed later to qt4 way of doing
-
 #ifndef OBJECTPROPERTY_H
 #define OBJECTPROPERTY_H
 
@@ -29,22 +25,25 @@
 #include <QVariant>
 #include <QDebug>
 
-/**
-	@author Joachim Schiele <js@lastlog.de>
-*/
+/*! this class does what a QObject deriving class also does but this is more lightweight */
+class objectProperty {
+  public:
+    /*! constructor */
+    objectProperty();
+    /*! destuctor */
+    ~objectProperty();
+    /*! get a property, init it with  */
+    const QVariant getProperty( QString key, QVariant init );
+    /*! set a property */
+    void setProperty( QString, QVariant );
+  public:
+    /*! get a property */
+    const QVariant getProperty( QString );
+    // QVector<QString> getAllProperties();
 
-class objectProperty{
-public://protected:
-  objectProperty();
-  ~objectProperty();
-  const QVariant getProperty(QString, QVariant );
-  void setProperty(QString, QVariant);
-public:
-  const QVariant getProperty(QString);
-  // QVector<QString> getAllProperties();
-
-private: // Members
-  QHash<QString, QVariant> property;
+  private: // Members
+    /*! holds all properties */
+    QHash<QString, QVariant> property;
 };
 
 #endif
