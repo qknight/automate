@@ -30,6 +30,7 @@ enum ViewType {
 #include <QDebug>
 
 #include "AbstractView.h"
+
 class automate;
 
 class viewHandler {

@@ -29,13 +29,13 @@ SceneItem_ConnectionHandle::SceneItem_ConnectionHandle() : QGraphicsItem() {
   move_object_on_mouseMove_used = false;
 }
 
+SceneItem_ConnectionHandle::~SceneItem_ConnectionHandle() {
+//   qDebug() << __FUNCTION__;
+}
+
 void SceneItem_ConnectionHandle::setLabel( QString label ) {
   m_label = label;
   update();
-}
-
-SceneItem_ConnectionHandle::~SceneItem_ConnectionHandle() {
-//   qDebug() << __FUNCTION__;
 }
 
 QPainterPath SceneItem_ConnectionHandle::shape() const {
@@ -46,7 +46,6 @@ QPainterPath SceneItem_ConnectionHandle::shape() const {
 
   return path;
 }
-
 
 QRectF SceneItem_ConnectionHandle::boundingRect() const {
   //FIXME on very long labels we could adjust the boundingRect() with the rendered text width/height

@@ -80,6 +80,9 @@ class SceneItem_Node : public QGraphicsItem {
     void updateData();
     /*! called when a new connection is added or deleted
     ** - the algorithm creates groups of connections with the same destination
+    **   say this node 'this' has 5 outgoing connections, 2 connect to nodeA and 3 to nodeB
+    **   we would have 2 groups then. the autolayout helps to draw the connections in a way
+    **   that they do not overlap on drawing.
     **  - NULL desination is not handled
     **  - loop desitnation is in one group
     **  - connections to the same destinations are grouped */

@@ -34,6 +34,7 @@
 #include "Model.h"
 #include "SceneItem_Node.h"
 #include "SceneItem_Connection.h"
+#include "graphicsView.h"
 
 /**
  @author Joachim Schiele <js@lastlog.de>
@@ -48,7 +49,7 @@ class GraphicsScene : public QGraphicsScene {
 
   public:
     /*! constructor */
-    GraphicsScene( Model *model );
+    GraphicsScene( Model *model, QWidget * parent );
     /*! destructor */
     ~GraphicsScene();
     /*! if connection should be highlighted on mouse over */
@@ -115,9 +116,12 @@ class GraphicsScene : public QGraphicsScene {
     ** the treeView handles rows/columns in items the GraphicsScene doesn't so we do not need to
     ** compare all the fields */
     bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
+
   public slots:
     /*! when a user want's to add a node we need to call this function which will request a node on the model side*/
     void insertNode();
+    void insertNode(QPoint pos);
+    
   protected slots:
     /*! abstract version of (for example) toggleFinalEvent */
     void toggleEvent( int role );
@@ -144,12 +148,14 @@ class GraphicsScene : public QGraphicsScene {
     /*! this is similar to clear() in qt 4.4 but as we need to remove all connections
     ** and then all nodes this is the way we go*/
     void clearScene();
+
   private slots:
     /*! the current selection of items changes, for example when some nodes or
     connections vanished based on a model request since another view deleted them */
     void selectionChanged();
     /*! see want_highlight */
     void toggleHighlight();
+
   signals:
     /*! hides this view widget */
     void hideView();

@@ -26,9 +26,6 @@
 // problem: insertRows inserts the data and the QAbstractItemView updates well but the
 //          QTreeView won't unless you call dataChanged()
 // pos. sol: will try to test if it works with qt 4.2.3
-/**
-  @author Joachim Schiele <js@lastlog.de>
-*/
 
 #include "Model.h"
 
@@ -129,6 +126,9 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
   if ( role == customRole::FinalRole )
     if ( n->getObjectType() == NODE )
       return n->getProperty( "final" );
+  if ( role == customRole::PosRole )
+    if ( n->getObjectType() == NODE )
+      return n->getProperty( "pos" );
   if ( role == customRole::StartRole )
     if ( n->getObjectType() == NODE )
       return n->getProperty( "start" );
@@ -289,19 +289,23 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
   return 7;
 }
 
-bool Model::insertRows( int row, int count, const QModelIndex & parent ) {
+bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos ) {
+  
   if (count > 1)
     qDebug() << "WARNING: this might need some testing";
 
   if ( !parent.isValid() ) { // no valid parent -> it's a node to add
-    AbstractTreeItem* abstractitem = rootItem;
 //     qDebug() << "case node";
     beginInsertRows( parent, row, row + count - 1 );
     {
-      node* n = new node( abstractitem );
-      n->setProperty( "start", false );
-      n->setProperty( "final", false );
-      abstractitem->appendChild( n );
+      node* n = new node(rootItem);
+      n->setProperty( "pos", pos );
+      if (n != NULL) {
+	rootItem->appendChild( n );
+      } else {
+	qDebug() << "fatal error in insertRows()";
+	exit(1);
+      }
     }
     endInsertRows();
     return true;
@@ -689,7 +693,7 @@ int Model::size() {
   return (( AutomateRoot* )rootItem )->size();
 }
 
-bool Model::insertNode() {
-  return insertRows( rowCount( QModelIndex() ), 1 );
+bool Model::insertNode(QPoint pos) {
+  return insertRows( rowCount( QModelIndex() ), 1, QModelIndex() , pos);
 }
 

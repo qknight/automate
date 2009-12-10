@@ -31,6 +31,7 @@
 #include "GraphicsScene.h"
 #include "Model.h"
 
+class GraphicsScene;
 /**
  @author Joachim Schiele <js@lastlog.de>
 */

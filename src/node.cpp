@@ -23,6 +23,9 @@
 
 node::node( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
   ID = generateUniqueID( getObjectType() );
+  setProperty( "start", false );
+  setProperty( "final", false );
+  setProperty( "pos", QPoint() );
 //   qDebug() << "NODE ID=" << ID << " TYPE=" << NODE;
 }
 
@@ -39,7 +42,7 @@ node::~node() {
 }
 
 void node::dump() {
-  qDebug() << "  \\---node::ID=" << ID << " childs:" << childCount() << ": " << ( unsigned int ) this << " parent=(" << ( unsigned int ) this->parent() << ")";
+//   qDebug() << "  \\---node::ID=" << ID << " childs:" << childCount() << ": " << ( unsigned int ) this << " parent=(" << ( unsigned int ) this->parent() << ")";
   // call dump for all children
 
   qDebug() << "     |-forward childs";

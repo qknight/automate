@@ -38,19 +38,24 @@
 #include <QToolBar>
 #include <QAction>
 #include <QStatusBar>
+#include <QPoint>
+#include <QCursor>
 
 #include "Model.h"
 #include "AbstractView.h"
 #include "ItemView.h"
+#include "GraphicsScene.h"
+class GraphicsScene;
+class ItemView;
 
 /*!
  ** The graphicsView implements a graphical representation of the automate.
  ** The concept is to wrap QGraphicsView capabilities into a QAbstractItemView.
  **
- ** ItemView is what talks to the model and what is called by the model.
+ ** ItemView talks to the model and is called by the model.
  ** The QGraphicsScene inherited by GraphicsScene is what is used to display the
- ** data trough ItemView. The GraphicsScene has another layer of items, namely:
- ** QGraphicsItems.
+ ** data through ItemView. The GraphicsScene has another layer of items, namely:
+ ** QGraphicsItems
  */
 class graphicsView : public AbstractView {
     Q_OBJECT
@@ -61,6 +66,8 @@ class graphicsView : public AbstractView {
     ~graphicsView();
     /*! not used, but can be done later ... */
     QStatusBar* sb;
+    /*! when using the shortcut to add a new node, the new node will be placed right under the cursor*/
+    QPoint queryMouseCoordinatesOverQGraphicsView();
   private:
     /*! this is the scene we work with, there is only one (in opposite to views on a scene where you
     ** can have multiple views!) */
@@ -76,7 +83,9 @@ class graphicsView : public AbstractView {
     /*! a helper function to improve readability of the code */
     void populateMenu();
 
-  private slots:
+  private Q_SLOTS:
+    /*! insertNode */
+    void insertNode();
     /*! zoomIn ...*/
     void zoomIn();
     /*! zoomOut ...*/
@@ -85,6 +94,9 @@ class graphicsView : public AbstractView {
     void zoomNormal();
     /*! not implemented yet but stubs are complete */
     void zoomFit();
+    
+    Q_SIGNALS:
+    void insertNodeSignal(QPoint pos);
 };
 
 #endif

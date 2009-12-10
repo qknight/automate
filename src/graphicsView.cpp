@@ -23,11 +23,11 @@
 graphicsView::graphicsView( Model *model, QMainWindow* parent ) : AbstractView( parent ) {
   this->model = model;
   sb = new QStatusBar;
-  view = new QGraphicsView;
+  view = new QGraphicsView(this);
   setWindowIcon(QIcon(QString::fromUtf8(":/icons/view_choose.png")));
 
   //QGLWidget* view = new QGLWidget ;
-  scene = new GraphicsScene( model );
+  scene = new GraphicsScene( model, this );
   itemView = new ItemView( view, scene, model, this );
 
   // we hide this widget since we only abuse it's connectivity for our QGraphicsScene/View
@@ -73,7 +73,8 @@ void graphicsView::populateMenu() {
 
   QAction* insertNodeAction = new QAction(QIcon(":/icons/bookmark_add.png"),"'n' - insert node", this);
   tb->addAction(insertNodeAction);
-  connect(insertNodeAction , SIGNAL(triggered()), scene, SLOT(insertNode()));
+  connect(insertNodeAction , SIGNAL(triggered()), this, SLOT(insertNode()));
+  connect(this, SIGNAL(insertNodeSignal(QPoint)), scene, SLOT(insertNode(QPoint)));
 
   QAction* removeAction = new QAction(QIcon(":/icons/button_cancel.png"),"'x' - del node/connection", this);
   tb->addAction(removeAction );
@@ -148,9 +149,23 @@ void graphicsView::zoomNormal() {
   view->resetMatrix();
 }
 
+void graphicsView::insertNode() {
+  //FIXME this is one of two places where the graphical editor inserts nodes
+  // this place is the click on the left icon bar, we should insert the node somewhere in the
+  // views FoV since that makes sense. it does not sense to track the cursor since it is above
+  // the icon when this event happens
+  QPoint p(qrand()%500,qrand()%200);
+  emit insertNodeSignal(p);  
+}
+
 void graphicsView::zoomFit() {
   qDebug() << "FIXME zoomFit() not implemented yet";
   //FIXME put your code here
 //   view->resetMatrix();
 //   view->setSceneRect(scene->sceneRect());
+}
+
+QPoint graphicsView::queryMouseCoordinatesOverQGraphicsView() {
+  QPointF pos = view->mapToScene(view->mapFromGlobal(QCursor::pos()));
+  return pos.toPoint();
 }

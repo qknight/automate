@@ -126,8 +126,7 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
     QModelIndex item = model->index( i, 0, parent );
     if ( model->getTreeItemType( item ) == NODE )
       scene->nodeInserted( QPersistentModelIndex( item ) );
-    else
-      if ( model->getTreeItemType( item ) == NODE_CONNECTION )
+    else if ( model->getTreeItemType( item ) == NODE_CONNECTION )
         scene->connectionInserted( QPersistentModelIndex( item ) );
   }
 }

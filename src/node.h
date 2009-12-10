@@ -25,6 +25,8 @@
 #include "AbstractTreeItem.h"
 #include "node_connection.h"
 
+#include <QPoint>
+
 /*! a node represents 'a node' in the data */
 class node : public AbstractTreeItem {
   friend class node_connection;
@@ -58,5 +60,6 @@ class node : public AbstractTreeItem {
     /*! internal use only: removes a reversepath */
     void removeChildReversePath( AbstractTreeItem *item );
 };
+
 
 #endif

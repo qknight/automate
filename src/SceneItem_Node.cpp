@@ -199,6 +199,9 @@ void SceneItem_Node::layoutChange() {
 
   QList<SceneItem_Connection *> itemsToAutoLayout;
   foreach( SceneItem_Connection* c, ConnectionItems ) {
+    // we ignore connections which you moved around other objects so that you don't need
+    // to setup again. however this might interfere with other connections which are autolayouted
+    // click on such an object (with custom transformation) and reset the flag
     if ( !c->customTransformation() /*&& !c->isLoop()*/ ) {
       itemsToAutoLayout.push_back( c );
     }
@@ -207,20 +210,28 @@ void SceneItem_Node::layoutChange() {
 //   unsigned int size = itemsToAutoLayout.size();
   int groupCount = 0;
   QVector<SceneItem_Connection *> itemsToAutoLayoutGroup;
+  // iterate over all outgoing connections
+  //  I) then pick those with the same source and destination and process them, while picking
+  //  II) remove them from the global list and do this process again and again until no
+  //  items are left
   while ( itemsToAutoLayout.size() > 0 ) {
+    // I)
     ++groupCount;
     itemsToAutoLayoutGroup.clear();
     SceneItem_Connection *a = itemsToAutoLayout.takeFirst();
-    unsigned int w = ( unsigned int )(( unsigned int )a->endItem() ^( unsigned int )a->startItem() );
+    // w forms a signature 
+    // FIXME long is arch specific
+    long w = ( long )(( long )a->endItem() ^( long )a->startItem() );
     itemsToAutoLayoutGroup.push_back( a );
     for ( int i = 0; i < itemsToAutoLayout.size(); ) {
-      if (( unsigned int )(( unsigned int )itemsToAutoLayout[i]->endItem() ^( unsigned int )itemsToAutoLayout[i]->startItem() ) == w
-//         ||    itemsToAutoLayout[i]->endItem() == itemsToAutoLayout[i]->startItem()
-         )
+      // FIXME long is arch specific
+      if (( long )(( long )itemsToAutoLayout[i]->endItem() ^( long )
+           	itemsToAutoLayout[i]->startItem() ) == w )
         itemsToAutoLayoutGroup.push_back( itemsToAutoLayout.takeAt( i ) );
       else
         ++i;
     }
+    // II)
     for ( int i = 0; i < itemsToAutoLayoutGroup.size(); ++i ) {
 //       bool oddOrEven = itemsToAutoLayoutGroup.size() % 2;
       SceneItem_Connection* c = itemsToAutoLayoutGroup[i];

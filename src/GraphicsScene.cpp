@@ -20,7 +20,7 @@
 
 #include "GraphicsScene.h"
 
-GraphicsScene::GraphicsScene( Model *model ) : QGraphicsScene() {
+GraphicsScene::GraphicsScene( Model *model, QWidget* parent ) : QGraphicsScene(parent) {
   this->model = model;
   m_want_highlight = false;
   m_want_boundingBox = false;
@@ -61,7 +61,7 @@ QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {
   // when the ItemView widget has focus &http://wiki.openmoko.org/wiki/OpenMoko_under_QEMU& when the mouse is in the ItemView
   //   only then insert the new node below the cursor
   // else put it at an random position near QPoint(0,0)
-  node->setPos( node->pos().x() + qrand() % 600, node->pos().y() + qrand() % 400 );
+  node->setPos( model->data(item, customRole::PosRole).toPoint() );
   updateNode( node );
   return node;
 }
@@ -217,7 +217,17 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     emit hideView();
   }
   if ( keyEvent->key() == Qt::Key_N ) {
-    insertNode();
+    //FIXME this is one of two places where the graphical editor inserts nodes
+    // the other is the icon which can be clicked with the mouse, this is the shortcut
+    // in general one wants to use the shortcut since it will insert the new node
+    // right below the mouse if the mouse is in the border of the QGraphicsView above the scene
+    // it might be outside, then we have to use the fallback strategy as insert the node in the
+    // middle of the current view
+    QPoint scenePoint;
+    graphicsView* gv = (graphicsView*) parent();
+    if (gv != NULL)
+      scenePoint = gv->queryMouseCoordinatesOverQGraphicsView();
+    insertNode(scenePoint);
   }
 
   if ( keyEvent->key() == Qt::Key_B ) {
@@ -475,6 +485,10 @@ bool GraphicsScene::want_highlight() {
 
 bool GraphicsScene::want_boundingBox() {
   return m_want_boundingBox;
+}
+
+void GraphicsScene::insertNode(QPoint pos) {
+  model->insertNode(pos);
 }
 
 void GraphicsScene::insertNode() {

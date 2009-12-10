@@ -27,6 +27,8 @@
 #include <QBrush>
 #include <QDebug>
 #include <QIcon>
+#include <QVariant>
+#include <QPoint>
 
 #include "AutomateRoot.h"
 #include "AbstractTreeItem.h"
@@ -42,7 +44,8 @@ enum CustomRole {
   StartRole,
   SymbolIndexRole,
   CustomLabelRole,
-  SortRole
+  SortRole,
+  PosRole
 };
 }
 
@@ -80,7 +83,7 @@ class Model : public QAbstractItemModel {
     bool removeItems( QList<QPersistentModelIndex> itemList );
     /*! this is the public interface, there is an private one for internal use as well!
     ** this inserts a node*/
-    bool insertNode();
+    bool insertNode(QPoint pos=QPoint());
     /*! this inserts a connection at startItem */
     bool insertConnection( QModelIndex startItem, QModelIndex endItem = QModelIndex() );
 
@@ -124,8 +127,12 @@ class Model : public QAbstractItemModel {
     bool hasChildren( const QModelIndex & parent = QModelIndex() ) const;
     /*! see the Qt docs about QAbstractItemModel */
     QVariant headerData( int section, Qt::Orientation orientation, int role ) const;
-    /*! see the Qt docs about QAbstractItemModel */
-    bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex() );
+    /*! see the Qt docs about QAbstractItemModel 
+    ** the obj can be used to initialize the object, check the insertRows implementation if your
+    ** object type is supported (example: NODE is supported, that means one can use insertRows to insert
+    ** exactly the given node called 'obj')
+    */
+    bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
 };

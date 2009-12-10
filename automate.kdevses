@@ -1,102 +1,50 @@
 <?xml version = '1.0' encoding = 'UTF-8'?>
 <!DOCTYPE KDevPrjSession>
 <KDevPrjSession>
- <DocsAndViews NumberOfDocuments="29" >
-  <Doc0 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionHandle.cpp" >
-   <View0 Encoding="" Type="Source" />
+ <DocsAndViews NumberOfDocuments="13" >
+  <Doc0 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/Model.cpp" >
+   <View0 Encoding="" line="540" Type="Source" />
   </Doc0>
-  <Doc1 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/Model.cpp" >
-   <View0 Encoding="" line="589" Type="Source" />
+  <Doc1 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/graphicsView.cpp" >
+   <View0 Encoding="" line="32" Type="Source" />
   </Doc1>
-  <Doc2 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/Model.h" >
-   <View0 Encoding="" Type="Source" />
+  <Doc2 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/graphicsView.h" >
+   <View0 Encoding="" line="30" Type="Source" />
   </Doc2>
-  <Doc3 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/AbstractTreeItem.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc3>
-  <Doc4 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/AutomateRoot.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc4>
-  <Doc5 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/AutomateRoot.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc5>
-  <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Node.cpp" >
+  <Doc3 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/GraphicsScene.cpp" >
    <View0 Encoding="" line="90" Type="Source" />
+  </Doc3>
+  <Doc4 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/GraphicsScene.h" >
+   <View0 Encoding="" line="22" Type="Source" />
+  </Doc4>
+  <Doc5 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/Model.h" >
+   <View0 Encoding="" line="82" Type="Source" />
+  </Doc5>
+  <Doc6 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ItemView.cpp" >
+   <View0 Encoding="" line="172" Type="Source" />
   </Doc6>
-  <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Node.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc7>
-  <Doc8 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/GraphicsScene.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc8>
-  <Doc9 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/GraphicsScene.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc9>
-  <Doc10 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ItemView.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc10>
-  <Doc11 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ItemView.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc11>
-  <Doc12 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_LabelEditor.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc12>
-  <Doc13 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_LabelEditor.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc13>
-  <Doc14 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/TODO" >
-   <View0 Encoding="" Type="Source" />
-  </Doc14>
-  <Doc15 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SymbolTable.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc15>
-  <Doc16 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SymbolTable.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc16>
-  <Doc17 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/AbstractTreeItem.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc17>
-  <Doc18 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/treeView.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc18>
-  <Doc19 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/automatehandler.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc19>
-  <Doc20 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_ConnectionHandle.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc20>
-  <Doc21 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Connection.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc21>
-  <Doc22 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Connection.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc22>
-  <Doc23 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/mainGraphicsView.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc23>
-  <Doc24 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/mainGraphicsView.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc24>
-  <Doc25 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/node_connection.cpp" >
-   <View0 Encoding="" Type="Source" />
-  </Doc25>
-  <Doc26 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/node_connection.h" >
-   <View0 Encoding="" Type="Source" />
-  </Doc26>
-  <Doc27 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/node.cpp" >
-   <View0 Encoding="" line="73" Type="Source" />
-  </Doc27>
-  <Doc28 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/node.h" >
+  <Doc7 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/ItemView.h" >
    <View0 Encoding="" line="37" Type="Source" />
-  </Doc28>
+  </Doc7>
+  <Doc8 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/AbstractTreeItem.cpp" >
+   <View0 Encoding="" line="0" Type="Source" />
+  </Doc8>
+  <Doc9 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/AbstractTreeItem.h" >
+   <View0 Encoding="" line="88" Type="Source" />
+  </Doc9>
+  <Doc10 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Connection.cpp" >
+   <View0 Encoding="" line="31" Type="Source" />
+  </Doc10>
+  <Doc11 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/SceneItem_Connection.h" >
+   <View0 Encoding="" line="68" Type="Source" />
+  </Doc11>
+  <Doc12 NumberOfViews="1" URL="file:///home/joachim/Desktop/projects/repository1/automate/src/AbstractView.cpp" >
+   <View0 Encoding="" line="14" Type="Source" />
+  </Doc12>
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
-   <breakpointList>
-    <breakpoint0 location="/home/joachim/Desktop/projects/repository1/automate/src/AbstractTreeItem.cpp:106" type="1" tracingFormatString="" traceFormatStringEnabled="0" condition="" tracingEnabled="0" enabled="1" >
-     <tracedExpressions/>
-    </breakpoint0>
-   </breakpointList>
+   <breakpointList/>
    <showInternalCommands value="0" />
   </kdevdebugger>
   <kdevfilelist>
@@ -167,7 +115,7 @@
   </kdevbookmarks>
   <kdevvalgrind>
    <executable path="" params="" />
-   <valgrind path="" params="" />
+   <valgrind path="/usr/bin/valgrind" params=" --tool=memcheck --leak-check=yes" />
    <calltree path="/usr/bin/valgrind" params="--tool=callgrind" />
    <kcachegrind path="/usr/kde/3.5/bin/kcachegrind" />
   </kdevvalgrind>

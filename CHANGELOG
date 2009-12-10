@@ -1,3 +1,13 @@
+10.12.2009
+  - added support for placing a node under the cursor
+    this means: when designing an automate one can now just move the cursor to a place
+    one wants a node and press 'n' to get one. this is great since it makes creating
+    automates much faster
+  - WARNING: found out that this codebase needs some serious refactoring
+  - WARNING: this codebase has a bug, i must check if that was also true for the last
+             revision or if it is a qt 4.5 problem in general
+	     the bug occures when a graphicsview is created -> it will crash the computer 
+	     here ;P
 2008-07-25
   - added custom loop handling so that loops can be moved to any location. 
     this 'fixed' loop labelItem position was now changed to be moved to any
