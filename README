@@ -21,6 +21,12 @@
  please feel free to comment on that code:
      8.6.2008 (C) Joachim Schiele <js@dune2.de>
 
+
+ some explanations about this project (additional to the doxygen documentation)
+   http://lastlog.de/wiki/index.php/AutomateEditor
+
+ the project is hosted on github.com/qknight/automate
+
 ======================================
  class documentation using doxygen
 ======================================
