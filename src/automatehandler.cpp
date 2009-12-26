@@ -37,10 +37,15 @@ automatehandler::automatehandler( QWidget* parent ) : QDialog( parent ) {
   addRandomAutomate();
   addRandomAutomate();
   addRandomAutomate();
+  treeWidget->setAlternatingRowColors(true);
 }
 
 automatehandler::~automatehandler() {
-  // see quit()
+  foreach(automate* a, automates) {
+    delete a;
+  }
+  automates.clear();
+  updateTreeWidget();
 }
 
 void automatehandler::updateTreeWidget() {
@@ -51,14 +56,15 @@ void automatehandler::updateTreeWidget() {
     a->setText( 0, automates[i]->name );
     a->setText( 1, QString( "%1" ).arg( automates[i]->childCount() ) );
     a->setText( 2, QString( "%1" ).arg( automates[i]->connectionCount() ) );
-    a->setText( 3, tr( "0" ) );
-    a->setText( 4, tr( "0" ) );
+/*    a->setText( 3, tr( "0" ) );
+    a->setText( 4, tr( "0" ) );*/
   }
   treeWidget->resizeColumnToContents( 0 );
+  treeWidget->setColumnWidth(0, treeWidget->columnWidth(0)+30);
   treeWidget->resizeColumnToContents( 1 );
   treeWidget->resizeColumnToContents( 2 );
-  treeWidget->resizeColumnToContents( 3 );
-  treeWidget->resizeColumnToContents( 4 );
+/*  treeWidget->resizeColumnToContents( 3 );
+  treeWidget->resizeColumnToContents( 4 );*/
 }
 
 void automatehandler::addAutomate() {
@@ -68,16 +74,21 @@ void automatehandler::addAutomate() {
   qDebug( "automate added" );
 }
 
+// CONCEPT BEFORE
+//  the code below will not work, once the model is finalized
+//  until then, it will remain to test the automate class
+//  the automateRoot() function will be made protected
+//  and not pulic as it is right now!
+// CONCEPT NOW
+//  it is probably no bad idea having two ways of adding a automate
+//  so either do it directly and attach a view to it later
+//  or use the model. if you need views in sync use the model
+//  if you want a script or program to generate a automate
+//  simply do it the way it is done here
 void automatehandler::addRandomAutomate() {
   automate* myautomate1 = new automate;
   automates.push_back( myautomate1 );
 
-  //TODO fix this warning, fix everything!
-  //WARNING BEGIN
-  //  the code below will not work, once the model is finalized
-  //  until then, it will remain to test the automate class
-  //  the automateRoot() function will be made protected
-  //  and not pulic as it is right now!
   AbstractTreeItem* rootnode = myautomate1->automateRootPtr();
   AutomateRoot* r = (AutomateRoot*)rootnode;
   r->symbol("a");
@@ -124,14 +135,13 @@ void automatehandler::addRandomAutomate() {
       node1->appendChild( static_cast<AbstractTreeItem*>( nc1 ) );
     }
   }
-  //WARNING END
 
   updateTreeWidget();
 //   qDebug("random automate added");
 }
 
 void automatehandler::delAutomate() {
-//WARNING::this code has to be checked. it might delete the wrong
+//FIXME::this code has to be checked. it might delete the wrong
 //         elements on multiple selection delete
   for ( int i = 0; i < treeWidget->selectedItems().size(); ++i ) {
     qDebug( "delAutomate::deleting automate" );

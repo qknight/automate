@@ -48,6 +48,7 @@ void automate::completeDFA() {
     }
 }
 
+// this function code might be incomplete
 QString automate::getAutomateType()
 {
   bool start=false; // a start node

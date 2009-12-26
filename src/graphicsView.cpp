@@ -20,7 +20,7 @@
 
 #include "graphicsView.h"
 
-graphicsView::graphicsView( Model *model, QMainWindow* parent ) : AbstractView( parent ) {
+GraphicsView::GraphicsView( Model *model, QMainWindow* parent ) : AbstractView( parent ) {
   this->model = model;
   sb = new QStatusBar;
   view = new QGraphicsView(this);
@@ -41,7 +41,7 @@ graphicsView::graphicsView( Model *model, QMainWindow* parent ) : AbstractView( 
   addToolBar(Qt::LeftToolBarArea, tb);
   setStatusBar(sb);
 
-  QItemSelectionModel *selectionModel = new QItemSelectionModel( model );
+  selectionModel = new QItemSelectionModel( model );
   itemView->setSelectionModel( selectionModel );
 
   resize( 800, 600 );
@@ -53,14 +53,17 @@ graphicsView::graphicsView( Model *model, QMainWindow* parent ) : AbstractView( 
   connect(scene, SIGNAL(toggleRenderHints()), itemView, SLOT(toggleRenderHints()));
 }
 
-graphicsView::~graphicsView() {
-//   qDebug() << __FUNCTION__;
+GraphicsView::~GraphicsView() {
+//   qDebug() << __PRETTY_FUNCTION__;
+  delete selectionModel;
+  delete tb;
+  delete itemView;
   delete scene;
   delete view;
   delete sb;
 }
 
-void graphicsView::populateMenu() {
+void GraphicsView::populateMenu() {
   QAction* toggleStartAction = new QAction(QIcon(":/icons/startNode.png"),"'s' - start toggle", this);
   tb->addAction(toggleStartAction );
   connect(toggleStartAction , SIGNAL(triggered()), scene, SLOT(toggleStartEvent()));
@@ -137,19 +140,19 @@ void graphicsView::populateMenu() {
   connect(toggle_customConnectionLabelsAction, SIGNAL(triggered()), scene, SLOT(toggle_customConnectionLabels()));
 }
 
-void graphicsView::zoomIn() {
+void GraphicsView::zoomIn() {
   view->scale( 1.2, 1.2 );
 }
 
-void graphicsView::zoomOut() {
+void GraphicsView::zoomOut() {
   view->scale( 0.8, 0.8 );
 }
 
-void graphicsView::zoomNormal() {
+void GraphicsView::zoomNormal() {
   view->resetMatrix();
 }
 
-void graphicsView::insertNode() {
+void GraphicsView::insertNode() {
   //FIXME this is one of two places where the graphical editor inserts nodes
   // this place is the click on the left icon bar, we should insert the node somewhere in the
   // views FoV since that makes sense. it does not sense to track the cursor since it is above
@@ -158,14 +161,14 @@ void graphicsView::insertNode() {
   emit insertNodeSignal(p);  
 }
 
-void graphicsView::zoomFit() {
+void GraphicsView::zoomFit() {
   qDebug() << "FIXME zoomFit() not implemented yet";
   //FIXME put your code here
 //   view->resetMatrix();
 //   view->setSceneRect(scene->sceneRect());
 }
 
-QPoint graphicsView::queryMouseCoordinatesOverQGraphicsView() {
+QPoint GraphicsView::queryMouseCoordinatesOverQGraphicsView() {
   QPointF pos = view->mapToScene(view->mapFromGlobal(QCursor::pos()));
   return pos.toPoint();
 }

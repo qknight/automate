@@ -37,10 +37,14 @@ AutomateRoot::AutomateRoot( AbstractTreeItem* parent ) : AbstractTreeItem( paren
 }
 
 AutomateRoot::~AutomateRoot() {
-//   qDebug() << __FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
   delete objCnt_node;
   delete objCnt_automateroot;
   delete objCnt_nodeconnection;
+  if (childCount() != 0) {
+    qDebug() << __PRETTY_FUNCTION__ << "-> FATAL ERROR: not all child items were removed prior to this function call, exiting";
+    exit(0);
+  }
 }
 
 void AutomateRoot::dump() {

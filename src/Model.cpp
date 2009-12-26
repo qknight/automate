@@ -18,8 +18,6 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
-
-
 // i hope i don't have the same issue as this post mentiones:
 //  http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
 //
@@ -348,6 +346,11 @@ bool Model::setData( const QModelIndex & index, const QVariant & value, int role
     emit dataChanged( index, index );
     return true;
   }
+  // this code is used to redirect a node_connection's destination (source is fixed to the node the 
+  // node_connection is assigned to). if one would not have unique IDs then it would be impossible
+  // to use a number to match a node with. say a node_connection connects from (source node id=2) to
+  // (destination node id=4), the code below let's you use the TreeView editor to redirect it to (say node id=7)
+  // if 7 exists
   if ( index.isValid() && getTreeItemType( index ) == NODE_CONNECTION && index.column() == 5 && role == Qt::EditRole ) {
     AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
     node_connection* nc = static_cast<node_connection*>( n );
@@ -400,7 +403,7 @@ QVariant Model::headerData( int section, Qt::Orientation orientation, int role )
         return "?";
       else
         if ( role == Qt::ToolTipRole )
-          return "don't ask!?";
+          return "node or node_connection";
     case 1:
       if ( role == Qt::DisplayRole )
         return "s";
@@ -697,3 +700,9 @@ bool Model::insertNode(QPoint pos) {
   return insertRows( rowCount( QModelIndex() ), 1, QModelIndex() , pos);
 }
 
+void Model::clear() {
+//   qDebug() << __PRETTY_FUNCTION__ << " -> there are " << rowCount(QModelIndex()) << " items to be removed first";
+  while(rowCount(QModelIndex())) {
+    removeNode(index(0,0,QModelIndex()));
+  }
+}

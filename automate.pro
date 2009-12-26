@@ -73,7 +73,7 @@ SOURCES += src/main.cpp \
  src/SymbolTable.cpp \
  src/SceneItem_LabelEditor.cpp \
  src/graphicsView.cpp
-FORMS += ui/controllerWidget.ui \
+FORMS += ui/AutomateHandlerWidget.ui \
          ui/treeViewMainWindow.ui
 DISTFILES += TODO README \
  GPL_V2 \

@@ -28,11 +28,8 @@ AbstractTreeItem::AbstractTreeItem( AbstractTreeItem *parent ) {
   ID = 0;
 }
 
-// WARNING: never delete objects as for instance childItems in the structure here
-// since this will create inconsistencies between the model and this data structure.
-// A better way is to fail with exit(0) since this problem must be handled with great care!
 AbstractTreeItem::~AbstractTreeItem() {
-//   qDebug() << __FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
 }
 
 void AbstractTreeItem::appendChild( AbstractTreeItem *item ) {

@@ -18,11 +18,9 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
-
 #include "objectProperty.h"
 
 objectProperty::objectProperty() { }
-
 objectProperty::~objectProperty() { }
 
 void objectProperty::setProperty(QString key, QVariant value) {

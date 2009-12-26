@@ -57,13 +57,13 @@ class ItemView;
  ** data through ItemView. The GraphicsScene has another layer of items, namely:
  ** QGraphicsItems
  */
-class graphicsView : public AbstractView {
+class GraphicsView : public AbstractView {
     Q_OBJECT
   public:
     /*! constructor, needs a model for operation */
-    graphicsView( Model *, QMainWindow* parent = 0 );
+    GraphicsView( Model *, QMainWindow* parent = 0 );
     /*! destructor */
-    ~graphicsView();
+    ~GraphicsView();
     /*! not used, but can be done later ... */
     QStatusBar* sb;
     /*! when using the shortcut to add a new node, the new node will be placed right under the cursor*/
@@ -82,6 +82,8 @@ class graphicsView : public AbstractView {
     QGraphicsView* view;
     /*! a helper function to improve readability of the code */
     void populateMenu();
+    /*! TODO selection model used to ??? */
+    QItemSelectionModel *selectionModel;
 
   private Q_SLOTS:
     /*! insertNode */

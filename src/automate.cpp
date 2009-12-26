@@ -42,6 +42,15 @@ automate::~automate() {
 #ifdef MODELTEST
   delete modeltest;
 #endif
+  model()->clear(); // removes childs in a recursive fasion
+  // FIXME root->remove_all_items() or similar, before calling the destructor
+  // this is important since the AutomateRoot should not remove any child items
+  // in a recursive fashion. calling the ~AutomateRoot destructor should check
+  // if all childs are gone, if not it should fail with a exit(0) call to indicate
+  // a serious failure.
+  // That said: remove all items [as nodes and node_connections] first via the model, 
+  // next if all items are gone call the destructor of AutomateRoot which WILL NOT
+  // FAIL then.
   delete m_model;
   delete root;
 
@@ -64,13 +73,13 @@ void automate::openNewView(ViewType vt) {
 //   qDebug() << "in file: " << __FILE__ << "on line: " << __LINE__;
   switch (vt) {
     case TreeViewType:
-      view = new treeView(model());
+      view = new TreeView(model());
       a = QString("TreeView - %2").arg(name);
       view->setWindowTitle(a);
       view->show();
       break;
     case GraphicsViewType:
-      view = new graphicsView(model());
+      view = new GraphicsView(model());
       a = QString("GraphicsView - %2").arg(name);
       view->setWindowTitle(a);
       view->show();

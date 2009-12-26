@@ -24,12 +24,7 @@ AbstractView::AbstractView( QMainWindow *parent ) : QMainWindow( parent ) {}
 AbstractView::~AbstractView() { }
 
 void AbstractView::showWithFocus() {
-  raise();
-  //TODO problem: except the main widget all others seem to raise but NOT to focus
-  //     this could be due to a kde overwrite here, which i didn't test yet
-
-//   setWindowState(windowState() & ~Qt::WindowMinimized | Qt::WindowActive);
-//   setFocus();
-//   hide();
-//   show();
+  show();    // if the widget was clicked away using the [x] on the top right widget
+  raise();   // if the widget is behind the main widget this will bring it to the foreground
+  setFocus();// this does not work as expected
 }

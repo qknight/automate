@@ -32,11 +32,11 @@ node::node( AbstractTreeItem* parent ) : AbstractTreeItem( parent ) {
 node::~node() {
 //   qDebug() << __FUNCTION__;
   if ( m_childItems.size() > 0 ) {
-    qDebug() << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
+    qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_childItems.size() << " childItems";
     exit( 0 );
   }
   if ( m_reverseChildItems.size() > 0 ) {
-    qDebug() << "FATAL ERROR: Still have " << m_reverseChildItems.size() << " reverseChildItems";
+    qDebug() << __PRETTY_FUNCTION__ << __LINE__ << "FATAL ERROR: Still have " << m_reverseChildItems.size() << " reverseChildItems";
     exit( 0 );
   }
 }

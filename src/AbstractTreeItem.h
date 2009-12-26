@@ -40,15 +40,13 @@ enum TreeItemType {
 ** - This class is extended by a custom object property system.
 ** - Every 'item' in the tree must have a uniq id
 **  - There is only one AutomateRoot object with id=0 in each automate
-**  - The AutomateRoot can assign ids to all other objects
+**  - The AutomateRoot can assign ids to all other objects as node and node_connection
 */
 class AbstractTreeItem : public objectProperty {
     friend class node;
     friend class node_connection;
     friend class AutomateRoot;
   public:
-    /*! destructor */
-    virtual ~AbstractTreeItem();
     /*! returns the number of childs:
       - 0 no childs
       - >0 child amount
@@ -74,11 +72,24 @@ class AbstractTreeItem : public objectProperty {
     /*! removes a child from m_childItems */
     virtual void removeChild( unsigned int index ) = 0;
   protected:
+    /*! WARNING: never delete objects as for instance childItems within the destructor
+    since this will create inconsistencies between the model and this data structure.
+    A better way is to fail with exit(0) since this problem must be handled with great care! */
+    virtual ~AbstractTreeItem();
+
     /*! the constructor is protected to enforce the policy, which is:
       - only derived classes may be used to create objects from:
         - that is: AutomateRoot, node, node_connection*/
     AbstractTreeItem( AbstractTreeItem *parent = 0 );
-    /*! this pure virtual function is used to compute a uniq ID. Only a AutomateRoot object can do that */
+    /*! this pure virtual function is used to compute a uniq ID. Only a AutomateRoot object can assign new IDs.
+        the idea of using IDs is twofold: 
+         - first: if someone uses scripts to modify an automate one can use the ideas instead of the pointers for identifying 
+           objects
+         - second: unlike the graphicsview (which is operated using the mouse with some keyboard shortcuts)
+           the treeview relies to a naming sheme and it would be unwise to use the pointers which would somehow be converted to
+           unsigned int values with a cast. 
+        currently there is no other use of the ID system
+    */
     virtual unsigned int generateUniqueID( unsigned int ) = 0;
     /*! id of this object
       - 0 is default but it's overwritten in the constructor of the deriving class

@@ -28,7 +28,7 @@ viewHandler::viewHandler() {
 viewHandler::~viewHandler() {
 //   qDebug("~viewHandler() %i", getListOfViews().size());
 
-  foreach(AbstractView* t,ViewList) {
+  foreach(AbstractView* t, ViewList) {
     delete t;
   }
 }

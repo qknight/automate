@@ -35,7 +35,7 @@ class AbstractView : public QMainWindow {
     /*! constructor */
     AbstractView( QMainWindow *parent = 0 );
     /*! destructor */
-    ~AbstractView();
+    virtual ~AbstractView();
   protected slots:
     /*! unhide the hidden widget and focus it, but doesn't work right now */
     void showWithFocus();

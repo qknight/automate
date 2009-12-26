@@ -33,7 +33,7 @@
 #include <QKeyEvent>
 
 /*! the treeView is one of the two main views which binds to the model */
-class treeView : public AbstractView, public Ui::treeViewMainWindow {
+class TreeView : public AbstractView, public Ui::treeViewMainWindow {
     Q_OBJECT
   private:
     /*! a selection model used to query item selections from the QTreeView */
@@ -50,9 +50,12 @@ class treeView : public AbstractView, public Ui::treeViewMainWindow {
     /*! removes all selected elements of a QTreeView */
     void removeEvent();
   public:
-    /*! ... */
-    treeView( Model *, QMainWindow* parent = 0 );
-    /*! ... */
+    /*! TODO */
+    TreeView( Model *, QMainWindow* parent = 0 );
+    /*! TODO */
+    ~TreeView();
+    /*! holds a pointer to the model used. a Automate class has only one model but can have several views that
+        share the same model */
     Model *model;
   public slots:
     /*! adds a node */

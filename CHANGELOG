@@ -1,3 +1,15 @@
+2009-12-25
+  - calling ~Automate now removes the datastructure as well (wasn't implemented yet)
+    so until this fix a lot of memory was lost
+  - when closing the AutomateHandler (that is the first gui you see) all Automates get removed prior
+    program termination. this helps to track issues with memleaks (using valgrind for instance).
+  - FIXED issues with GraphicsView/TreeView once they were hidden (with a click to [x] on the top right corner)
+    they won't show up anymore using the QMenu context menu in the AutomateHandler
+  - added doxygen comments
+
+2009-12-24
+  - made ViewHandler destructor virtual (i forgot this and the views weren't removed properly)
+
 10.12.2009
   - added support for placing a node under the cursor
     this means: when designing an automate one can now just move the cursor to a place

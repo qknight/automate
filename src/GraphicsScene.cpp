@@ -145,6 +145,7 @@ void GraphicsScene::clearScene() {
   foreach( QGraphicsItem* i, nodes )
     delete i;
   if ( items().size() ) {
+    //FIXME this should never happen, sleep(10) should be replaced by exit(0), and Warning by FATAL ERROR
     qDebug() << "Warning: we still got items on this scene while there should not be any!";
     sleep (10);
   }
@@ -224,7 +225,7 @@ void GraphicsScene::keyPressEvent( QKeyEvent * keyEvent ) {
     // it might be outside, then we have to use the fallback strategy as insert the node in the
     // middle of the current view
     QPoint scenePoint;
-    graphicsView* gv = (graphicsView*) parent();
+    GraphicsView* gv = (GraphicsView*) parent();
     if (gv != NULL)
       scenePoint = gv->queryMouseCoordinatesOverQGraphicsView();
     insertNode(scenePoint);

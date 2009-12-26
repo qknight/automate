@@ -33,8 +33,7 @@
 #include "Model.h"
 
 #include "treeView.h"
-
-#include "ui_controllerWidget.h"
+#include "ui_AutomateHandlerWidget.h"
 
 /*! this is the base class which handles all automates and represents them in a nice list. */
 class automatehandler : public QDialog, private Ui::controllerWidget {

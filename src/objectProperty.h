@@ -25,7 +25,7 @@
 #include <QVariant>
 #include <QDebug>
 
-/*! this class does what a QObject deriving class also does but this is more lightweight */
+/*! this class does what a QObject deriving class also does but this is the lightweight solution */
 class objectProperty {
   public:
     /*! constructor */
@@ -39,7 +39,6 @@ class objectProperty {
   public:
     /*! get a property */
     const QVariant getProperty( QString );
-    // QVector<QString> getAllProperties();
 
   private: // Members
     /*! holds all properties */

@@ -135,6 +135,11 @@ class Model : public QAbstractItemModel {
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
+  protected:
+    /*! this function removes all items expect the AutomateRoot item itself and is used to
+    cleanly destroy all objects related/including the class Automate.<br>
+    It can be called while views are attached to the model, it is not efficient performancewise */
+    void clear();
 };
 
 #endif

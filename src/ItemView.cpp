@@ -143,7 +143,7 @@ void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int 
   }
 }
 
-/*
+/*!
 ** This algorithm traverses trough the QModelIndex hierarchy
 **  topleft -- itemA -- connection1
 **             \---- -- connection2       given the topLeft item it returns itemA
@@ -176,18 +176,18 @@ QModelIndex ItemView::traverseTroughIndexes( QModelIndex index ) {
 
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
 //   qDebug() << __FUNCTION__;
-  QModelIndex tmpIndex  = topLeft;
+  QModelIndex tmpIndex = topLeft;
   do {
 //     qDebug() << "dataChanged is now called()";
     switch (model->getTreeItemType( tmpIndex )) {
       case NODE:
-//       qDebug() << __FUNCTION__ << "Node modification";
-      scene->updateNode( QPersistentModelIndex( tmpIndex ) );
-      break;
-    case NODE_CONNECTION:
-//       qDebug() << __FUNCTION__ << "Connection modification";
-      scene->updateConnection( QPersistentModelIndex( tmpIndex ) );
-      break;
+//        qDebug() << __FUNCTION__ << "Node modification";
+        scene->updateNode( QPersistentModelIndex( tmpIndex ) );
+        break;
+      case NODE_CONNECTION:
+//        qDebug() << __FUNCTION__ << "Connection modification";
+        scene->updateConnection( QPersistentModelIndex( tmpIndex ) );
+        break;
       default:
         //FIXME this could be an issue
         qDebug() << __FILE__ << __FUNCTION__ << " didn't understand what i should be doing";
@@ -200,6 +200,7 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
 }
 
 void ItemView::layoutChanged(){
-  qDebug() << "NOT implemented yet, please implement me!, exiting";
+  //FIXME do we need that?
+  qDebug() << __PRETTY_FUNCTION__ << " " << __FUNCTION__ << " is NOT implemented yet, please implement me!, exiting";
   exit(0);
 }

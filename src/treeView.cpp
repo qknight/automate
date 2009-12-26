@@ -18,10 +18,9 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
-
 #include "treeView.h"
 
-treeView::treeView( Model* model, QMainWindow* parent ) : AbstractView( parent ) {
+TreeView::TreeView( Model* model, QMainWindow* parent ) : AbstractView( parent ) {
   setupUi( this );
   this->model = model;
 
@@ -58,7 +57,13 @@ treeView::treeView( Model* model, QMainWindow* parent ) : AbstractView( parent )
            this, SLOT( currentChanged( const QModelIndex &, const QModelIndex & ) ) );
 }
 
-void treeView::currentChanged( const QModelIndex & current, const QModelIndex & /*previous*/ ) {
+TreeView::~TreeView() {
+//   qDebug() << __PRETTY_FUNCTION__;
+  delete ism;
+  delete proxyModel;
+}
+
+void TreeView::currentChanged( const QModelIndex & current, const QModelIndex & /*previous*/ ) {
 //   qDebug() << __FUNCTION__;
   QString a;
   QModelIndex currentItem = proxyModel->mapToSource( current );
@@ -101,7 +106,7 @@ void treeView::currentChanged( const QModelIndex & current, const QModelIndex & 
   textBrowser->setText( text );
 }
 
-void treeView::delSelectedItems( ) {
+void TreeView::delSelectedItems( ) {
   QList<QPersistentModelIndex> selectedItems;
   foreach( QModelIndex selectedItem, ism->selectedRows() )
     selectedItems.append( QPersistentModelIndex(proxyModel->mapToSource( selectedItem ) ) );
@@ -113,15 +118,18 @@ void treeView::delSelectedItems( ) {
     qDebug() << "FAILED removing all selected nodes";*/
 }
 
-void treeView::addNode() {
+void TreeView::addNode() {
   addAbstractNodeItem( NODE );
 }
 
-void treeView::addConnection() {
+void TreeView::addConnection() {
   addAbstractNodeItem( NODE_CONNECTION );
 }
 
-void treeView::addAbstractNodeItem( TreeItemType type ) {
+// this code breaks the model view pattern since it has a reference to TreeItemType
+// an easy workaround would be to add a function called addNode() and addConnection(QModelIndex parent) to the model
+// and call this instead of this hack
+void TreeView::addAbstractNodeItem( TreeItemType type ) {
   //FIXME this code needs a cleanup
   // it's still unclear how to handle multiple insertions on multiple selections
   // it might be wise to only allow appending of items for 'one' selected item
@@ -160,7 +168,7 @@ void treeView::addAbstractNodeItem( TreeItemType type ) {
   }
 }
 
-void treeView::keyPressEvent( QKeyEvent * keyEvent ) {
+void TreeView::keyPressEvent( QKeyEvent * keyEvent ) {
   if ( keyEvent->key() == Qt::Key_X ) {
     delSelectedItems();
   }
@@ -183,7 +191,7 @@ void treeView::keyPressEvent( QKeyEvent * keyEvent ) {
   }
 }
 
-void treeView::startToggleEvent( int role ) {
+void TreeView::startToggleEvent( int role ) {
   int selectedcount = ism->selectedRows().size();
   QList<QModelIndex> selectedItems;
   foreach( QModelIndex selectedItem, ism->selectedRows() )
