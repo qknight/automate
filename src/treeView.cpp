@@ -45,11 +45,11 @@ TreeView::TreeView( Model* model, QMainWindow* parent ) : AbstractView( parent )
   nodeTreeView->resizeColumnToContents( 5 );
 
   connect( addNodeBtn, SIGNAL( clicked() ),
-           this, SLOT( addNode() ) );
+           this, SLOT( addNodeSlot() ) );
   connect( delNodeBtn, SIGNAL( clicked() ),
            this, SLOT( delSelectedItems() ) );
   connect( addConnectionBtn, SIGNAL( clicked() ),
-           this, SLOT( addConnection() ) );
+           this, SLOT( addConnectionSlot() ) );
   connect( delConnectionBtn, SIGNAL( clicked() ),
            this, SLOT( delSelectedItems() ) );
 
@@ -71,33 +71,35 @@ void TreeView::currentChanged( const QModelIndex & current, const QModelIndex & 
     textBrowser->setText( "no element selected" );
     return;
   }
-  switch ( model->getTreeItemType( currentItem ) ) {
-  case AUTOMATE_ROOT:
-    a = "AUTOMATE_ROOT";
-    delConnectionBtn->setEnabled( false );
-    delNodeBtn->setEnabled( false );
-    addConnectionBtn->setEnabled( false );
-    break;
-  case NODE:
-    a = "NODE";
-    delNodeBtn->setEnabled( true );
-    delConnectionBtn->setEnabled( false );
-    addConnectionBtn->setEnabled( true );
-    break;
-  case NODE_CONNECTION:
-    a = "NODE_CONNECTION\n";
-    delNodeBtn->setEnabled( false );
-    delConnectionBtn->setEnabled( true );
-    addConnectionBtn->setEnabled( true );
-    a.append("\nInternal symbolTable:\n");
-    for (int i=0; i < model->size(); ++i) {
-      a.append(QString("%1   -   %2\n").arg(i).arg(model->symbol(i)));
-    }
-    break;
-  default:
-    delNodeBtn->setEnabled( false );
-    a = "not in record, this should not happen";
-    break;
+  // this is wrong since it should use the QVariant QModelIndex::data ( int role = Qt::DisplayRole ) const
+  // instead of adding another function into the model
+  switch ( model->data( currentItem, customRole::TypeRole ).toInt() ) {
+    case ViewTreeItemType::AUTOMATE_ROOT:
+      a = "AUTOMATE_ROOT";
+      delConnectionBtn->setEnabled( false );
+      delNodeBtn->setEnabled( false );
+      addConnectionBtn->setEnabled( false );
+      break;
+    case ViewTreeItemType::NODE:
+      a = "NODE";
+      delNodeBtn->setEnabled( true );
+      delConnectionBtn->setEnabled( false );
+      addConnectionBtn->setEnabled( true );
+      break;
+    case ViewTreeItemType::NODE_CONNECTION:
+      a = "NODE_CONNECTION\n";
+      delNodeBtn->setEnabled( false );
+      delConnectionBtn->setEnabled( true );
+      addConnectionBtn->setEnabled( true );
+      a.append("\nInternal symbolTable:\n");
+      for (int i=0; i < model->size(); ++i) {
+	a.append(QString("%1   -   %2\n").arg(i).arg(model->symbol(i)));
+      }
+      break;
+    default:
+      delNodeBtn->setEnabled( false );
+      a = "not in record, this should not happen";
+      break;
   }
 
   QString text = QString( "type::%1\nid = %2" )
@@ -111,61 +113,15 @@ void TreeView::delSelectedItems( ) {
   foreach( QModelIndex selectedItem, ism->selectedRows() )
     selectedItems.append( QPersistentModelIndex(proxyModel->mapToSource( selectedItem ) ) );
 //   qDebug( "%i selected item(s) to remove", selectedItems.size() );
-  /*bool s =*/ model->removeItems( selectedItems );
-/*  if ( s )
-    qDebug() << "success removing all selected nodes";
-  else
-    qDebug() << "FAILED removing all selected nodes";*/
+  model->removeItems( selectedItems );
 }
 
-void TreeView::addNode() {
-  addAbstractNodeItem( NODE );
+void TreeView::addNodeSlot() {
+  model->insertNode();
 }
 
-void TreeView::addConnection() {
-  addAbstractNodeItem( NODE_CONNECTION );
-}
-
-// this code breaks the model view pattern since it has a reference to TreeItemType
-// an easy workaround would be to add a function called addNode() and addConnection(QModelIndex parent) to the model
-// and call this instead of this hack
-void TreeView::addAbstractNodeItem( TreeItemType type ) {
-  //FIXME this code needs a cleanup
-  // it's still unclear how to handle multiple insertions on multiple selections
-  // it might be wise to only allow appending of items for 'one' selected item
-  int selectedcount = ism->selectedRows().size();
-  qDebug( "%i item(s) need to be appended", selectedcount );
-  QList<QModelIndex> selectedItems;
-  foreach( QModelIndex selectedItem, ism->selectedRows() )
-  selectedItems.append( proxyModel->mapToSource( selectedItem ) );
-  if ( selectedcount == 0 )
-    selectedItems.append( QModelIndex() );
-  foreach( QModelIndex item, selectedItems ) {
-    switch ( type ) {
-    case AUTOMATE_ROOT:
-      qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << "FATAL ERROR: AUTOMATE_ROOT";
-      exit( 0 );
-      continue;
-    case UNKNOWN:
-      qDebug() << __FILE__ << __FUNCTION__ << __LINE__ <<  "FATAL ERROR: UNKNOWN";
-      exit( 0 );
-      continue;
-    case NODE:
-//       qDebug() << "add NODE clicked";
-      model->insertNode();
-      continue;
-    case NODE_CONNECTION:
-//       qDebug() << "add CONNECTION clicked";
-      if ( model->getTreeItemType( item ) == NODE ) {
-        model->insertConnection(item);
-      }  else
-        if ( model->getTreeItemType( item ) == NODE_CONNECTION ) {
-          QModelIndex parentItem = model->parent( item );
-          model->insertConnection(parentItem);
-        }
-      continue;
-    }
-  }
+void TreeView::addConnectionSlot() {
+  addConnection();
 }
 
 void TreeView::keyPressEvent( QKeyEvent * keyEvent ) {
@@ -176,10 +132,10 @@ void TreeView::keyPressEvent( QKeyEvent * keyEvent ) {
     hide();
   }
   if ( keyEvent->key() == Qt::Key_N ) {
-      addAbstractNodeItem( NODE );
+    model->insertNode();
   }
   if ( keyEvent->key() == Qt::Key_C ) {
-    addAbstractNodeItem( NODE_CONNECTION );
+    addConnection();
   }
   // node start toggle
   if ( keyEvent->key() == Qt::Key_S ) {
@@ -199,7 +155,7 @@ void TreeView::startToggleEvent( int role ) {
 
   if ( selectedcount == 1 ) {
     QModelIndex index = selectedItems.first();
-    if ( model->getTreeItemType( index ) == NODE ) {
+    if ( model->data( index, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE ) {
       bool state = model->data( index, role ).toBool();
       model->setData( index, !state, role );
     } else {
@@ -207,5 +163,14 @@ void TreeView::startToggleEvent( int role ) {
     }
   } else {
     qDebug() << "select only one item to use the toggle";
+  }
+}
+
+void TreeView::addConnection() {
+//   qDebug( "%i item(s) selected", ism->selectedRows().size() );
+
+  // will insert a connection if the parent item (the QModelIndex() is of type NODE)
+  foreach( QModelIndex selectedItem, ism->selectedRows() ) {
+    model->insertConnection(proxyModel->mapToSource( selectedItem ));  
   }
 }

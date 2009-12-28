@@ -96,13 +96,13 @@ QRegion ItemView::visualRegionForSelection( const QItemSelection &/*selection*/ 
 }
 
 void ItemView::reset() {
-//   qDebug() << __FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
   emit clearScene();
   init();
 }
 
 void ItemView::init() {
-//   qDebug() << __FUNCTION__;
+//   qDebug() << __PRETTY_FUNCTION__;
   for ( int i = 0; i < model->rowCount( QModelIndex() ); ++i ) {
 //     qDebug() << "adding node i =" << i;
     QModelIndex item = model->index( i, 0, QModelIndex() );
@@ -124,10 +124,10 @@ void ItemView::rowsInserted( const QModelIndex & parent, int start, int end ) {
 //   qDebug() << "rowsInserted in ItemView called: need to insert " << end - start + 1 << " item(s).";
   for ( int i = start; i <= end; ++i ) {
     QModelIndex item = model->index( i, 0, parent );
-    if ( model->getTreeItemType( item ) == NODE )
+    if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE )
       scene->nodeInserted( QPersistentModelIndex( item ) );
-    else if ( model->getTreeItemType( item ) == NODE_CONNECTION )
-        scene->connectionInserted( QPersistentModelIndex( item ) );
+    else if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE_CONNECTION )
+      scene->connectionInserted( QPersistentModelIndex( item ) );
   }
 }
 
@@ -135,11 +135,10 @@ void ItemView::rowsAboutToBeRemoved( const QModelIndex & parent, int start, int 
 //   qDebug() << "rowsAboutToBeRemoved in ItemView called: need to remove " << end-start+1 << " item(s).";
   for ( int i = start; i <= end; ++i ) {
     QModelIndex item = model->index( i, 0, parent );
-    if ( model->getTreeItemType( item ) == NODE )
+    if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE )
       scene->nodeRemoved( QPersistentModelIndex( item ) );
-    else
-      if ( model->getTreeItemType( item ) == NODE_CONNECTION )
-        scene->connectionRemoved( QPersistentModelIndex( item ) );
+    else if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE_CONNECTION )
+      scene->connectionRemoved( QPersistentModelIndex( item ) );
   }
 }
 
@@ -173,24 +172,22 @@ QModelIndex ItemView::traverseTroughIndexes( QModelIndex index ) {
   return QModelIndex();
 }
 
-
 void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bottomRight ) {
 //   qDebug() << __FUNCTION__;
   QModelIndex tmpIndex = topLeft;
   do {
 //     qDebug() << "dataChanged is now called()";
-    switch (model->getTreeItemType( tmpIndex )) {
-      case NODE:
+    switch (model->data( tmpIndex, customRole::TypeRole ).toInt()) {
+      case ViewTreeItemType::NODE:
 //        qDebug() << __FUNCTION__ << "Node modification";
         scene->updateNode( QPersistentModelIndex( tmpIndex ) );
         break;
-      case NODE_CONNECTION:
+      case ViewTreeItemType::NODE_CONNECTION:
 //        qDebug() << __FUNCTION__ << "Connection modification";
         scene->updateConnection( QPersistentModelIndex( tmpIndex ) );
         break;
       default:
-        //FIXME this could be an issue
-        qDebug() << __FILE__ << __FUNCTION__ << " didn't understand what i should be doing";
+        qDebug() << __PRETTY_FUNCTION__ << " didn't understand what i should be doing";
         exit(0);
     }
     if (tmpIndex == bottomRight)
@@ -201,6 +198,6 @@ void ItemView::dataChanged( const QModelIndex & topLeft, const QModelIndex & bot
 
 void ItemView::layoutChanged(){
   //FIXME do we need that?
-  qDebug() << __PRETTY_FUNCTION__ << " " << __FUNCTION__ << " is NOT implemented yet, please implement me!, exiting";
+  qDebug() << __PRETTY_FUNCTION__ << " is NOT implemented yet, please implement me!, exiting";
   exit(0);
 }

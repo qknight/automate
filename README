@@ -1,7 +1,9 @@
 ======================================
  what is this?
 ======================================
- this project features an automate editor with a graphical and tree like editor.
+ this project features an automate editor class with a graphical- and tree- like editor.
+ this project can be used as a library to visualize directed graphs.
+
  it was created at the University of Tuebingen, Germany as a 'Studienarbeit'.
  Chair: Arbeitsbereich für Theoretische Informatik/Formale Sprachen
 
@@ -12,15 +14,13 @@
  thanks for the help of Christian Behle and Andreas Krebs who created the specification
  for this work and always had time when i needed them.
 
- all the code in this distribution is licensed to the terms of the GPL v2 or v3
- (if used with qt 4.4 or later)
+ all the code in this distribution is licensed to the terms of the LGPL v3 (if used with qt 4.5 or later)
  all used icons are from the kde icon theme noia-kde-icons-1.00.tgz
 
  The Noia icons for KDE are under GNU LGPL license.
 
  please feel free to comment on that code:
      8.6.2008 (C) Joachim Schiele <js@dune2.de>
-
 
  some explanations about this project (additional to the doxygen documentation)
    http://lastlog.de/wiki/index.php/AutomateEditor

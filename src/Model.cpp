@@ -26,6 +26,10 @@
 // pos. sol: will try to test if it works with qt 4.2.3
 
 #include "Model.h"
+#include "AutomateRoot.h"
+#include "AbstractTreeItem.h"
+#include "node_connection.h"
+#include "node.h"
 
 // a lot of code was taken from the simpletreemodel example and later
 // heavily modified
@@ -56,7 +60,7 @@ QModelIndex Model::index( int row, int column, const QModelIndex & parent ) cons
 
   AbstractTreeItem* parentItem;
 
-  //BUG, parent ist nie valid, darum fehler!
+  //BUG, parent is never valid
   if ( !parent.isValid() )
     parentItem = rootItem;
   else {
@@ -121,6 +125,16 @@ QVariant Model::data( const QModelIndex &index, int role ) const {
   AbstractTreeItem* n = static_cast<AbstractTreeItem*>( index.internalPointer() );
   if ( role == customRole::CustomLabelRole )
     return n->getProperty( "CustomLabelRole" );
+  // to understand customRole::TypeRole see the comment (Model.h - TreeItemType enum comment )
+  if ( role == customRole::TypeRole ) {
+    if ( n->getObjectType() == AUTOMATE_ROOT )
+      return ViewTreeItemType::AUTOMATE_ROOT;
+    if ( n->getObjectType() == NODE_CONNECTION )
+      return ViewTreeItemType::NODE_CONNECTION;
+    if ( n->getObjectType() == NODE )
+      return ViewTreeItemType::NODE;
+    return ViewTreeItemType::UNKNOWN;
+  }
   if ( role == customRole::FinalRole )
     if ( n->getObjectType() == NODE )
       return n->getProperty( "final" );
@@ -288,12 +302,14 @@ int Model::columnCount( const QModelIndex & /*parent*/ ) const {
 }
 
 bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint pos ) {
-  
-  if (count > 1)
-    qDebug() << "WARNING: this might need some testing";
+  if (count > 1) {
+    qDebug() << __PRETTY_FUNCTION__ << "FATAL: this might need some testing, exiting";
+    exit(1);
+  }
 
-  if ( !parent.isValid() ) { // no valid parent -> it's a node to add
-//     qDebug() << "case node";
+  // no valid parent -> it's a node to add
+  if ( !parent.isValid() ) { 
+    // a NODE
     beginInsertRows( parent, row, row + count - 1 );
     {
       node* n = new node(rootItem);
@@ -301,7 +317,7 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint p
       if (n != NULL) {
 	rootItem->appendChild( n );
       } else {
-	qDebug() << "fatal error in insertRows()";
+	qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: in insertRows(), exiting";
 	exit(1);
       }
     }
@@ -323,8 +339,8 @@ bool Model::insertRows( int row, int count, const QModelIndex & parent, QPoint p
     endInsertRows();
     return true;
   }
-  qDebug() << "can't add object to the automate class since i don't know what to do, exiting";
-  exit(0);
+  qDebug() << __PRETTY_FUNCTION__ << "FATAL ERROR: can't add object to the automate class since i don't know what to do, exiting";
+  exit(1);
   return false;
 }
 
@@ -547,6 +563,9 @@ QModelIndex Model::next_nodeModelIndex( QModelIndex cItem ) {
 */
 bool Model::insertConnection( QModelIndex startItem, QModelIndex endItem ) {
 //   qDebug() << "startitem: n" << data( startItem, customRole::IdRole ).toInt();
+  if ( getTreeItemType( startItem ) != NODE )  
+    return false;
+  
   int row = rowCount( startItem );
   bool success = insertRows( row, 1, startItem );
   if ( success && endItem.isValid() ) {

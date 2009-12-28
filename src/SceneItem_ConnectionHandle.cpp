@@ -58,6 +58,7 @@ QRectF SceneItem_ConnectionHandle::boundingRect() const {
 
 void SceneItem_ConnectionHandle::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
 //   painter->drawPath( shape() );
+return;
   QColor c;
   if ( isSelected() )
     c = QColor( "red" );

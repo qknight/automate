@@ -34,6 +34,11 @@
 #include "SceneItem_Connection.h"
 #include "SceneItem_LabelEditor.h"
 
+/*!
+** This class represents a QGraphicsItem used to draw the 'connection handle' 
+** between two nodes (SceneItem_Node). It can host an editor to change the label
+** drawn in a gray bubble.
+*/
 class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
   Q_OBJECT
   friend class SceneItem_ConnectionLabel;

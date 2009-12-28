@@ -1,3 +1,17 @@
+2009-12-26
+  - this code can be used as a library therefore i plan to release it using LGPL
+    but i have to rewrite the headers and that did not happen yet
+  - treeView.cpp / ItemView.cpp no longer break the MVC pattern
+    // FIXME this breaks the MVC pattern by using model->getTreeItemType();
+    model->getTreeItemType() is now private (defined in Model.h)
+    and should only be used inside Model.cpp (and friends of that class)
+    
+    the replacement now is something like:
+      if ( model->data( item, customRole::TypeRole ).toInt() == ViewTreeItemType::NODE )
+
+    this maps the ViewTreeItemType::NODE via the model to a AbstractTreeItem's NODE type
+  - fixed doxygen build, a hardcoded path /home/joachim/.../src/ was the problem
+
 2009-12-25
   - calling ~Automate now removes the datastructure as well (wasn't implemented yet)
     so until this fix a lot of memory was lost

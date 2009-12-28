@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'AutomateHandlerWidget.ui'
 **
-** Created: Sat Dec 26 14:35:05 2009
+** Created: Sun Dec 27 06:27:26 2009
 **      by: Qt User Interface Compiler version 4.5.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!

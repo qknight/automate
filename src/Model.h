@@ -30,23 +30,33 @@
 #include <QVariant>
 #include <QPoint>
 
-#include "AutomateRoot.h"
-#include "AbstractTreeItem.h"
-#include "node_connection.h"
-#include "node.h"
-
+class AutomateRoot;
+class AbstractTreeItem;
+class node_connection;
+class node;
 class automate;
 
 namespace customRole {
-enum CustomRole {
-  IdRole = Qt::UserRole,
-  FinalRole,
-  StartRole,
-  SymbolIndexRole,
-  CustomLabelRole,
-  SortRole,
-  PosRole
-};
+  enum CustomRole {
+    IdRole = Qt::UserRole,
+    FinalRole,
+    StartRole,
+    SymbolIndexRole,
+    CustomLabelRole,
+    SortRole,
+    PosRole,
+    TypeRole
+  };
+}
+namespace ViewTreeItemType {
+  // the idea behind yet another type identifier is that we map the types below via the model to the
+  // types defined in AbstractTreeItem.h (see TreeItemType in AbstractTreeItem.h)
+  enum TreeItemType {
+    AUTOMATE_ROOT,
+    NODE,
+    NODE_CONNECTION,
+    UNKNOWN
+  };
 }
 
 /*! this is one of the core parts of this work and this code is very important in regards of syncing
@@ -54,7 +64,7 @@ enum CustomRole {
 class Model : public QAbstractItemModel {
     // FIXME only make the special function reset() and layoutChanged() a
     //       friend but not the whole class
-    friend class automate;//::reset();
+    friend class automate;
   public:
     /*! a root node is mendatory to query for child items */
     Model( AbstractTreeItem* root, QObject* parent = 0 );
@@ -87,8 +97,6 @@ class Model : public QAbstractItemModel {
     /*! this inserts a connection at startItem */
     bool insertConnection( QModelIndex startItem, QModelIndex endItem = QModelIndex() );
 
-    /*! reveals the type of object in the data structure represented by item in the model structure */
-    unsigned int getTreeItemType( const QModelIndex& item );
     /*! returns the QModelIndex of the next_node from item which must be a connection */
     QModelIndex next_nodeModelIndex( QModelIndex item );
 
@@ -103,6 +111,8 @@ class Model : public QAbstractItemModel {
     int size();
 
   private:
+    /*! reveals the type of object in the data structure represented by item in the model structure */
+    unsigned int getTreeItemType( const QModelIndex& item );
     /*! for debugging this function creates a QString, see the AbstractTreeItem.h for reference */
     QString objectTypeQString( unsigned int input );
     /*! this is used by the treeView when you insert a new destination for a connection. the

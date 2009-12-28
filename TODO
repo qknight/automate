@@ -1,24 +1,38 @@
 WARNING: parts of this document could be outdated (2009-12-24)
 
-FIXME
+=================================================================================================
+        -- release checks --
+=================================================================================================
+
+ - does doxygen complain about undocumented classes/functions?
+ - does every file have a proper copyright notice?
+ - check code for BUG string and fix those for (have a look at FIXME and WARNING as well)
+
+=================================================================================================
+        -- important FIXMES --
+=================================================================================================
+
+ - usability in TreeView: needs a mouse, no keyboard navigation possible which is bad
+
+ - adding a GraphicsView using the automatehandler on automates which have connections (excluding loops)
+   will trigger a loop which will eat up all memory and crash the system here -> see SceneItem_ConnectionHandle::paint()
+
+ - GraphicsView: if two nodes with no connections are visualized, then the bug can be triggered by:
+   1. create a connection with MMB over one node (hold the MMB) and drag it to the other node
+   2. a new connection is added (this is not the bug)
+   3. now the source node is selected - (bug) since i don't know why yet
+
  - items which are added via a GraphicsView (using two GraphicsViews attached to the same automate)
    will (as expected) add the node at the same respecitve position. say x=204,y=250 on both views.
    however: if a node is moved only the first view will update the new position correctly, the second
    view will not see this since it is not done using 'setData and dataChanged()' via the model yet
 
-FIXME
  - ~Automate should remove all data structures associated with a automate instance like:
   - all views (as well as all objects in the views as for instance a SceneItem_Node) and the model
   - all data which 'could' be destructed by ~AutomateRoot
 
 FIXME qt bug report schreiben
   Re: [Issue N218633] http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
-
-FINAL
- - clean all TODOs and FIXMEs in the code
- - add old algorithms which reduce an automate and alike... [done], see automate_algorithms.cpp
-FINAL doxygen comments on code and concepts
- - allg. doku mit doxygen wo die wichtigsten konzepte erklaert (see blog)
 
 =================================================================================================
         -- not in the scope of this work --

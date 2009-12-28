@@ -42,13 +42,16 @@ class TreeView : public AbstractView, public Ui::treeViewMainWindow {
     QSortFilterProxyModel *proxyModel;
     /*! this code inserts a node or a connection depending on the selection of items, can insert
     ** multiple elements at once */
-    void addAbstractNodeItem( TreeItemType type );
+//     void addAbstractNodeItem( TreeItemType type );
     /*! the treeview has shortcuts, see the source */
     void keyPressEvent( QKeyEvent * keyEvent );
     /*! toggles the start/final role of a connection*/
     void startToggleEvent(int role);
     /*! removes all selected elements of a QTreeView */
     void removeEvent();
+    /*! all selected QModelIndex'es are used to add a connection. if the selected QModelIndex is a connection
+        itself nothing happens but if it is a node a connection will be appended.*/
+    void addConnection();
   public:
     /*! TODO */
     TreeView( Model *, QMainWindow* parent = 0 );
@@ -59,9 +62,9 @@ class TreeView : public AbstractView, public Ui::treeViewMainWindow {
     Model *model;
   public slots:
     /*! adds a node */
-    void addNode();
+    void addNodeSlot();
     /*! adds a connection */
-    void addConnection();
+    void addConnectionSlot();
     /*! removes the selected items */
     void delSelectedItems();
   private slots:
