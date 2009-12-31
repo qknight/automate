@@ -40,9 +40,6 @@ class TreeView : public AbstractView, public Ui::treeViewMainWindow {
     QItemSelectionModel* ism;
     /*! proxy model is used to sort the elements in the view */
     QSortFilterProxyModel *proxyModel;
-    /*! this code inserts a node or a connection depending on the selection of items, can insert
-    ** multiple elements at once */
-//     void addAbstractNodeItem( TreeItemType type );
     /*! the treeview has shortcuts, see the source */
     void keyPressEvent( QKeyEvent * keyEvent );
     /*! toggles the start/final role of a connection*/

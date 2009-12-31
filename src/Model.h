@@ -38,16 +38,17 @@ class automate;
 
 namespace customRole {
   enum CustomRole {
-    IdRole = Qt::UserRole,
+    IdRole = Qt::UserRole, // UserRole is the first number one can use for selfassigned roles by the Qt-toolkit
     FinalRole,
     StartRole,
     SymbolIndexRole,
     CustomLabelRole,
-    SortRole,
-    PosRole,
-    TypeRole
+    SortRole, // used by the TreeView to sort items
+    PosRole, // used by GraphicsView to place a new node on 'node-creation-time'
+    TypeRole // used by views to query a QModelIndex for its type [NODE or NODE_CONNECTION .. or whatever]
   };
 }
+
 namespace ViewTreeItemType {
   // the idea behind yet another type identifier is that we map the types below via the model to the
   // types defined in AbstractTreeItem.h (see TreeItemType in AbstractTreeItem.h)
@@ -60,11 +61,14 @@ namespace ViewTreeItemType {
 }
 
 /*! this is one of the core parts of this work and this code is very important in regards of syncing
-    the different views as treeView/graphicsView are types of*/
+**  the different views (as TreeView/GraphicsView)
+**  the use of forward declarations are great since it helps to hide the data structure internals
+**  and a view MUST NOT know anything about that -> all data must be queried/written using the model
+*/
 class Model : public QAbstractItemModel {
-    // FIXME only make the special function reset() and layoutChanged() a
-    //       friend but not the whole class
     friend class automate;
+//     friend class TreeView;
+//     friend class ItemView;
   public:
     /*! a root node is mendatory to query for child items */
     Model( AbstractTreeItem* root, QObject* parent = 0 );
@@ -140,15 +144,15 @@ class Model : public QAbstractItemModel {
     /*! see the Qt docs about QAbstractItemModel 
     ** the obj can be used to initialize the object, check the insertRows implementation if your
     ** object type is supported (example: NODE is supported, that means one can use insertRows to insert
-    ** exactly the given node called 'obj')
-    */
+    ** exactly the given node called 'obj') */
     bool insertRows( int row, int count, const QModelIndex & parent = QModelIndex(), QPoint pos=QPoint());
     /*! see the Qt docs about QAbstractItemModel */
     bool removeRows( int row, int count, const QModelIndex & parent );
+    
   protected:
-    /*! this function removes all items expect the AutomateRoot item itself and is used to
-    cleanly destroy all objects related/including the class Automate.<br>
-    It can be called while views are attached to the model, it is not efficient performancewise */
+    /*! this function removes all items expect the AutomateRoot item itself (which can't be removed by the model)
+    ** It is used to cleanly destroy all objects related/including the 'class Automate'.<br>
+    ** It can be called while views are attached to the model, it is not efficient performancewise */
     void clear();
 };
 

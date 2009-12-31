@@ -31,16 +31,6 @@ GraphicsScene::GraphicsScene( Model *model, QWidget* parent ) : QGraphicsScene(p
   line = 0;
   connect( this, SIGNAL( selectionChanged() ), this, SLOT( selectionChanged() ) );
 
-  //FIXME qt 4.4.x and 4.3.x have a bug in the BspTreeIndex methods -> removeItem(QGraphicsItem)
-  //      since in some cases an already deleted item is queried which segfaults the program
-  //      POSSIBLE CAUSE: maybe this isn't a bug in qt BUT in my QGraphicsItem implementation's
-  //      boundingBox on item resize, have to track that done yet.
-  //      FINAL SOLUTION: found it, it was my own SceneItem_Connection item's wrong dimension
-  // //   QRectF SceneItem_Connection::boundingRect() const {
-  // //   QRectF z = QRectF(-2000,-2000,4000,4000);
-  // //   return z;
-  //      finally showed that with that dimension it would never crash -> now i have to fix that...
-
   setItemIndexMethod(NoIndex);
 }
 

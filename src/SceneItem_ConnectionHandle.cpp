@@ -18,7 +18,6 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
-
 #include "SceneItem_ConnectionHandle.h"
 // http://lists.trolltech.com/qt-interest/2007-03/thread00929-0.html
 
@@ -58,7 +57,6 @@ QRectF SceneItem_ConnectionHandle::boundingRect() const {
 
 void SceneItem_ConnectionHandle::paint( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
 //   painter->drawPath( shape() );
-return;
   QColor c;
   if ( isSelected() )
     c = QColor( "red" );
@@ -92,7 +90,6 @@ return;
   int height = fm.height();
   painter->drawText( QPointF( -width / 2, height / 4 ), m_label );
 }
-
 
 void SceneItem_ConnectionHandle::mousePressEvent( QGraphicsSceneMouseEvent * /*event*/ ) {
   move_object_on_mouseMove = true;

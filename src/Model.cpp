@@ -23,7 +23,7 @@
 //
 // problem: insertRows inserts the data and the QAbstractItemView updates well but the
 //          QTreeView won't unless you call dataChanged()
-// pos. sol: will try to test if it works with qt 4.2.3
+// posible solution: will try to test if it works with qt 4.2.3
 
 #include "Model.h"
 #include "AutomateRoot.h"

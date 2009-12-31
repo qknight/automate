@@ -35,7 +35,8 @@
  *     - convert2NFA() : converts a epsilon automate to a NFA
  *     - convert2DFA() : converts a NFA or epsilon automate to a DFA
  *     - convert2miniDFA() : minimizes a DFA
- *
+ * \section concepts Concepts
+ * 
  * \section issues Issues
  * A list of current issues can be found in the TODO file. The CHANGELOG file was
  * introduced in the end of the project but would have been helpful in many cases.
@@ -70,31 +71,35 @@
  *  - these screenshots show many usability issues and in the end show the process to a working
  *    editing concept. some concepts where thrown away and others were never meant to be included
  *    but added here to show what can be done.
- * <img src="../images/graphicsView2.jpg" alt="Screenshot-graphicsView2.jpg">
- * <img src="../images/graphicsView3.jpg" alt="Screenshot-graphicsView3.jpg">
- * <img src="../images/graphicsView4.jpg" alt="Screenshot-graphicsView4.jpg">
- * <img src="../images/graphicsView5.jpg" alt="Screenshot-graphicsView5.jpg">
- * <img src="../images/graphicsView6.jpg" alt="Screenshot-graphicsView6.jpg">
- * <img src="../images/graphicsView7.jpg" alt="Screenshot-graphicsView7.jpg">
- * <img src="../images/graphicsView8.jpg" alt="Screenshot-graphicsView8.jpg">
- * <img src="../images/graphicsView9.jpg" alt="Screenshot-graphicsView9.jpg">
- * <img src="../images/graphicsView10.jpg" alt="Screenshot-graphicsView10.jpg">
- * <img src="../images/graphicsView11.jpg" alt="Screenshot-graphicsView11.jpg">
- * <img src="../images/graphicsView12.jpg" alt="Screenshot-graphicsView12.jpg">
- * <img src="../images/graphicsView13.jpg" alt="Screenshot-graphicsView13.jpg">
- * <img src="../images/graphicsView14.jpg" alt="Screenshot-graphicsView14.jpg">
- * <img src="../images/graphicsView15.jpg" alt="Screenshot-graphicsView15.jpg">
- * <img src="../images/graphicsView16.jpg" alt="Screenshot-graphicsView16.jpg">
- * <img src="../images/graphicsView17.jpg" alt="Screenshot-graphicsView17.jpg">
- * <img src="../images/graphicsView18.jpg" alt="Screenshot-graphicsView18.jpg">
- * <img src="../images/graphicsView19.jpg" alt="Screenshot-graphicsView19.jpg">
- * <img src="../images/graphicsView20.jpg" alt="Screenshot-graphicsView20.jpg">
- * <img src="../images/graphicsView21.jpg" alt="Screenshot-graphicsView21.jpg">
- * <img src="../images/graphicsView22.jpg" alt="Screenshot-graphicsView22.jpg">
- * <img src="../images/graphicsView22b.jpg" alt="Screenshot-graphicsView22b.jpg">
- * <img src="../images/graphicsView23.jpg" alt="Screenshot-graphicsView23.jpg">
- * <img src="../images/graphicsView24.jpg" alt="Screenshot-graphicsView24.jpg">
- * <img src="../images/graphicsView25.jpg" alt="Screenshot-graphicsView25.jpg">
+ * <img src="../images/graphicsView2.jpg" title="Screenshot-graphicsView2.jpg">
+ * <img src="../images/graphicsView3.jpg" title="Screenshot-graphicsView3.jpg">
+ * <img src="../images/graphicsView4.jpg" title="Screenshot-graphicsView4.jpg">
+ * <img src="../images/graphicsView5.jpg" title="Screenshot-graphicsView5.jpg">
+ * <img src="../images/graphicsView6.jpg" title="Screenshot-graphicsView6.jpg">
+ * <img src="../images/graphicsView7.jpg" title="Screenshot-graphicsView7.jpg">
+ * <img src="../images/graphicsView8.jpg" title="Screenshot-graphicsView8.jpg">
+ * <img src="../images/graphicsView9.jpg" title="Screenshot-graphicsView9.jpg">
+ * <img src="../images/graphicsView10.jpg" title="Screenshot-graphicsView10.jpg">
+ * <img src="../images/graphicsView11.jpg" title="Screenshot-graphicsView11.jpg">
+ * <img src="../images/graphicsView12.jpg" title="Screenshot-graphicsView12.jpg">
+ * <img src="../images/graphicsView13.jpg" title="Screenshot-graphicsView13.jpg">
+ * <img src="../images/graphicsView14.jpg" title="Screenshot-graphicsView14.jpg">
+ * <img src="../images/graphicsView15.jpg" title="Screenshot-graphicsView15.jpg">
+ * <img src="../images/graphicsView16.jpg" title="Screenshot-graphicsView16.jpg">
+ * <img src="../images/graphicsView17.jpg" title="Screenshot-graphicsView17.jpg">
+ * <img src="../images/graphicsView18.jpg" title="Screenshot-graphicsView18.jpg">
+ * <img src="../images/graphicsView19.jpg" title="Screenshot-graphicsView19.jpg">
+ * <img src="../images/graphicsView20.jpg" title="Screenshot-graphicsView20.jpg">
+ * <img src="../images/graphicsView21.jpg" title="Screenshot-graphicsView21.jpg">
+ * <img src="../images/graphicsView22.jpg" title="Screenshot-graphicsView22.jpg">
+ * <img src="../images/graphicsView22b.jpg" title="Screenshot-graphicsView22b.jpg">
+ * <img src="../images/graphicsView23.jpg" title="Screenshot-graphicsView23.jpg">
+ * the picture below shows a directed graph without arrows using cubicTo bezier curve
+ * i did not find out how to draw the arrow head to the right position so i
+ * did not use the bezier approach which is said.
+ * <img src="../images/graphicsView24.jpg" title="Screenshot-graphicsView24.jpg">
+ * the picture below shows a
+ * <img src="../images/graphicsView25.jpg" title="Screenshot-graphicsView25.jpg - the final automate drawing">
  */
 
 #include <QApplication>

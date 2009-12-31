@@ -12,6 +12,30 @@ WARNING: parts of this document could be outdated (2009-12-24)
         -- important FIXMES --
 =================================================================================================
 
+ - GraphicsScene.cpp
+  //FIXME qt 4.4.x and 4.3.x have a bug in the BspTreeIndex methods -> removeItem(QGraphicsItem)
+  //      since in some cases an already deleted item is queried which segfaults the program
+  //      POSSIBLE CAUSE: maybe this isn't a bug in qt BUT in my QGraphicsItem implementation's
+  //      boundingBox on item resize, have to track that done yet.
+  //      FINAL SOLUTION: found it, it was my own SceneItem_Connection item's wrong dimension
+  // //   QRectF SceneItem_Connection::boundingRect() const {
+  // //   QRectF z = QRectF(-2000,-2000,4000,4000);
+  // //   return z;
+  //      finally showed that with that dimension it would never crash -> now i have to fix that...
+
+ - GraphicsView: items currently query the scene for the model
+   FIX: every item should have direct access to the model with model()
+
+    % grep -e "class.*:" src/SceneItem_*
+      src/SceneItem_Connection.h:class SceneItem_Connection : public QGraphicsItem {
+      src/SceneItem_ConnectionHandle.h:class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
+      src/SceneItem_LabelEditor.h:class SceneItem_LabelEditor : public QGraphicsTextItem {
+      src/SceneItem_Node.h:class SceneItem_Node : public QGraphicsItem {
+
+ - nodes IDs and node_connection IDs should be unique? right now there can be cases where:
+   NODE::ID=1 and NODE_CONNECTION::ID=1 are the same (tested) but [todo] is this wanted?
+
+ - check all casts for static_cast and dynamic_cast
  - usability in TreeView: needs a mouse, no keyboard navigation possible which is bad
 
  - adding a GraphicsView using the automatehandler on automates which have connections (excluding loops)
