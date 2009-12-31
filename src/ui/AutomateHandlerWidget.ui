@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>automate controller widget</string>
+   <string>assigned in the source file NOT HERE!</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../automatehandler.qrc">
+   <iconset resource="../../automatehandler.qrc">
     <normaloff>:/icons/home_blue.png</normaloff>:/icons/home_blue.png</iconset>
   </property>
   <layout class="QGridLayout">
@@ -114,7 +114,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../automatehandler.qrc"/>
+  <include location="../../automatehandler.qrc"/>
  </resources>
  <connections/>
 </ui>

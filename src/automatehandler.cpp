@@ -18,12 +18,13 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
-
 #include "automatehandler.h"
+#include "version.h"
 
 automatehandler::automatehandler( QWidget* parent ) : QDialog( parent ) {
   setAttribute( Qt::WA_DeleteOnClose );
   setupUi( this );
+  setWindowTitle(QString("automate - %1").arg(VERSION));
   connect( treeWidget, SIGNAL( customContextMenuRequested( const QPoint & ) ),
            this, SLOT( popQMenu( const QPoint & ) ) );
   connect( updateBtn, SIGNAL( clicked() ), this, SLOT( updateTreeWidget() ) );

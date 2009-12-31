@@ -7,10 +7,16 @@ project(automate CXX C)
 FIND_PACKAGE(Qt4 REQUIRED) # find and setup Qt4 for this project
 INCLUDE( ${QT_USE_FILE} )
 
-# i would to see more projects using these defaults
-ADD_DEFINITIONS( "-Wall -ansi" )
+# i would to see more projects using these defaults (-pedantic does not work yet)
+ADD_DEFINITIONS( "-Wall -ansi " )
 
+# the version for the doxygen documenation is also controlled by AUTOMATE_VERSION
+# but set in 'doc/CMakeLists.txt'
 SET ( AUTOMATE_VERSION "1.0.0-rc1" )
+  CONFIGURE_FILE(version.h.in version.h @ONLY IMMEDIATE)
+# this code generates the version information for the .cpp/.h files
+
+SET (Generated_Sources ${PROJECT_BINARY_DIR}/version.h )
 
 OPTION(BUILD_AUTOMATE_DOCUMENTATION "Create doxygen documentation for developers" ON)
 
@@ -46,7 +52,9 @@ SET( automate_SOURCES
 )
 
 # if .h files are included which don't inherit or use QOBJECT you will get a warning but everything might work,
-# in that case just remove that file here
+# in that case just remove that file here. in case you miss a include here you will get some weird vtable issue
+# in that case look at the symbol name which can't be resolved and have a wise guess where that could be
+# defined and finally include that specific header here and rebuild from a 'cleaned' build directory
 SET( automate_MOC_HEADERS
   src/AbstractView.h
   src/ItemView.h
@@ -63,11 +71,13 @@ SET( automate_UIs
   src/ui/treeViewMainWindow.ui
 )
 
+# icons and other stuff will be processed here
 SET( automate_RCCs
   automatehandler.qrc
 )
 
 INCLUDE_DIRECTORIES(
+  ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
@@ -81,7 +91,7 @@ QT4_WRAP_CPP (automate_SOURCES ${automate_MOC_HEADERS})
 
 QT4_ADD_RESOURCES(automate_SOURCES ${automate_RCCs})
 
-ADD_EXECUTABLE(automate ${automate_SOURCES} )
+ADD_EXECUTABLE(automate ${automate_SOURCES} ${Generated_Sources} )
 
 TARGET_LINK_LIBRARIES( automate ${QT_LIBRARIES} )
 

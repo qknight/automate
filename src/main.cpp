@@ -35,37 +35,24 @@
  *     - convert2NFA() : converts a epsilon automate to a NFA
  *     - convert2DFA() : converts a NFA or epsilon automate to a DFA
  *     - convert2miniDFA() : minimizes a DFA
- * \section concepts Concepts
- * 
+ * \section concepts Concepts 
+ * please see also my blog: http://blog.lastlog.de as for instance
+ * - http://invalidmagic.wordpress.com/2009/12/10/qgraphicsscene-used-as-a-qabstractitemmodel/
+ * @image html graphicssceneasabstractitemview.png
  * \section issues Issues
  * A list of current issues can be found in the TODO file. The CHANGELOG file was
- * introduced in the end of the project but would have been helpful in many cases.
+ * introduced late but gives you a lot of information on various concepts.
  * The same goes for version control systems: we used svn but since svn needs a working
  * internet connection it's pretty useless for offline working. Using git made a fundamental
  * change in 'code change documentation'.
  *
  * If I would have to warn you of issues then I would say:
  *  - please read the TODO file carefully
- *  - QGraphicsItem is a nice concept but in the end the SceneItem_Connection should
- *    have been implemented as base class for:
- *      - a loop item
- *      - a normal connection item
- *    but as it isn't that way a lot of things cause problems hard to come along.
- *  - use and feel of the graphicsView is broken in some ways as selecting connections with
- *    clicking on it's labelItem isn't really what one wants since selection handling should
- *    be done differently (by selection the line which is the primary item and not it's labelItem).
- *    The problem is that this wasn't possible since when you have several loops it's very hard to
- *    click the right line.
- *  - QGraphicsItems should not derive QObject but it is not possible to use a contextMenu AND not
- *    to use a QObject based class.
- *  - the model code is very complex and the QGraphicsScene which is wrapped as a custom view trough
- *    the ItemView class makes it even more complex. Just keep in mind that a stack strace with gdb
- *    helps a lot to find out which function call functions you want to monitor.
- *
  * \section install_sec Installation
- * \subsection step1 Step 1: download the tar file / git clone / svn co
- * \subsection step2 Step 2: make; qmake
- * \subsection step3 Step 3: cd debug; ./automate
+ * \subsection step1 Step 1: download the tar file / or use git clone
+ * \subsection step2 Step 2: mkdir build; cd build; cmake ..; make
+ * \subsection step3 Step 3: ./automate
+ * \subsection step4 Step 4: firefox doc/html/index.html (this is the documentation)
  *
  * \section z Some screenshots taken fram the beginning of the developing process
  *  - these screenshots show many usability issues and in the end show the process to a working
@@ -97,7 +84,7 @@
  * @image html graphicsView23.jpg
  * the picture below shows a directed graph without arrows using cubicTo bezier curve
  * i did not find out how to draw the arrow head to the right position so i
- * did not use the bezier approach which is said.
+ * did not use the bezier approach which is said!
  * @image html images/graphicsView24.jpg
  * the picture below shows the 'current' state
  * @image html images/graphicsView25.jpg
@@ -108,7 +95,6 @@
 
 int main( int argc, char* argv[] ) {
   QApplication app( argc, argv );
-//   connect(&app,SIGNAL(lastWindowClosed()),&app,SLOT(quit()));
   automatehandler* z = new automatehandler();
   z->show();
   return app.exec();

@@ -1,4 +1,7 @@
 2009-12-31
+  - the version number is now assigned using cmake for the qt project and for the doxygen documentation
+    using AUTOMATE_VERSION variable in CMakeLists.txt, just include version.h into the cpp file you want
+    to access the macro variable called VERSION which will be replaced by a string containing the version
   - cmake is now the default and only build system
   - doxygen build is enabled by default if doxygen is found
 

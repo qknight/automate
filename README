@@ -15,12 +15,12 @@
  for this work and always had time when i needed them.
 
  all the code in this distribution is licensed to the terms of the LGPL v3 (if used with qt 4.5 or later)
- all used icons are from the kde icon theme noia-kde-icons-1.00.tgz
-
- The Noia icons for KDE are under GNU LGPL license.
+ most used icons are from the kde icon theme noia-kde-icons-1.00.tgz
+  - The Noia icons for KDE are under GNU LGPL license.
+  - my icons which were specially created for this project are under GNU LGPL license as well
 
  please feel free to comment on that code:
-     8.6.2008 (C) Joachim Schiele <js@dune2.de>
+     8.6.2008 (C) Joachim Schiele <js@lastlog.de>
 
  some explanations about this project (additional to the doxygen documentation)
    http://lastlog.de/wiki/index.php/AutomateEditor
@@ -32,7 +32,9 @@
 ======================================
  class documentation using doxygen
 ======================================
-run doxygen to get a nice html documentation with helpful comments
+using cmake will automatically generate the documentation using doxygen
+see your build directory:
+ - build/doc/html/index.html
 
 doxygen class documentaion:
    http://www.stack.nl/~dimitri/doxygen/docblocks.html
