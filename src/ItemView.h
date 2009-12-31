@@ -26,7 +26,7 @@
 #include <QPersistentModelIndex>
 #include <QDebug>
 #include <QResizeEvent>
-#include <QGLWidget>
+//#include <QGLWidget>
 
 #include "GraphicsScene.h"
 #include "Model.h"

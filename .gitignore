@@ -1,7 +1,6 @@
 .svn
 Makefile
-debug/
-release/
+build/
 gmon.out
 debug
 doxygen

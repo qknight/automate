@@ -71,35 +71,36 @@
  *  - these screenshots show many usability issues and in the end show the process to a working
  *    editing concept. some concepts where thrown away and others were never meant to be included
  *    but added here to show what can be done.
- * <img src="../images/graphicsView2.jpg" title="Screenshot-graphicsView2.jpg">
- * <img src="../images/graphicsView3.jpg" title="Screenshot-graphicsView3.jpg">
- * <img src="../images/graphicsView4.jpg" title="Screenshot-graphicsView4.jpg">
- * <img src="../images/graphicsView5.jpg" title="Screenshot-graphicsView5.jpg">
- * <img src="../images/graphicsView6.jpg" title="Screenshot-graphicsView6.jpg">
- * <img src="../images/graphicsView7.jpg" title="Screenshot-graphicsView7.jpg">
- * <img src="../images/graphicsView8.jpg" title="Screenshot-graphicsView8.jpg">
- * <img src="../images/graphicsView9.jpg" title="Screenshot-graphicsView9.jpg">
- * <img src="../images/graphicsView10.jpg" title="Screenshot-graphicsView10.jpg">
- * <img src="../images/graphicsView11.jpg" title="Screenshot-graphicsView11.jpg">
- * <img src="../images/graphicsView12.jpg" title="Screenshot-graphicsView12.jpg">
- * <img src="../images/graphicsView13.jpg" title="Screenshot-graphicsView13.jpg">
- * <img src="../images/graphicsView14.jpg" title="Screenshot-graphicsView14.jpg">
- * <img src="../images/graphicsView15.jpg" title="Screenshot-graphicsView15.jpg">
- * <img src="../images/graphicsView16.jpg" title="Screenshot-graphicsView16.jpg">
- * <img src="../images/graphicsView17.jpg" title="Screenshot-graphicsView17.jpg">
- * <img src="../images/graphicsView18.jpg" title="Screenshot-graphicsView18.jpg">
- * <img src="../images/graphicsView19.jpg" title="Screenshot-graphicsView19.jpg">
- * <img src="../images/graphicsView20.jpg" title="Screenshot-graphicsView20.jpg">
- * <img src="../images/graphicsView21.jpg" title="Screenshot-graphicsView21.jpg">
- * <img src="../images/graphicsView22.jpg" title="Screenshot-graphicsView22.jpg">
- * <img src="../images/graphicsView22b.jpg" title="Screenshot-graphicsView22b.jpg">
- * <img src="../images/graphicsView23.jpg" title="Screenshot-graphicsView23.jpg">
+
+ * @image html graphicsView2.jpg
+ * @image html graphicsView3.jpg
+ * @image html graphicsView4.jpg
+ * @image html graphicsView5.jpg
+ * @image html graphicsView6.jpg
+ * @image html graphicsView7.jpg
+ * @image html graphicsView8.jpg
+ * @image html graphicsView9.jpg
+ * @image html graphicsView10.jpg
+ * @image html graphicsView11.jpg
+ * @image html graphicsView12.jpg
+ * @image html graphicsView13.jpg
+ * @image html graphicsView14.jpg
+ * @image html graphicsView15.jpg
+ * @image html graphicsView16.jpg
+ * @image html graphicsView17.jpg
+ * @image html graphicsView18.jpg
+ * @image html graphicsView19.jpg
+ * @image html graphicsView20.jpg
+ * @image html graphicsView21.jpg
+ * @image html graphicsView22.jpg
+ * @image html graphicsView22b.jpg
+ * @image html graphicsView23.jpg
  * the picture below shows a directed graph without arrows using cubicTo bezier curve
  * i did not find out how to draw the arrow head to the right position so i
  * did not use the bezier approach which is said.
- * <img src="../images/graphicsView24.jpg" title="Screenshot-graphicsView24.jpg">
- * the picture below shows a
- * <img src="../images/graphicsView25.jpg" title="Screenshot-graphicsView25.jpg - the final automate drawing">
+ * @image html images/graphicsView24.jpg
+ * the picture below shows the 'current' state
+ * @image html images/graphicsView25.jpg
  */
 
 #include <QApplication>

@@ -4,9 +4,11 @@ WARNING: parts of this document could be outdated (2009-12-24)
         -- release checks --
 =================================================================================================
 
- - does doxygen complain about undocumented classes/functions?
+ - does doxygen complain about undocumented classes/functions? does doxygen work in general?
+   are all images included?
  - does every file have a proper copyright notice?
  - check code for BUG string and fix those for (have a look at FIXME and WARNING as well)
+ - fix version number using CMakeLists.txt variable called AUTOMATE_VERSION
 
 =================================================================================================
         -- important FIXMES --

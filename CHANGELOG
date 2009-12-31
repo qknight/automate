@@ -1,3 +1,7 @@
+2009-12-31
+  - cmake is now the default and only build system
+  - doxygen build is enabled by default if doxygen is found
+
 2009-12-26
   - this code can be used as a library therefore i plan to release it using LGPL
     but i have to rewrite the headers and that did not happen yet

@@ -32,7 +32,7 @@
 #include <QGraphicsScene>
 #include <QTextBrowser>
 #include <QGraphicsView>
-#include <QGLWidget>
+//#include <QGLWidget>
 #include <QGridLayout>
 #include <QSizePolicy>
 #include <QToolBar>
