@@ -27,28 +27,34 @@ ADD_SUBDIRECTORY(doc)
 # SET (QT_USE_QTOPENGL 1)
 
 SET( automate_SOURCES
-  src/AbstractTreeItem.cpp
-  src/AbstractView.cpp
-  src/AutomateRoot.cpp
-  src/GraphicsScene.cpp
-  src/ItemView.cpp
-  src/Model.cpp
-  src/SceneItem_Connection.cpp
-  src/SceneItem_ConnectionHandle.cpp
-  src/SceneItem_LabelEditor.cpp
-  src/SceneItem_Node.cpp
-  src/SymbolTable.cpp
+  src/main.cpp
   src/automate.cpp
   src/automatehandler.cpp
-  src/graphicsView.cpp
-  src/main.cpp
-  src/meta_node.cpp
-  src/node.cpp
-  src/node_connection.cpp
-  src/objectCounter.cpp
-  src/objectProperty.cpp
-  src/treeView.cpp
   src/viewHandler.cpp
+  src/AbstractView.cpp
+  src/Model.cpp
+
+  # backend data structure related files
+  src/backend/AbstractTreeItem.cpp
+  src/backend/AutomateRoot.cpp
+  src/backend/meta_node.cpp
+  src/backend/node.cpp
+  src/backend/node_connection.cpp
+  src/backend/objectCounter.cpp
+  src/backend/objectProperty.cpp
+  src/backend/SymbolTable.cpp
+
+  # treeView 
+  src/TreeView/treeView.cpp
+ 
+  # frontend data structure equivalent files used by the QGraphicsScene
+  src/GraphicsView/graphicsView.cpp
+  src/GraphicsView/GraphicsScene.cpp
+  src/GraphicsView/ItemView.cpp
+  src/GraphicsView/SceneItem_Connection.cpp
+  src/GraphicsView/SceneItem_ConnectionHandle.cpp
+  src/GraphicsView/SceneItem_LabelEditor.cpp
+  src/GraphicsView/SceneItem_Node.cpp
 )
 
 # if .h files are included which don't inherit or use QOBJECT you will get a warning but everything might work,
@@ -57,13 +63,15 @@ SET( automate_SOURCES
 # defined and finally include that specific header here and rebuild from a 'cleaned' build directory
 SET( automate_MOC_HEADERS
   src/AbstractView.h
-  src/ItemView.h
   src/automatehandler.h
-  src/GraphicsScene.h
-  src/graphicsView.h
-  src/treeView.h
-  src/SceneItem_LabelEditor.h
-  src/SceneItem_ConnectionHandle.h
+
+  src/TreeView/treeView.h
+
+  src/GraphicsView/ItemView.h
+  src/GraphicsView/GraphicsScene.h
+  src/GraphicsView/graphicsView.h
+  src/GraphicsView/SceneItem_LabelEditor.h
+  src/GraphicsView/SceneItem_ConnectionHandle.h
 )
 
 SET( automate_UIs
@@ -79,6 +87,10 @@ SET( automate_RCCs
 INCLUDE_DIRECTORIES(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_SOURCE_DIR}
+  "${CMAKE_SOURCE_DIR}/src"
+  "${CMAKE_SOURCE_DIR}/src/backend"
+  "${CMAKE_SOURCE_DIR}/src/GraphicsView"
+  "${CMAKE_SOURCE_DIR}/src/TreeView"
   ${CMAKE_CURRENT_SOURCE_DIR}
   ${CMAKE_CURRENT_BINARY_DIR}
 )
