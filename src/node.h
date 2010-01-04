@@ -18,7 +18,6 @@
   @author Joachim Schiele <js@lastlog.de>
 */
 
-
 #ifndef NODE__HH__
 #define NODE__HH__
 
@@ -60,6 +59,5 @@ class node : public AbstractTreeItem {
     /*! internal use only: removes a reversepath */
     void removeChildReversePath( AbstractTreeItem *item );
 };
-
 
 #endif

@@ -94,7 +94,17 @@ class GraphicsScene : public QGraphicsScene {
     bool m_want_customNodeLabels;
     /*! internal variable */
     bool m_want_customConnectionLabels;
-    /*! converts a QPersistentModelIndex into a QGraphicsItem */
+    /*! converts a QPersistentModelIndex into a QGraphicsItem
+    ** the qgraphicsscene stores all graphical objects and in those objects
+    ** we have a QPersistentModelIndex stored. this gives us the possibility of
+    ** having several different graphicsViews on the same automate
+    **
+    ** a general compare function had to be implemented: compareIndexes
+    ** since this implementation doesn't use
+    ** column BUT columns somehow whxere reported to be different, meaning: a stored index could have column 3
+    ** while the treeView would make a difference because the treeView uses the columns to distinguish between
+    ** different entries in the hierarchical view (the treeView) where for instance column 3 shows the node name
+    ** and column 4 shows the symbol_index of a connection*/
     QGraphicsItem* modelToSceenIndex( QPersistentModelIndex index );
     /*! this (red) line is needed for adding connections with the MMB (mid-mouse-button) between nodes */
     QGraphicsLineItem *line;

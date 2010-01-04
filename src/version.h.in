@@ -1,0 +1,8 @@
+/*
+** this file is used via cmake to set the version number globally
+** cmake will (when typing 'cmake', before you type 'make') generate a file called version.h
+** which can be included in any project cpp or h file to query for the version
+**
+** something similar is used to set the version for the doxygen documentation, see doc/CMakeLists.txt
+*/
+#define VERSION "@AUTOMATE_VERSION@"

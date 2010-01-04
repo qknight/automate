@@ -13,7 +13,7 @@ ADD_DEFINITIONS( "-Wall -ansi " )
 # the version for the doxygen documenation is also controlled by AUTOMATE_VERSION
 # but set in 'doc/CMakeLists.txt'
 SET ( AUTOMATE_VERSION "1.0.0-rc1" )
-  CONFIGURE_FILE(version.h.in version.h @ONLY IMMEDIATE)
+  CONFIGURE_FILE(src/version.h.in version.h @ONLY IMMEDIATE)
 # this code generates the version information for the .cpp/.h files
 
 SET (Generated_Sources ${PROJECT_BINARY_DIR}/version.h )

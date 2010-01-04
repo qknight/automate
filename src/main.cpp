@@ -35,10 +35,15 @@
  *     - convert2NFA() : converts a epsilon automate to a NFA
  *     - convert2DFA() : converts a NFA or epsilon automate to a DFA
  *     - convert2miniDFA() : minimizes a DFA
+ * \section requirements Requirements
+ * - cmake 2.6 or later
+ * - qt 4.5 or later
+ * - linux/windows/macosx
  * \section concepts Concepts 
  * please see also my blog: http://blog.lastlog.de as for instance
  * - http://invalidmagic.wordpress.com/2009/12/10/qgraphicsscene-used-as-a-qabstractitemmodel/
  * @image html graphicssceneasabstractitemview.png
+ * @image html data_structure.png
  * \section issues Issues
  * A list of current issues can be found in the TODO file. The CHANGELOG file was
  * introduced late but gives you a lot of information on various concepts.
@@ -56,9 +61,8 @@
  *
  * \section z Some screenshots taken fram the beginning of the developing process
  *  - these screenshots show many usability issues and in the end show the process to a working
- *    editing concept. some concepts where thrown away and others were never meant to be included
+ *    editing concept. Some concepts where discarded and others were never meant to be included
  *    but added here to show what can be done.
-
  * @image html graphicsView2.jpg
  * @image html graphicsView3.jpg
  * @image html graphicsView4.jpg

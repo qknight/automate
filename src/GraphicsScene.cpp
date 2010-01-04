@@ -47,10 +47,6 @@ QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {
 //   qDebug() << __FUNCTION__;
   SceneItem_Node* node = new SceneItem_Node( item );
   addItem( node );
-  // FIXME need to implement this!
-  // when the ItemView widget has focus &http://wiki.openmoko.org/wiki/OpenMoko_under_QEMU& when the mouse is in the ItemView
-  //   only then insert the new node below the cursor
-  // else put it at an random position near QPoint(0,0)
   node->setPos( model->data(item, customRole::PosRole).toPoint() );
   updateNode( node );
   return node;
@@ -141,18 +137,6 @@ void GraphicsScene::clearScene() {
   }
 }
 
-/*
-** the qgraphicsscene stores all graphical objects and in those objects
-** we have a QPersistentModelIndex stored. this gives us the possibility of
-** having several different graphicsViews on the same automate
-*/
-
-// a general compare function had to be implemented: compareIndexes
-// since this implementation doesn't use
-// column BUT columns somehow whxere reported to be different, meaning: a stored index could have column 3
-// while the treeView would make a difference because the treeView uses the columns to distinguish between
-// different entries in the hierarchical view (the treeView) where for instance column 3 shows the node name
-// and column 4 shows the symbol_index of a connection
 QGraphicsItem* GraphicsScene::modelToSceenIndex( QPersistentModelIndex index ) {
   QList<QGraphicsItem *> m_list = items();
 //   qDebug() << "=== searching in: " << m_list.size() << " items ====";
@@ -173,13 +157,11 @@ QGraphicsItem* GraphicsScene::modelToSceenIndex( QPersistentModelIndex index ) {
       }
     }
   }
-  qDebug() << "failed to modify the item, since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found";
-  qDebug() << "sleeping 10 seconds now";
-  sleep(10);
+  qDebug() << "FATAL: failed to modify the item, since the QGraphicsScene equivalent to the given QPersistentModelIndex wasn't found, exiting";
+  exit(1);
   return NULL;
 }
 
-// I hope this function in not incomplete
 bool GraphicsScene::compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b ) {
   if ( a.row() != b.row() )
     return false;
@@ -403,10 +385,9 @@ bool GraphicsScene::setData( const QModelIndex & index, const QVariant & value, 
   return model->setData( index, value, role );
 }
 
-/*
+/*!
 ** mousePressEvent,mouseReleaseEvent,mouseMoveEvent are used to graphically connect two nodes
-** with each. even loops are possible just mouseRelease over the same node
-*/
+** with each. even loops are possible just mouseRelease over the same node */
 void GraphicsScene::mousePressEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
   if ( items( mouseEvent->scenePos() ).count() && mouseEvent->button() == Qt::MidButton ) {
     QGraphicsScene::mousePressEvent( mouseEvent );
@@ -419,6 +400,7 @@ void GraphicsScene::mousePressEvent( QGraphicsSceneMouseEvent *mouseEvent ) {
     if ( mouseEvent->button() == Qt::MidButton ) {
 
     } else {
+      qDebug() << "here";
       QGraphicsScene::mousePressEvent( mouseEvent );
     }
 }

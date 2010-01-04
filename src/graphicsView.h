@@ -55,8 +55,7 @@ class ItemView;
  ** ItemView talks to the model and is called by the model.
  ** The QGraphicsScene inherited by GraphicsScene is what is used to display the
  ** data through ItemView. The GraphicsScene has another layer of items, namely:
- ** QGraphicsItems
- */
+ ** QGraphicsItems */
 class GraphicsView : public AbstractView {
     Q_OBJECT
   public:
@@ -82,11 +81,14 @@ class GraphicsView : public AbstractView {
     QGraphicsView* view;
     /*! a helper function to improve readability of the code */
     void populateMenu();
-    /*! TODO selection model used to ??? */
+    /*!  */
     QItemSelectionModel *selectionModel;
 
   private Q_SLOTS:
-    /*! insertNode */
+    /*! insertNode this is one of two places where the graphical editor inserts nodes
+    ** this place is the click on the left icon bar, we should insert the node somewhere in the
+    ** views FoV since that makes sense. it does not sense to track the cursor since it is above
+    ** the icon when this event happens */
     void insertNode();
     /*! zoomIn ...*/
     void zoomIn();

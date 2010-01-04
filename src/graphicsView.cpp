@@ -153,10 +153,6 @@ void GraphicsView::zoomNormal() {
 }
 
 void GraphicsView::insertNode() {
-  //FIXME this is one of two places where the graphical editor inserts nodes
-  // this place is the click on the left icon bar, we should insert the node somewhere in the
-  // views FoV since that makes sense. it does not sense to track the cursor since it is above
-  // the icon when this event happens
   QPoint p(qrand()%500,qrand()%200);
   emit insertNodeSignal(p);  
 }

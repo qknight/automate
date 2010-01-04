@@ -28,9 +28,10 @@ ItemView::ItemView( QGraphicsView* view, GraphicsScene* scene, Model *model, QWi
   this->scene = scene;
   setModel( model );
   want_antialiasing = true;
+//   view->setDragMode(QGraphicsView::RubberBandDrag);
+//   view->setDragMode(QGraphicsView::ScrollHandDrag);
   view->setRenderHints( QPainter::Antialiasing | QPainter::SmoothPixmapTransform );
   view->setScene( scene );
-  view->setDragMode( QGraphicsView::RubberBandDrag );
 
 /*#ifndef QT_NO_OPENGL
   openGlButton->setEnabled(QGLFormat::hasOpenGL());
