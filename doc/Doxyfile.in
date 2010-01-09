@@ -125,7 +125,7 @@ FILE_PATTERNS          = *.c \
                          *.M \
                          *.MM \
                          *.PY
-RECURSIVE              = NO
+RECURSIVE              = YES
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 

@@ -1,3 +1,6 @@
+2010-01-09
+  - added some documentation
+  - fixed doxygen build
 2010-01-04
   - created a new filesystem structure
   - added some more documentation with a class diagram which will be VERY helpful if you want

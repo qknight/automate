@@ -13,6 +13,7 @@ WARNING: parts of this document could be outdated (2009-12-24)
 =================================================================================================
         -- important FIXMES --
 =================================================================================================
+ - WARNING: doxygen build is broken since i moved src files into different folders
 
  - on my second pc (not my laptop) i executed automate, opened a GraphicsView and as expected
    the automate application crashed with this symptoms:

@@ -44,6 +44,7 @@
  * - http://invalidmagic.wordpress.com/2009/12/10/qgraphicsscene-used-as-a-qabstractitemmodel/
  * @image html graphicssceneasabstractitemview.png
  * @image html data_structure.png
+ * @image html QModelIndexConcepts.png
  * \section issues Issues
  * A list of current issues can be found in the TODO file. The CHANGELOG file was
  * introduced late but gives you a lot of information on various concepts.
