@@ -3,9 +3,10 @@ WARNING: parts of this document could be outdated (2009-12-24)
 =================================================================================================
         -- release checks --
 =================================================================================================
-
- - does doxygen complain about undocumented classes/functions? does doxygen work in general?
-   are all images included?
+ - doxygen
+   * does doxygen complain about undocumented classes/functions? 
+   * does doxygen work in general?
+   * are all images included?
  - does every file have a proper copyright notice?
  - check code for BUG string and fix those for (have a look at FIXME and WARNING as well)
  - fix version number using CMakeLists.txt variable called AUTOMATE_VERSION
@@ -13,7 +14,21 @@ WARNING: parts of this document could be outdated (2009-12-24)
 =================================================================================================
         -- important FIXMES --
 =================================================================================================
- - WARNING: doxygen build is broken since i moved src files into different folders
+ - sceneRect for the view and for the QGraphicsScene are wrongly initialized
+ - drawing the arrow does not work if the two objects are to 'near' to each other, however
+   sometimes the error is drawn the wrong direction
+ - after making a new connection the src node is always selected?! why?
+ - QGraphicsView/QGraphicsScene virtual and 'physical' screen resulution don't fit. somehow the
+   QGraphicsView(or -Scene) is expanded automatically (and/or reloacted) but then some items get 
+   out of the current view while the scrollbars won't show up, so some items are just hidden and 
+   won't be accessed easily.
+
+      renderHints : QPainter::RenderHints
+      resizeAnchor : ViewportAnchor
+      rubberBandSelectionMode : Qt::ItemSelectionMode
+      sceneRect : QRectF
+      transformationAnchor : ViewportAnchor
+      viewportUpdateMode : ViewportUpdateMode
 
  - on my second pc (not my laptop) i executed automate, opened a GraphicsView and as expected
    the automate application crashed with this symptoms:
@@ -66,8 +81,7 @@ WARNING: parts of this document could be outdated (2009-12-24)
 	#18 0x00000030fb52e8d7 in QCoreApplicationPrivate::sendThroughObjectEventFilters () from /usr/lib64/qt4/libQtCore.so.4
 
 	the bug can be isolated to SceneItem_ConnectionHandle.cpp function paint()..
-	  painter->drawEllipse( rectangle ); <- this will crash it
-
+	  painter->drawEllipse( rectangle ); <- this will crash it, why?
 
  - slow painting of the scene if say 100+ items are moved (without connections!) means there
    is no caching and redrawing is getting slow. disabling antialiasing makes that much faster.
@@ -102,6 +116,7 @@ WARNING: parts of this document could be outdated (2009-12-24)
 
  - nodes IDs and node_connection IDs should be unique? right now there can be cases where:
    NODE::ID=1 and NODE_CONNECTION::ID=1 are the same (tested) but [todo] is this wanted?
+   FIX -> yes this is wanted
 
  - check all casts for static_cast and dynamic_cast
  - usability in TreeView: needs a mouse, no keyboard navigation possible which is bad
@@ -125,10 +140,6 @@ WARNING: parts of this document could be outdated (2009-12-24)
 
 FIXME qt bug report schreiben
   Re: [Issue N218633] http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
-
-=================================================================================================
-        -- not in the scope of this work --
-=================================================================================================
 
 FIXME Model.cpp/GraphicsScene.cpp right now adds a new connection as a loop, afterwards the loop
       can be changed to a outgoing connection. the idea was that the automate is always well formed:
@@ -156,7 +167,7 @@ FIXME treeView, adding a new connection isn't marked with a '+' sign in the tree
       http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
       i can reproduce it with qt 4.3.3 and qt 4.4.0 -> [2] was taken with qt 4.4.0
       with some help of irc.kde.org#qt from kibab i've made a hack* to make it
-      working as intended:
+      work as intended:
 
       ================ modified qtreeview.cpp ==================
           if (parent != d->root /*&& !d->isIndexExpanded(parent)*/) {
@@ -189,6 +200,7 @@ FIXME treeView, adding a new connection isn't marked with a '+' sign in the tree
       http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
       [2] http://www.lastlog.de/misc/drawing_problem.ogg
       [3] http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
+
 FIXME labelEditor could be impoved by selecting all text on edit
 FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
 FIXME graphicsView: 'even' amount node_connections should be centered, 'odd' amounts are already rendered as intended
@@ -214,22 +226,6 @@ FIXME ICONS for ACTIONS:
   - enable/disable opengl rendering
 FIXME GraphicsScene: replace keyPressEvent code with QShortCut/QAction
 
-graphicsView:
- - grid
-  - show/hide grid
-  - enable/disable grid magnification
-  - inc/dec grid spacing
- - implement 'flow' -> this feature will move overlapping nodes away from each and
-                       it does so for connection labels as well
- - add rotation handle
-
-  misc:
-  add this to the documentaiton for futher reading
- - http://www.graphviz.org/doc/libguide/libguide.pdf
- - http://www.boost.org/doc/libs/1_35_0/libs/graph/doc/index.html
- - http://www.graphviz.org/
- - http://www.boost.org/libs/graph/doc/fruchterman_reingold.html
-
 todo
       LMB                     -> select node/connection
       LMB drag                -> bbox for selecting objects
@@ -240,7 +236,6 @@ x     MMB on empty space      -> move view
 
 general:
  - add 'invert all connections' to automate_algorithms
- - re-merge automate_algorithms to trunk
  - getAutomateType
    create a better detection of automate type
  - checkWord
@@ -248,31 +243,3 @@ general:
  - think about if automate/meta_automate need a
    copy constructor ... -> rule of three
    - copy an automate 1:1
-
-FIXME
-items which have to be editable:
-                            treeView    graphicsview
- - start                    editable    editable
- - final                    editable    editable
- - next_node                editable    visible,no editor yet
- - new connections          editable    editable
- - new nodes                editable    works well now
- - deletable nodes          editable    editable
- - deletable conns.         editable    editable
- - multiple selection       editable    editable
- - node label rename        editable    -
- - connection label ren     editable    -
- - connection symbol        editable    -
- - move nodes/labels        sorting     mouse drag
- - ctrl+LMB add single      -           editable
-   node to a selection
- - ctrl+LMB add single      -           editable
-   conn. to a selection     -           -
- - select a single node
-   \ by boundingbox         -           editable
-   \ by click               editable    editable
- - select a single conn.
-   \ by boundingbox         -           editable
-   \ by click               editable    -
- - reconnect on the fly     editable    -
-  (in the graphicsView we need a handle for this)

@@ -1,11 +1,9 @@
-======================================
- what is this?
-======================================
+========= what is this? ===============================================
  this project features an automate editor class with a graphical- and tree- like editor.
  this project can be used as a library to visualize directed graphs.
 
  it was created at the University of Tuebingen, Germany as a 'Studienarbeit'.
- Chair: Arbeitsbereich für Theoretische Informatik/Formale Sprachen
+ Chair: Arbeitsbereich fuer Theoretische Informatik/Formale Sprachen
 
  most of the code was written by me:
  thanks very much for the help from the people in #qt@irc.freenode.org namely
@@ -29,13 +27,50 @@
  the project is hosted on github.com:
    http://github.com/qknight/automate
 
-======================================
- class documentation using doxygen
-======================================
-using cmake will automatically generate the documentation using doxygen
+========== what is this not? ================================================== 
+there is no auto-layout function so all the stuff has to be done by you.
+it would be nice if we could use the graphviz API for doing that...
+
+========== how to use? ================================================== 
+i have to review this list again but in general it should give you an
+idea what can be done.
+
+                            treeView    graphicsview
+ - start                    editable    editable
+ - final                    editable    editable
+ - next_node                editable    visible,no editor yet
+ - new connections          editable    editable
+ - new nodes                editable    editable
+ - deletable nodes          editable    editable
+ - deletable conns.         editable    editable
+ - multiple selection       editable    editable
+ - node label rename        editable    editable
+ - connection label ren     editable    -
+ - connection symbol        editable    -
+ - move nodes/labels        sorting     mouse drag
+ - ctrl+LMB add single      -           editable
+   node to a selection
+ - ctrl+LMB add single      -           editable
+   conn. to a selection     -           -
+ - select a single node
+   \ by boundingbox         -           editable
+   \ by click               editable    editable
+ - select a single conn.
+   \ by boundingbox         -           editable
+   \ by click               editable    -
+ - reconnect on the fly     editable    -
+  (in the graphicsView we need a handle for this)
+
+========== class documentation using doxygen ============================ 
+using 'cmake, make' will automatically generate the documentation using doxygen
 see your build directory:
  - build/doc/html/index.html
 
+========== documentation, project related ============================
 doxygen class documentaion:
    http://www.stack.nl/~dimitri/doxygen/docblocks.html
-
+automate related:
+ - http://www.graphviz.org/doc/libguide/libguide.pdf
+ - http://www.boost.org/doc/libs/1_35_0/libs/graph/doc/index.html
+ - http://www.graphviz.org/
+ - http://www.boost.org/libs/graph/doc/fruchterman_reingold.html

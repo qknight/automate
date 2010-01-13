@@ -1,18 +1,19 @@
-// automate implements an automate class in c++ using qt4
-// Copyright (C) 2007 Joachim Schiele
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+/*
+    This file is part of automate.
+      Copyright Joachim Schiele
+      
+    automate is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Lesser General Public License as published by
+    the Free Software Foundation, either version 3 of the License.
+
+    automate is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Lesser General Public License for more details.
+
+    You should have received a copy of the GNU Lesser General Public License
+    along with automate.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 /**
   @author Joachim Schiele <js@lastlog.de>
@@ -64,6 +65,7 @@ class GraphicsScene : public QGraphicsScene {
     bool want_customNodeLabels();
     /*! same as for custom node labels */
     bool want_customConnectionLabels();
+    
     /*! a wrapper function for all items in the scene, so that they can call data() directly */
     QVariant data( const QModelIndex &index, int role ) const;
     /*! a wrapper function for all items in the scene, so that they can call setData() directly */
@@ -95,7 +97,7 @@ class GraphicsScene : public QGraphicsScene {
     /*! internal variable */
     bool m_want_customConnectionLabels;
     /*! converts a QPersistentModelIndex into a QGraphicsItem
-    ** the qgraphicsscene stores all graphical objects and in those objects
+    ** the QGraphicsScene stores all graphical objects and in those objects
     ** we have a QPersistentModelIndex stored. this gives us the possibility of
     ** having several different graphicsViews on the same automate
     **
@@ -106,6 +108,11 @@ class GraphicsScene : public QGraphicsScene {
     ** different entries in the hierarchical view (the treeView) where for instance column 3 shows the node name
     ** and column 4 shows the symbol_index of a connection*/
     QGraphicsItem* modelToSceenIndex( QPersistentModelIndex index );
+    /*! a custom compare function to only compare fields in a QPersistentModelIndex which matter since
+    ** the treeView handles rows/columns in items the GraphicsScene doesn't so we do not need to
+    ** compare all the fields */
+    bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
+
     /*! this (red) line is needed for adding connections with the MMB (mid-mouse-button) between nodes */
     QGraphicsLineItem *line;
     /*! the GraphicsScene visualizes the data of this model */
@@ -122,10 +129,6 @@ class GraphicsScene : public QGraphicsScene {
     void updateNode( QGraphicsItem* item );
     /*! updates a connection based on item pointer*/
     void updateConnection( QGraphicsItem* item );
-    /*! a custom compare function to only compare fields in a QPersistentModelIndex which matter since
-    ** the treeView handles rows/columns in items the GraphicsScene doesn't so we do not need to
-    ** compare all the fields */
-    bool compareIndexes( const QPersistentModelIndex & a, const QPersistentModelIndex & b );
 
   public slots:
     /*! when a user want's to add a node we need to call this function which will request a node on the model side*/
