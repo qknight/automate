@@ -1,4 +1,23 @@
+2010-01-14
+  - added this to graphicsView.cpp
+    view->setSceneRect(QRect(0,0,500,500));
+    scene->setSceneRect(QRect(0,0,500,500));
+    which FIXED the issue when a GraphicsView was opened with existing nodes/connections
+    -> this will be fixed better in the near future, but works for now
 2010-01-13
+   - this was fixed many many releases ago but goes into documentation here
+     FIXME Model.cpp/GraphicsScene.cpp right now adds a new connection as a loop, afterwards the loop
+      can be changed to a outgoing connection. the idea was that the automate is always well formed:
+        no links to dead objects
+      but this adds some overhead. this situation can be handled better:
+      just add a dead object which every new connection is linked to. now we can distinguish
+      between new object and loop again and we don't have any overhead.
+    FIX: this is now done using NULL
+
+  - all the points mentioned here were FIXed a few releases ago, but i want that in the CHANGELOG anyway
+    - ~Automate should remove all data structures associated with a automate instance like:
+    - all views (as well as all objects in the views as for instance a SceneItem_Node) and the model
+    - all data which 'could' be destructed by ~AutomateRoot
   - lgpl 3.0 release
 2010-01-09
   - added some documentation

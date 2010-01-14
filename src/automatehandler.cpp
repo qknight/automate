@@ -97,11 +97,11 @@ void automatehandler::addRandomAutomate() {
   r->symbol("Q");
   r->symbol("f");
   r->symbol("_%");
-//   qDebug() << "rootnode=" << (unsigned int) rootnode;
+//   qDebug() << "rootnode=" << 	(unsigned int) rootnode;
 //   qDebug() << "rootnode.parent()=" << (unsigned int)rootnode->parent();
 
-  int todonodes = qrand() % 4; //20
-  int todoconnections_ = 4;    //44 (first graph, connection c3 remove -> ctrl+u -> segfault
+  int todonodes = qrand() % 10; //20
+  int todoconnections_ = 5;    //44 (first graph, connection c3 remove -> ctrl+u -> segfault
 
   for ( int i = 0; i < todonodes; ++i ) {
     int s = qrand() % 2;

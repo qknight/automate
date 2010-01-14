@@ -61,10 +61,28 @@ idea what can be done.
  - reconnect on the fly     editable    -
   (in the graphicsView we need a handle for this)
 
+using the GraphicsView
+      LMB on node or connection         -> select node/connection
+      LMB pressed + drag                -> bbox for selecting objects
+      MMB on nodes                      -> connect them
+      MMB on empty space                -> 
+      RMB on node/connection            -> context menu
+      RMB on scene                      -> move view
+
+LMB = left mouse button
 ========== class documentation using doxygen ============================ 
 using 'cmake, make' will automatically generate the documentation using doxygen
 see your build directory:
  - build/doc/html/index.html
+
+========== issues ======================================================= 
+ - items which are added via a GraphicsView (using two GraphicsViews attached to the same automate)
+   will (as expected) add the node at the same respecitve position. say x=204,y=250 on both views.
+   however: if a node is moved only the first view will update the new position correctly, the second
+   view will not see this since it is not done using 'setData and dataChanged()' via the model yet
+   FIX this is intended behaviour. if the second view should be 'similar' just use another 'view'
+       attached to the QGraphicsScene (which can be done without breaking anything)
+
 
 ========== documentation, project related ============================
 doxygen class documentaion:

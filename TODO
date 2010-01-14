@@ -8,28 +8,93 @@ WARNING: parts of this document could be outdated (2009-12-24)
    * does doxygen work in general?
    * are all images included?
  - does every file have a proper copyright notice?
- - check code for BUG string and fix those for (have a look at FIXME and WARNING as well)
- - fix version number using CMakeLists.txt variable called AUTOMATE_VERSION
+ - check code for BUG/FIXME/WARNING string and fix it
+ - increase?! version number using CMakeLists.txt variable called AUTOMATE_VERSION
 
 =================================================================================================
         -- important FIXMES --
 =================================================================================================
- - sceneRect for the view and for the QGraphicsScene are wrongly initialized
- - drawing the arrow does not work if the two objects are to 'near' to each other, however
-   sometimes the error is drawn the wrong direction
- - after making a new connection the src node is always selected?! why?
- - QGraphicsView/QGraphicsScene virtual and 'physical' screen resulution don't fit. somehow the
-   QGraphicsView(or -Scene) is expanded automatically (and/or reloacted) but then some items get 
-   out of the current view while the scrollbars won't show up, so some items are just hidden and 
-   won't be accessed easily.
+currently working on:
+      LMB on node or connection         -> select node/connection
+      LMB+CTRL selct node/connection    -> add another object to the selection
+         FIXME: currently the selection is canceled when there is no object to be clicked
+      LMB pressed + drag                -> bbox for selecting objects
+      MMB on nodes                      -> connect them
+      MMB on empty space                -> 
+      RMB on node/connection            -> context menu
+      RMB on scene                      -> move view
 
-      renderHints : QPainter::RenderHints
-      resizeAnchor : ViewportAnchor
-      rubberBandSelectionMode : Qt::ItemSelectionMode
-      sceneRect : QRectF
-      transformationAnchor : ViewportAnchor
-      viewportUpdateMode : ViewportUpdateMode
+=========== general =====================================================
+ - check all casts for static_cast and dynamic_cast
+ - use parentWidget() and parent where possible
 
+=========== TreeView =====================================================
+ - usability in TreeView: needs a mouse, no keyboard navigation possible which is bad
+ - nodes IDs and node_connection IDs should be unique? right now there can be cases where:
+   NODE::ID=1 and NODE_CONNECTION::ID=1 are the same (tested) but [todo] is this wanted?
+   FIX -> yes this is wanted
+   check if that is actually implemented right when using the TreeView to reconnect connections
+   FIX yes it is done right
+
+ - using TreeView and GraphicsView together:
+   we have two nodes, now we doubleclick one node to change the label while the TreeView is in the background, this won't update the TreeView
+   at once (immediately) but when alt+tab or clicking on the TreeView it gets updated. is this a bug?
+   >> it does however work vice versa
+   >> it does also work when using two TreeViews
+   so it is probably a bug
+
+FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
+      HINT: check the row/column in dataChanged() call, maybe this is the fix?!
+      HINT: maybe implement hasChildren as well
+      HINT: if layouChanged() is used, it works BUT this is not good since it should work without!
+      HINT: it's working for removeRows however AND once '+' was clicked (meaning the item should expand)
+            it will be working when the item is removed and after no child is there anymore again an item is added
+            it will stop working again when you hit the '-' and try delete all + add one item again
+            - the view will update correctly if the widget is clicked anywhere?! why?
+      HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
+      SOLUTION:
+      this is definitly a Qt bug which is either here again by regression or by intention
+      http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
+      i can reproduce it with qt 4.3.3 and qt 4.4.0 -> [2] was taken with qt 4.4.0
+      with some help of irc.kde.org#qt from kibab i've made a hack* to make it
+      work as intended:
+
+      ================ modified qtreeview.cpp ==================
+          if (parent != d->root /*&& !d->isIndexExpanded(parent)*/) {
+              QAbstractItemView::rowsInserted(parent, start, end);
+      //         return;
+      }
+      ================ modified qtreeview.cpp ==================
+
+      ================ UNmodified qtreeview.cpp ==================
+          if (parent != d->root && !d->isIndexExpanded(parent)) {
+              QAbstractItemView::rowsInserted(parent, start, end);
+              return;
+      }
+      ================ UNmodified qtreeview.cpp ==================
+      now recompile qt and install it...
+      (this fix is not complete and triggers other bugs....)
+
+      the funny thing is that the problem is for insertRows and using qt 4.2.3
+      (x==one of the releases) the problem was inverted since insertRows would work
+      there but removeRows didn't remove the + sign there.
+
+      [3] seems to cover the same issue
+
+      have fun!
+
+      * i expect some performance penalty and maybe other things as well. please
+      check
+
+      [1] http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
+      [2] http://www.lastlog.de/misc/drawing_problem.ogg
+      [3] http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
+ - treeView flags should only be editable if editable!
+  right now it's just ignoring edits which don't affect anything
+  
+=========== GraphicsView =====================================================
+ - adding a GraphicsView using the automatehandler on automates which have connections (excluding loops)
+   will trigger a loop which will eat up all memory and crash the system here -> see SceneItem_ConnectionHandle::paint()
  - on my second pc (not my laptop) i executed automate, opened a GraphicsView and as expected
    the automate application crashed with this symptoms:
    1. the memory footprint rises very very fast with about 100mb/s allocation 
@@ -82,8 +147,42 @@ WARNING: parts of this document could be outdated (2009-12-24)
 
 	the bug can be isolated to SceneItem_ConnectionHandle.cpp function paint()..
 	  painter->drawEllipse( rectangle ); <- this will crash it, why?
+ - GraphicsView: items currently query the scene for the model
+   FIX: every item should have direct access to the model with model()
 
- - slow painting of the scene if say 100+ items are moved (without connections!) means there
+    % grep -e "class.*:" src/SceneItem_*
+      src/SceneItem_Connection.h:class SceneItem_Connection : public QGraphicsItem {
+      src/SceneItem_ConnectionHandle.h:class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
+      src/SceneItem_LabelEditor.h:class SceneItem_LabelEditor : public QGraphicsTextItem {
+      src/SceneItem_Node.h:class SceneItem_Node : public QGraphicsItem {
+
+ - GraphicsView using ctrl+a does not always select all items?!
+ - in GraphicsView a selection can be expanded when clicking a non-yet-selected item with ctrl+LMB
+   but if you miss that item the selection is canceled which is a bug... ;P
+ - - adding a new item in a GraphicsView scrolls the view towards that item, which is what i hate.
+   + it is however acceptable for a connection. (currently that isn't working either)
+ - sceneRect for the view and for the QGraphicsScene are wrongly initialized
+ - after making a new connection the src node is always selected?! why?
+ - GraphicsView: if two nodes with no connections are visualized, then the bug can be triggered by:
+   1. create a connection with MMB over one node (hold the MMB) and drag it to the other node
+   2. a new connection is added (this is not the bug)
+   3. now the source node is selected - (bug) since i don't know why yet
+
+ - QGraphicsView/QGraphicsScene virtual and 'physical' screen resulution don't fit. somehow the
+   QGraphicsView(or -Scene) is expanded automatically (and/or reloacted) but then some items get 
+   out of the current view while the scrollbars won't show up, so some items are just hidden and 
+   won't be accessed easily.
+
+      renderHints : QPainter::RenderHints
+      resizeAnchor : ViewportAnchor
+      rubberBandSelectionMode : Qt::ItemSelectionMode
+      sceneRect : QRectF
+      transformationAnchor : ViewportAnchor
+      viewportUpdateMode : ViewportUpdateMode
+
+ - drawing the arrow does not work if the two objects are to 'near' to each other, however
+   sometimes the error is drawn the wrong direction
+    - slow painting of the scene if say 100+ items are moved (without connections!) means there
    is no caching and redrawing is getting slow. disabling antialiasing makes that much faster.
  - QGraphicsView
   issue 1: selection of items with draging a rect should only be possible with one mousebutton
@@ -93,7 +192,24 @@ WARNING: parts of this document could be outdated (2009-12-24)
            boundary. IDEA: when there 20 folders in kmail but 10 are in the view one can still drag
            a mail to the bottom which then scrolls the view downwards so you can actually access
            the lowest folder. we need the same happening here.
-
+ - SceneItem_Node, SceneItem_ConnectionHandle
+      on very long labels we could adjust the boundingRect() with the rendered text width/height
+      right now text is croped until the scene is completely redrawn most of the time the label
+      will be cut and this looks buggy
+ - graphicsView: implement layoutChanged()
+      traverse all QPersistentModelIndex: if valid leave if not remove them, add new ones as well
+ - cubicTo instead of QLine with arrow faces
+ - label needs caching inside a node/connection since each redraw triggers a model query
+ - if connectionLabel is moved between two nodes it's resizing on node move is correct
+    BUT if the connectionLabel is moved beyond on node it's resizing is done into the wrong direction
+    -> while the distance between the nodes shrinks the object moves even farer away
+ - moving two nodes in a way they will overlap should be handled better: connection drawing is disabled then!
+  - also fix object initialisation of a connection
+    because two overlapping connectionLabels should be drawn RED!
+ - ICONS for ACTIONS:
+  - enable/disable opengl rendering
+ - GraphicsScene: replace keyPressEvent code with QShortCut/QAction
+ - we need more caching so that item redrawing doesn't slow down every move operation
  - GraphicsScene.cpp
   //FIXME qt 4.4.x and 4.3.x have a bug in the BspTreeIndex methods -> removeItem(QGraphicsItem)
   //      since in some cases an already deleted item is queried which segfaults the program
@@ -105,141 +221,9 @@ WARNING: parts of this document could be outdated (2009-12-24)
   // //   return z;
   //      finally showed that with that dimension it would never crash -> now i have to fix that...
 
- - GraphicsView: items currently query the scene for the model
-   FIX: every item should have direct access to the model with model()
-
-    % grep -e "class.*:" src/SceneItem_*
-      src/SceneItem_Connection.h:class SceneItem_Connection : public QGraphicsItem {
-      src/SceneItem_ConnectionHandle.h:class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
-      src/SceneItem_LabelEditor.h:class SceneItem_LabelEditor : public QGraphicsTextItem {
-      src/SceneItem_Node.h:class SceneItem_Node : public QGraphicsItem {
-
- - nodes IDs and node_connection IDs should be unique? right now there can be cases where:
-   NODE::ID=1 and NODE_CONNECTION::ID=1 are the same (tested) but [todo] is this wanted?
-   FIX -> yes this is wanted
-
- - check all casts for static_cast and dynamic_cast
- - usability in TreeView: needs a mouse, no keyboard navigation possible which is bad
-
- - adding a GraphicsView using the automatehandler on automates which have connections (excluding loops)
-   will trigger a loop which will eat up all memory and crash the system here -> see SceneItem_ConnectionHandle::paint()
-
- - GraphicsView: if two nodes with no connections are visualized, then the bug can be triggered by:
-   1. create a connection with MMB over one node (hold the MMB) and drag it to the other node
-   2. a new connection is added (this is not the bug)
-   3. now the source node is selected - (bug) since i don't know why yet
-
- - items which are added via a GraphicsView (using two GraphicsViews attached to the same automate)
-   will (as expected) add the node at the same respecitve position. say x=204,y=250 on both views.
-   however: if a node is moved only the first view will update the new position correctly, the second
-   view will not see this since it is not done using 'setData and dataChanged()' via the model yet
-
- - ~Automate should remove all data structures associated with a automate instance like:
-  - all views (as well as all objects in the views as for instance a SceneItem_Node) and the model
-  - all data which 'could' be destructed by ~AutomateRoot
-
-FIXME qt bug report schreiben
-  Re: [Issue N218633] http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
-
-FIXME Model.cpp/GraphicsScene.cpp right now adds a new connection as a loop, afterwards the loop
-      can be changed to a outgoing connection. the idea was that the automate is always well formed:
-        no links to dead objects
-      but this adds some overhead. this situation can be handled better:
-      just add a dead object which every new connection is linked to. now we can distinguish
-      between new object and loop again and we don't have any overhead.
-FIXME SceneItem_Node, SceneItem_ConnectionHandle
-      on very long labels we could adjust the boundingRect() with the rendered text width/height
-      right now text is croped until the scene is completely redrawn most of the time the label
-      will be cut and this looks buggy
-FIXME graphicsView: implement layoutChanged()
-      traverse all QPersistentModelIndex: if valid leave if not remove them, add new ones as well
-FIXME treeView, adding a new connection isn't marked with a '+' sign in the treeView node line!
-      HINT: check the row/column in dataChanged() call, maybe this is the fix?!
-      HINT: maybe implement hasChildren as well
-      HINT: if layouChanged() is used, it works BUT this is not good since it should work without!
-      HINT: it's working for removeRows however AND once '+' was clicked (meaning the item should expand)
-            it will be working when the item is removed and after no child is there anymore again an item is added
-            it will stop working again when you hit the '-' and try delete all + add one item again
-            - the view will update correctly if the widget is clicked anywhere?! why?
-      HINT: http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
-      SOLUTION:
-      this is definitly a Qt bug which is either here again by regression or by intention
-      http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
-      i can reproduce it with qt 4.3.3 and qt 4.4.0 -> [2] was taken with qt 4.4.0
-      with some help of irc.kde.org#qt from kibab i've made a hack* to make it
-      work as intended:
-
-      ================ modified qtreeview.cpp ==================
-          if (parent != d->root /*&& !d->isIndexExpanded(parent)*/) {
-              QAbstractItemView::rowsInserted(parent, start, end);
-      //         return;
-      }
-      ================ modified qtreeview.cpp ==================
-
-      ================ UNmodified qtreeview.cpp ==================
-          if (parent != d->root && !d->isIndexExpanded(parent)) {
-              QAbstractItemView::rowsInserted(parent, start, end);
-              return;
-      }
-      ================ UNmodified qtreeview.cpp ==================
-      now recompile qt and install it...
-      (this fix is not complete and triggers other bugs....)
-
-      the funny thing is that the problem is for insertRows and using qt 4.2.3
-      (x==one of the releases) the problem was inverted since insertRows would work
-      there but removeRows didn't remove the + sign there.
-
-      [3] seems to cover the same issue
-
-      have fun!
-
-      * i expect some performance penalty and maybe other things as well. please
-      check
-
-      [1]
-      http://trolltech.com/developer/task-tracker/index_html?method=entry&id=78949
-      [2] http://www.lastlog.de/misc/drawing_problem.ogg
-      [3] http://lists.trolltech.com/qt-interest/2007-06/thread00580-0.html
-
-FIXME labelEditor could be impoved by selecting all text on edit
-FIXME when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
-FIXME graphicsView: 'even' amount node_connections should be centered, 'odd' amounts are already rendered as intended
-FIXME zoomFit
+ - labelEditor could be impoved by selecting all text on edit
+ - when in labelItemEditor mode one can invoke drawing a red line with MMB on the text (instead of Xserver-paste)
+ - graphicsView: 'even' amount node_connections should be centered, 'odd' amounts are already rendered as intended
+ - zoomFit
   - andreas krebs wanted to do that, nearly everything is there now, see
     void mainGraphicsView::zoomFit() { in mainGraphicsView.cpp
-FIXME graphicsitem
-  - remove trembling when moving an connectionLabel -> FIXED in qt 4.4
-FIXME treeView flags should only be editable if editable!
-  right now it's just ignoring edits which don't affect anything
-FIXME add symbol editor featuring a QStringList model
-FIXME label needs caching inside a node/connection since each redraw triggers a model query
-FIXME if connectionLabel is moved between two nodes it's resizing on node move is correct
-    BUT if the connectionLabel is moved beyond on node it's resizing is done into the wrong direction
-    -> while the distance between the nodes shrinks the object moves even farer away
-FIXME moving two nodes in a way they will overlap should be handled better: connection drawing is disabled then!
-  - also fix object initialisation of a connection
-    because two overlapping connectionLabels should be drawn RED!
-FIXME use parentWidget() and parent where possible
-FIXME nodes should appear under mouse cursor not randomly if added from the GraphicsView
-      fix it here: QGraphicsItem* GraphicsScene::nodeInserted( QPersistentModelIndex item ) {
-FIXME ICONS for ACTIONS:
-  - enable/disable opengl rendering
-FIXME GraphicsScene: replace keyPressEvent code with QShortCut/QAction
-
-todo
-      LMB                     -> select node/connection
-      LMB drag                -> bbox for selecting objects
-      MMB on nodes            -> connect them
-x     MMB on empty space      -> move view
-      RMB on node/connection  -> context menu
-      RMB on scene            -> ??????????????
-
-general:
- - add 'invert all connections' to automate_algorithms
- - getAutomateType
-   create a better detection of automate type
- - checkWord
-   iterative word check implementation for eNFA/NFA/DFA
- - think about if automate/meta_automate need a
-   copy constructor ... -> rule of three
-   - copy an automate 1:1
