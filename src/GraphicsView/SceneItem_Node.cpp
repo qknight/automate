@@ -17,7 +17,7 @@
 
 #include "SceneItem_Node.h"
 
-SceneItem_Node::SceneItem_Node ( QPersistentModelIndex index ) : QGraphicsItem() {
+SceneItem_Node::SceneItem_Node ( QPersistentModelIndex index ) {
     setFlag ( QGraphicsItem::ItemIsMovable );
     setFlag ( QGraphicsItem::ItemIsSelectable );
 //   setFlag( QGraphicsItem::ItemIsFocusable );
@@ -46,13 +46,13 @@ void SceneItem_Node::updateData() {
         qDebug() << "item isn't in any scene, can't query for valid data";
         return;
     }
-    int id = ( ( GraphicsScene* ) scene() )->data ( index, customRole::IdRole ).toInt();
+    int id = data ( index, customRole::IdRole ).toInt();
     QString toolTip = QString ( "n%1" ).arg ( id );
     setToolTip ( toolTip );
-    bool start = ( ( GraphicsScene* ) scene() )->data ( index, customRole::StartRole ).toBool();
-    bool final = ( ( GraphicsScene* ) scene() )->data ( index, customRole::FinalRole ).toBool();
+    bool start = data ( index, customRole::StartRole ).toBool();
+    bool final = data ( index, customRole::FinalRole ).toBool();
     m_label = QString ( "%1" ).arg ( id );
-    m_label_custom = ( ( GraphicsScene * ) scene() )->data ( index, customRole::CustomLabelRole ).toString();
+    m_label_custom = data ( index, customRole::CustomLabelRole ).toString();
     if ( m_label_custom == "" )
         m_label_custom = m_label;
     this->start = start;
@@ -69,9 +69,10 @@ QRectF SceneItem_Node::boundingRect() const {
 }
 
 void SceneItem_Node::paint ( QPainter *painter, const QStyleOptionGraphicsItem */*option*/, QWidget */*widget*/ ) {
-
+    //FIXME this is a very bad way of doing this, just use the want_boundingBoxRole with data/setData...
     if ( ( ( GraphicsScene* ) scene() )->want_boundingBox() )
         painter->drawRect ( boundingRect() );
+    //FIXME this is a very bad way of doing this, just use the want_boundingBoxRole with data/setData...
     if ( ( ( GraphicsScene* ) scene() )->want_drawItemShape() )
         painter->drawPath ( shape() );
 
@@ -119,6 +120,7 @@ void SceneItem_Node::paint ( QPainter *painter, const QStyleOptionGraphicsItem *
 
 // name text
     QString label;
+    //FIXME this is a very bad way of doing this, just use the want_boundingBoxRole with data/setData...
     if ( ( ( GraphicsScene* ) scene() )->want_customNodeLabels() ) {
         label = this->m_label_custom;
     } else {
@@ -276,10 +278,12 @@ void SceneItem_Node::contextMenuEvent ( QGraphicsSceneContextMenuEvent * /*event
 }
 
 void SceneItem_Node::mouseDoubleClickEvent ( QGraphicsSceneMouseEvent * event ) {
+   if ( event->button() == Qt::LeftButton ) {
     SceneItem_LabelEditor* f = new SceneItem_LabelEditor ( this );
     f->setZValue ( 1000.0 );
     f->setTextInteractionFlags ( Qt::TextEditorInteraction );
     f->setPos ( event->pos() );
     f->setTextInteractionFlags ( Qt::TextEditorInteraction );
     f->setFocus();
+   }
 }

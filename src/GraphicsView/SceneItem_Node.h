@@ -22,16 +22,11 @@
 #define SCENEITEM_NODE_H
 
 #include <QGraphicsItem>
-#include <QPainter>
-#include <QDebug>
 #include <QPainterPath>
 #include <QPersistentModelIndex>
-#include <QGraphicsView>
-#include <QMenu>
 #include <QGraphicsSceneMouseEvent>
-#include <QMultiMap>
-
-#include "GraphicsScene.h"
+#include <QGraphicsItem>
+#include "AbstractMVCGraphicsItem.h"
 #include "SceneItem_Connection.h"
 #include "SceneItem_Types.h"
 #include "SceneItem_LabelEditor.h"
@@ -43,7 +38,7 @@ class SceneItem_LabelEditor;
 
 /*! represents a node in the QGraphicsScene which can have childs. Childs are incomming and outgoing
 ** connections as both need to be repainted when either the startNode or endNode is moved.*/
-class SceneItem_Node : public QGraphicsItem {
+class SceneItem_Node : public AbstractMVCGraphicsItem {
   friend class SceneItem_Connection;
   public:
     /*! the QPersistentModelIndex must be valid troughout the lifetime of the SceneItem_Node */

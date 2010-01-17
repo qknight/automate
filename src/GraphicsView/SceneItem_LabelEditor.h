@@ -32,14 +32,20 @@
 #include <QTextCursor>
 #include <QRegExp>
 
+#include "AbstractMVCGraphicsItem.h"
 #include "SceneItem_Connection.h"
 #include "SceneItem_ConnectionHandle.h"
 
 class SceneItem_ConnectionHandle;
 
-/*! this is an inline editor for editing of a label on a connection as '0' or '1' are used for instance.
-** since QString is used to represent the label there are quite a few possible labels...*/
-class SceneItem_LabelEditor : public QGraphicsTextItem {
+/*! this is an inline editor (meaning it is no seperated QWidget but a widget living living in a QGraphicsScene)
+ * for editing of a label from 
+ *  - a connection
+ *  - a node
+ *  QString is used to represent the label
+ */
+//FIXME this class should use AbstractMVCGraphicsItem's functions instead of it's own
+class SceneItem_LabelEditor : public QGraphicsTextItem/*, public virtual AbstractMVCGraphicsItem*/ {
   Q_OBJECT
   friend class SceneItem_ConnectionHandle;
   public:

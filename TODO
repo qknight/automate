@@ -19,10 +19,11 @@ currently working on:
       LMB+CTRL selct node/connection    -> add another object to the selection
          FIXME: currently the selection is canceled when there is no object to be clicked
       LMB pressed + drag                -> bbox for selecting objects
-      MMB on nodes                      -> connect them
+      MMB click on nodes                -> connect them
       MMB on empty space                -> 
       RMB on node/connection            -> context menu
-      RMB on scene                      -> move view
+>      RMB on scene                      -> move view
++      LMB doubleclick                   -> invoke label editor for node or connection
 
 =========== general =====================================================
  - check all casts for static_cast and dynamic_cast
@@ -93,6 +94,7 @@ FIXME treeView, adding a new connection isn't marked with a '+' sign in the tree
   right now it's just ignoring edits which don't affect anything
   
 =========== GraphicsView =====================================================
+ - i'm not using setData(...)/data(...) for QGraphicsItems to store data, is that good/bad design?
  - adding a GraphicsView using the automatehandler on automates which have connections (excluding loops)
    will trigger a loop which will eat up all memory and crash the system here -> see SceneItem_ConnectionHandle::paint()
  - on my second pc (not my laptop) i executed automate, opened a GraphicsView and as expected
@@ -157,6 +159,7 @@ FIXME treeView, adding a new connection isn't marked with a '+' sign in the tree
       src/SceneItem_Node.h:class SceneItem_Node : public QGraphicsItem {
 
  - GraphicsView using ctrl+a does not always select all items?!
+   this is probably the QGraphicsScene->sceneRect issue
  - in GraphicsView a selection can be expanded when clicking a non-yet-selected item with ctrl+LMB
    but if you miss that item the selection is canceled which is a bug... ;P
  - - adding a new item in a GraphicsView scrolls the view towards that item, which is what i hate.

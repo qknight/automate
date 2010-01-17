@@ -22,7 +22,6 @@
 #ifndef SCENEITEM_CONNECTIONHANDLE_H
 #define SCENEITEM_CONNECTIONHANDLE_H
 
-#include <QGraphicsItem>
 #include <QPointF>
 #include <QPainter>
 #include <QColor>
@@ -31,7 +30,9 @@
 #include <QTextDocument>
 #include <QObject>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsItem>
 
+#include "AbstractMVCGraphicsItem.h"
 #include "SceneItem_Connection.h"
 #include "SceneItem_LabelEditor.h"
 
@@ -40,7 +41,7 @@
 ** between two nodes (SceneItem_Node). It can host an editor to change the label
 ** drawn in a gray bubble.
 */
-class SceneItem_ConnectionHandle : public QObject, public QGraphicsItem {
+class SceneItem_ConnectionHandle : public QObject, public AbstractMVCGraphicsItem {
         Q_OBJECT
         friend class SceneItem_ConnectionLabel;
     public:

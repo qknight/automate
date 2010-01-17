@@ -16,7 +16,7 @@ SET ( AUTOMATE_VERSION "1.0.0-rc1" )
   CONFIGURE_FILE(src/version.h.in version.h @ONLY IMMEDIATE)
 # this code generates the version information for the .cpp/.h files
 
-SET (Generated_Sources ${PROJECT_BINARY_DIR}/version.h )
+SET (Generated_Sources  ${PROJECT_BINARY_DIR}/version.h )
 
 OPTION(BUILD_AUTOMATE_DOCUMENTATION "Create doxygen documentation for developers" ON)
 
@@ -48,6 +48,7 @@ SET( automate_SOURCES
   src/TreeView/treeView.cpp
  
   # frontend data structure equivalent files used by the QGraphicsScene
+  src/GraphicsView/AbstractMVCGraphicsItem.cpp
   src/GraphicsView/graphicsView.cpp
   src/GraphicsView/GraphicsScene.cpp
   src/GraphicsView/ItemView.cpp

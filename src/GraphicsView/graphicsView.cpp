@@ -43,9 +43,13 @@ GraphicsView::GraphicsView ( Model *model, QMainWindow* parent ) : AbstractView 
     addToolBar ( Qt::LeftToolBarArea, tb );
     setStatusBar ( sb );
 
-    selectionModel = new QItemSelectionModel ( model );
-    itemView->setSelectionModel ( selectionModel );
+    // this selectionModel can be used if one want's to have the same selection in all
+    // views, however the QGraphicsView(QGraphicsScene) will need some adaptions first
+    // to make the TreeView select the same items as the GraphicsView and vice versa.
+//     selectionModel = new QItemSelectionModel ( model );
+//     itemView->setSelectionModel ( selectionModel );
 
+    //FIXME i need to do something about this
     resize ( 800, 600 );
     view->setSceneRect(QRect(0,0,500,500));
     scene->setSceneRect(QRect(0,0,500,500));
@@ -59,7 +63,7 @@ GraphicsView::GraphicsView ( Model *model, QMainWindow* parent ) : AbstractView 
 
 GraphicsView::~GraphicsView() {
 //   qDebug() << __PRETTY_FUNCTION__;
-    delete selectionModel;
+//     delete selectionModel;
     delete tb;
     delete itemView;
     delete scene;

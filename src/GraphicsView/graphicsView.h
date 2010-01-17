@@ -33,7 +33,6 @@
 #include <QGraphicsScene>
 #include <QTextBrowser>
 #include <QGraphicsView>
-//#include <QGLWidget>
 #include <QGridLayout>
 #include <QSizePolicy>
 #include <QToolBar>
@@ -41,11 +40,13 @@
 #include <QStatusBar>
 #include <QPoint>
 #include <QCursor>
+//#include <QGLWidget>
 
 #include "Model.h"
 #include "AbstractView.h"
 #include "ItemView.h"
 #include "GraphicsScene.h"
+
 class GraphicsScene;
 class ItemView;
 
@@ -84,8 +85,7 @@ class GraphicsView : public AbstractView {
     QGraphicsView* view;
     /*! a helper function to improve readability of the code */
     void populateMenu();
-    /*!  */
-    QItemSelectionModel *selectionModel;
+//     QItemSelectionModel *selectionModel;
 
   private Q_SLOTS:
     /*! insertNode this is one of two places where the graphical editor inserts nodes
