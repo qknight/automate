@@ -48,7 +48,7 @@ SET( automate_SOURCES
   src/TreeView/treeView.cpp
  
   # frontend data structure equivalent files used by the QGraphicsScene
-  src/GraphicsView/AbstractMVCGraphicsItem.cpp
+  src/GraphicsView/GraphicsItemModelExtension.cpp
   src/GraphicsView/graphicsView.cpp
   src/GraphicsView/GraphicsScene.cpp
   src/GraphicsView/ItemView.cpp

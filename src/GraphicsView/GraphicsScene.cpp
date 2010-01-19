@@ -398,11 +398,20 @@ void GraphicsScene::mousePressEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
         addItem ( line );
     } else
         if ( mouseEvent->button() == Qt::MidButton ) {
-
+	  views().first()->setDragMode(QGraphicsView::RubberBandDrag);//QGraphicsView::RubberBandDrag;QGraphicsView::ScrollHandDrag;QGraphicsView::NoDrag
         } else {
 //       qDebug() << __PRETTY_FUNCTION__;
             QGraphicsScene::mousePressEvent ( mouseEvent );
         }
+}
+
+void GraphicsScene::mouseMoveEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
+    if ( line != 0 ) {
+        QLineF newLine ( line->line().p1(), mouseEvent->scenePos() );
+        line->setLine ( newLine );
+    } else {
+        QGraphicsScene::mouseMoveEvent ( mouseEvent );
+    }
 }
 
 void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
@@ -432,15 +441,6 @@ void GraphicsScene::mouseReleaseEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
         }
     }
     QGraphicsScene::mouseReleaseEvent ( mouseEvent );
-}
-
-void GraphicsScene::mouseMoveEvent ( QGraphicsSceneMouseEvent *mouseEvent ) {
-    if ( line != 0 ) {
-        QLineF newLine ( line->line().p1(), mouseEvent->scenePos() );
-        line->setLine ( newLine );
-    } else {
-        QGraphicsScene::mouseMoveEvent ( mouseEvent );
-    }
 }
 
 void GraphicsScene::toggleHighlight() {

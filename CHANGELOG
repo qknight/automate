@@ -1,3 +1,7 @@
+2010-01-19
+  - improved AbstractMVCGraphicsItem which is now called GraphicsItemModelExtension
+    also virtual inheritance didn't work since i can't change QGraphicsTextItem's way
+    of inheriting from QGraphicsItem (read: i can't add public virtual QGraphicsItem)
 2010-01-17
   - labeleditor for nodes and connection(labels) will only show up with LMB doubleclick
 2010-01-16

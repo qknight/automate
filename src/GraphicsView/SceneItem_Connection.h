@@ -30,7 +30,7 @@
 #include <math.h>
 
 #include "GraphicsScene.h"
-#include "AbstractMVCGraphicsItem.h"
+#include "GraphicsItemModelExtension.h"
 #include "SceneItem_Node.h"
 #include "SceneItem_Types.h"
 #include "SceneItem_ConnectionHandle.h"
@@ -46,7 +46,7 @@ class SceneItem_ConnectionHandle;
 /*! represents a connection item in the graphicsScene: normal connection and loop
 problems: this class should be split into one base class with general purpose functions and two
  ** inheriting classes normal_connection and loop_connection to make a lot of things clearer */
-class SceneItem_Connection : public AbstractMVCGraphicsItem {
+class SceneItem_Connection : public QGraphicsItem, public GraphicsItemModelExtension {
         friend class SceneItem_ConnectionHandle;
     public:
         /*! constructor which binds the index for lifetime */

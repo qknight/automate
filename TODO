@@ -14,6 +14,9 @@ WARNING: parts of this document could be outdated (2009-12-24)
 =================================================================================================
         -- important FIXMES --
 =================================================================================================
+done items:
+      LMB doubleclick                   -> invoke label editor for node or connection
+
 currently working on:
       LMB on node or connection         -> select node/connection
       LMB+CTRL selct node/connection    -> add another object to the selection
@@ -22,8 +25,7 @@ currently working on:
       MMB click on nodes                -> connect them
       MMB on empty space                -> 
       RMB on node/connection            -> context menu
->      RMB on scene                      -> move view
-+      LMB doubleclick                   -> invoke label editor for node or connection
+>      RMB on scene                      -> moves the view
 
 =========== general =====================================================
  - check all casts for static_cast and dynamic_cast

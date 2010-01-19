@@ -43,6 +43,9 @@
 /*! */
 class GraphicsScene : public QGraphicsScene {
   Q_OBJECT
+  friend class GraphicsItemModelExtension;
+  //TODO relocate all code for model <-> QGrpahicsItem interaction into the GraphicsItemModelExtension 
+  //     and remove the next 3 lines
   friend class SceneItem_Node;
   friend class SceneItem_Connection;
   friend class SceneItem_ConnectionHandle;

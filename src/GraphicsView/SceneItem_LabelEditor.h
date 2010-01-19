@@ -32,7 +32,7 @@
 #include <QTextCursor>
 #include <QRegExp>
 
-#include "AbstractMVCGraphicsItem.h"
+#include "GraphicsItemModelExtension.h"
 #include "SceneItem_Connection.h"
 #include "SceneItem_ConnectionHandle.h"
 
@@ -44,8 +44,7 @@ class SceneItem_ConnectionHandle;
  *  - a node
  *  QString is used to represent the label
  */
-//FIXME this class should use AbstractMVCGraphicsItem's functions instead of it's own
-class SceneItem_LabelEditor : public QGraphicsTextItem/*, public virtual AbstractMVCGraphicsItem*/ {
+class SceneItem_LabelEditor : public QGraphicsTextItem, public GraphicsItemModelExtension {
   Q_OBJECT
   friend class SceneItem_ConnectionHandle;
   public:

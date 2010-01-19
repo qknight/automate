@@ -74,13 +74,13 @@ void SceneItem_Connection::updateData() {
     }
 
     bool forceLayoutUpdate = false;
-    unsigned int id = data ( index, customRole::IdRole ).toInt();
+    unsigned int id = GraphicsItemModelExtension::modelData ( scene(), index, customRole::IdRole ).toInt();
     QString toolTip = QString ( "c%1" ).arg ( id );
     setToolTip ( toolTip );
 
     prepareGeometryChange();
 
-    QString symbol = data ( index, customRole::SymbolIndexRole ).toString();
+    QString symbol = GraphicsItemModelExtension::modelData ( scene(), index, customRole::SymbolIndexRole ).toString();
     labelItem->setLabel ( symbol );
 
     //FIXME have a look at this, maybe this can be done better

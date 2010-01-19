@@ -18,20 +18,20 @@
 #ifndef ABSTRACTMVCGRAPHICSITEM_H
 #define ABSTRACTMVCGRAPHICSITEM_H
 
-#include <QGraphicsItem>
 #include <QPersistentModelIndex>
 
+#include <QGraphicsScene>
 /*!
  * this class extends all normal QGraphicsItem(s) with another data/setData function, both yet different
  * class definitions can be used simultaneously since the parameterlist is different. 
  *
  * and this is a central place for all items to query the model for data/setData
  */
-class AbstractMVCGraphicsItem : public /*virtual*/ QGraphicsItem {
+class GraphicsItemModelExtension {
   public:
     /*! a wrapper function for all items in the scene, so that they can call data() directly */
-    QVariant data( const QModelIndex &index, int role ) const;
+    QVariant modelData( QGraphicsScene* scene, const QModelIndex &index, int role ) const;
     /*! a wrapper function for all items in the scene, so that they can call setData() directly */
-    bool setData( const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
+    bool setModelData( QGraphicsScene* scene, const QModelIndex & index, const QVariant & value, int role = Qt::EditRole );
 };
 #endif // ABSTRACTMVCGRAPHICSITEM_H

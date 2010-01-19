@@ -46,13 +46,13 @@ void SceneItem_Node::updateData() {
         qDebug() << "item isn't in any scene, can't query for valid data";
         return;
     }
-    int id = data ( index, customRole::IdRole ).toInt();
+    int id = modelData ( scene(), index, customRole::IdRole ).toInt();
     QString toolTip = QString ( "n%1" ).arg ( id );
     setToolTip ( toolTip );
-    bool start = data ( index, customRole::StartRole ).toBool();
-    bool final = data ( index, customRole::FinalRole ).toBool();
+    bool start = modelData ( scene(), index, customRole::StartRole ).toBool();
+    bool final = modelData ( scene(), index, customRole::FinalRole ).toBool();
     m_label = QString ( "%1" ).arg ( id );
-    m_label_custom = data ( index, customRole::CustomLabelRole ).toString();
+    m_label_custom = modelData ( scene(), index, customRole::CustomLabelRole ).toString();
     if ( m_label_custom == "" )
         m_label_custom = m_label;
     this->start = start;
