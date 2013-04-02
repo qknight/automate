@@ -28,7 +28,7 @@
 
 /*! this class is only instantiated once for every automate
  ** this is the only instance which is able to give valid IDs */
-class AutomateRoot : public AbstractTreeItem, protected SymbolTable {
+class AutomateRoot : public AbstractTreeItem, public SymbolTable {
   public:
     AutomateRoot( AbstractTreeItem* parent = 0 );
     /*! WARNING: never delete objects as for instance childItems in the structure here
