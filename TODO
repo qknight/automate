@@ -27,6 +27,11 @@ currently working on:
       RMB on node/connection            -> context menu
 >      RMB on scene                      -> moves the view
 
+TODO!!!!!!
+i've changed a lot in the way an object inherits from the extension class, see spring random map generator's
+GraphicsItemModelExtension class, which is really good now (compared to this)
+this is also true for QGraphicsView/QGraphicsScene related view handling as scrolling the scene
+
 =========== general =====================================================
  - check all casts for static_cast and dynamic_cast
  - use parentWidget() and parent where possible

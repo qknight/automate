@@ -98,7 +98,7 @@ QRegion ItemView::visualRegionForSelection ( const QItemSelection &/*selection*/
 }
 
 void ItemView::reset() {
-//   qDebug() << __PRETTY_FUNCTION__;
+    qDebug() << __PRETTY_FUNCTION__;
     emit clearScene();
     init();
 }
